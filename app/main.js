@@ -230,13 +230,13 @@ module.exports = require("url");
 
 /***/ }),
 
-/***/ "./config/env_test.json":
-/*!******************************!*\
-  !*** ./config/env_test.json ***!
-  \******************************/
+/***/ "./config/env_development.json":
+/*!*************************************!*\
+  !*** ./config/env_development.json ***!
+  \*************************************/
 /***/ ((module) => {
 
-module.exports = JSON.parse('{"name":"test","description":"Add here any environment specific stuff you like."}');
+module.exports = JSON.parse('{"name":"development","description":"Add here any environment specific stuff you like."}');
 
 /***/ })
 
@@ -325,7 +325,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _menu_edit_menu_template__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./menu/edit_menu_template */ "./src/menu/edit_menu_template.js");
 /* harmony import */ var _menu_dev_menu_template__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./menu/dev_menu_template */ "./src/menu/dev_menu_template.js");
 /* harmony import */ var _helpers_window__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./helpers/window */ "./src/helpers/window.js");
-/* harmony import */ var env__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! env */ "./config/env_test.json");
+/* harmony import */ var env__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! env */ "./config/env_development.json");
 // This is main process of Electron, started as first thing when your
 // app starts. It runs through entire life of your application.
 // It doesn't have any windows which you can see on screen, but we can open
