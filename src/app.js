@@ -37,6 +37,7 @@ function SaveConfig() {
 
 function LoadConfig() {
   let r = {};
+
   try {
     r = JSON.parse(localStorage.getItem('config') ?? '{}');
   } catch(e) {}
@@ -44,8 +45,6 @@ function LoadConfig() {
   const { L, C, f } = r;
 
   [L, C, f].forEach((v, i) => SetValue(i, typeof v == 'string' && v != '' ? v : ''));
-
-  //console.log('LoadConfig', [...values]);
 
   return r;
 }
