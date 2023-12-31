@@ -124,9 +124,9 @@ input {
   margin: 0.125em 0.125em 0.125em 0.5em;
 }
 
- input.selected {
+input.selected {
   color: #d00;
-} 
+}
 
 label {
   display: inline-flex;

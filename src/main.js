@@ -67,9 +67,7 @@ app.on('ready', () => {
     })
   );
 
-  if(env.name === 'development') {
-    mainWindow.openDevTools();
-  }
+  if(env.name === 'development') mainWindow.openDevTools();
 });
 
 app.on('window-all-closed', () => {

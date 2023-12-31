@@ -95,6 +95,8 @@ function SetValue(name, value) {
     values[idx] = undefined;
     return true;
   }
+  console.log('SetValue', { name, value });
+  if(isNaN(value)) throw new Error(`SetValue name=${name} value=${value}`);
 
   const result = ParseValue(value, name);
 
@@ -257,7 +259,7 @@ function Update() {
   QA('input').forEach(e => {
     const { name, value } = e;
 
-    if(value != '') ParseValue(value, name);
+    if(value != '' && Number.isFinite(value) && value !== Infinity) ParseValue(value, name);
   });
 
   for(let i = 0; i < 3; i++)
@@ -419,4 +421,36 @@ function Init() {
   setInterval(() => SaveConfig(), 500);
 }
 
-//Object.assign(globalThis, {CalcThompson, CalcInductance, CalcCapacity, CalcFrequency, ClearValues, Exp2Unit, Exponent, FormatNumber, GetFieldElements, GetFieldValue, GetSelected, GetValue, GuessField, Init, OnInput, ParseValue, ProcessValue, RoundFunction, SelectField, SetField, SetValue, SetupFields, Thousand, Unit, Update, LoadConfig, SaveConfig, inputElements, validValues, Q, QA });
+Object.assign(globalThis, {
+  CalcThompson,
+  CalcInductance,
+  CalcCapacity,
+  CalcFrequency,
+  ClearValues,
+  Exp2Unit,
+  Exponent,
+  FormatNumber,
+  GetFieldElements,
+  GetFieldValue,
+  GetSelected,
+  GetValue,
+  GuessField,
+  Init,
+  OnInput,
+  ParseValue,
+  ProcessValue,
+  RoundFunction,
+  SelectField,
+  SetField,
+  SetValue,
+  SetupFields,
+  Thousand,
+  Unit,
+  Update,
+  LoadConfig,
+  SaveConfig,
+  inputElements,
+  validValues,
+  Q,
+  QA
+});
