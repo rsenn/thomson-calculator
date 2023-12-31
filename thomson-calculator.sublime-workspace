@@ -219,6 +219,38 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "src/app.js",
+			"settings":
+			{
+				"buffer_size": 10094,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					25,
+					1,
+					"insert",
+					{
+						"characters": "\n"
+					},
+					"AgAAAIgIAAAAAAAAiQgAAAAAAAAAAAAAiQgAAAAAAACLCAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAiAgAAAAAAACICAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					30,
+					1,
+					"insert",
+					{
+						"characters": "\n"
+					},
+					"AwAAALcIAAAAAAAAuAgAAAAAAAAAAAAAuAgAAAAAAAC6CAAAAAAAAAAAAACJCAAAAAAAAIkIAAAAAAAAAgAAACAg",
+					"AQAAAAAAAAABAAAAtwgAAAAAAAC3CAAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -320,10 +352,13 @@
 	},
 	"expanded_folders":
 	[
-		"/home/roman/Projects/thomson-calculator"
+		"/home/roman/Projects/thomson-calculator",
+		"/home/roman/Projects/thomson-calculator/app",
+		"/home/roman/Projects/thomson-calculator/src"
 	],
 	"file_history":
 	[
+		"/home/roman/Projects/thomson-calculator/app/app.js",
 		"/home/roman/Projects/electron-boilerplate/app/app.html",
 		"/home/roman/Projects/electron-boilerplate/src/stylesheets/main.css",
 		"/home/roman/Projects/electron-boilerplate/src/main.js",
@@ -450,12 +485,11 @@
 		"/home/roman/Sources/opencv/modules/core/include/opencv2/core/mat.inl.hpp",
 		"/opt/opencv-4.5.0/include/opencv4/opencv2/core/mat.hpp",
 		"/home/roman/.config/sublime-text/Packages/User/Themes/TronLegacy.tmTheme",
-		"/home/roman/Projects/plot-cv/quickjs/modules/tests/test_qjsm.js",
-		"/home/roman/Projects/plot-cv/quickjs/modules/tests/test_lexer.js"
+		"/home/roman/Projects/plot-cv/quickjs/modules/tests/test_qjsm.js"
 	],
 	"find":
 	{
-		"height": 33.0
+		"height": 67.0
 	},
 	"find_in_files":
 	{
@@ -469,6 +503,7 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"  \n"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -490,6 +525,53 @@
 		{
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "src/app.js",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10094,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1927,
+								1927
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "./",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								}
+							],
+							"function_name_status_row": 86,
+							"show_line_column": "disabled",
+							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JavaScriptNext.tmLanguage",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1704008627.46,
+							"tabs_extra_last_activated_sheet_index": 0,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1865.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
 			]
 		}
 	],

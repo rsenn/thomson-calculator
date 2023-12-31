@@ -15,11 +15,9 @@ const units = ['H', 'F', 'Hz'];
 const names = Object.keys(valueIndex);
 const inputElements = QA('input');
 
-let fields,
-  selectedField,
-  config = (globalThis.config = {}),
-  initialized;
+let fields, selectedField, initialized;
 
+globalThis.config = {};
 document.addEventListener('load', Init);
 
 setTimeout(Init, 100);
@@ -30,19 +28,26 @@ function FieldIndex(arg) {
 }
 
 function SaveConfig() {
-  for(let i = 0; i < 3; i++) if(validValues[i]) config['LCf'[i]] = GetFieldElements(i)[2].value;
+  for(let i = 0; i < 3; i++) if(validValues[i]) globalThis.config['LCf'[i]] = GetFieldElements(i)[2].value;
 
-  config.selected = GetSelected();
+  globalThis.config.selected = GetSelected();
 
-  localStorage.setItem('config', JSON.stringify(config));
+  localStorage.setItem('config', JSON.stringify(globalThis.config));
 }
 
 function LoadConfig() {
+  let r = {};
   try {
-    return JSON.parse(localStorage.getItem('config') ?? '{}');
+    r = JSON.parse(localStorage.getItem('config') ?? '{}');
   } catch(e) {}
 
-  return {};
+  const { L, C, f } = r;
+
+  [L, C, f].forEach((v, i) => SetValue(i, typeof v == 'string' && v != '' ? v : ''));
+
+  //console.log('LoadConfig', [...values]);
+
+  return r;
 }
 
 function* PartitionArray(a, size) {
@@ -58,6 +63,11 @@ function GetFieldElements(n) {
 function GetFieldValue(n) {
   const e = GetFieldElements(FieldIndex(n)).find(e => e.tagName.toLowerCase() == 'input');
   return e.value;
+}
+
+function SetFieldValue(n, v) {
+  const e = GetFieldElements(FieldIndex(n)).find(e => e.tagName.toLowerCase() == 'input');
+  e.value = v;
 }
 
 function SelectField(i) {
@@ -95,10 +105,15 @@ function SetValue(name, value) {
     values[idx] = undefined;
     return true;
   }
-  console.log('SetValue', { name, value });
-  if(isNaN(value)) throw new Error(`SetValue name=${name} value=${value}`);
+
+  if(typeof value == 'number') {
+    if(!Number.isFinite(value)) throw new Error(`SetValue name=${name} value=${value}`);
+
+    if(isNaN(value)) throw new Error(`SetValue name=${name} value=${value}`);
+  }
 
   const result = ParseValue(value, name);
+  //console.log('SetValue', { name, value, result });
 
   if(validValues[idx]) SetField(name);
 
@@ -117,14 +132,14 @@ function CalcThompson() {
   }
 }
 
-function SetField(i, num, round = RoundFunction(config.precision ?? 3)) {
+function SetField(i, num, round = RoundFunction(globalThis.config.precision ?? 3)) {
   if(typeof i == 'string') i = valueIndex[i];
 
   if(typeof num != 'number') num = GetValue(i);
 
   if(typeof num != 'number') num = ProcessValue(num + '', 'LCf'[i]);
 
-  if(isNaN(num)) throw new Error(`SetField(): i = ${i},  num = ${num}`);
+  if(isNaN(num)) return; //throw new Error(`SetField(): i = ${i},  num = ${num}`);
 
   inputElements[i].value = FormatNumber(num, null, i, round);
 }
@@ -213,9 +228,13 @@ function OnInput(event) {
   const { name, value } = target;
   const idx = valueIndex[name];
 
-  if(ParseValue(value, name)) CalcThompson();
+  //console.log('OnInput', { value, name, idx });
 
-  event.preventDefault();
+  if(idx !== undefined) {
+    if(ParseValue(value, name)) CalcThompson();
+
+    event.preventDefault();
+  }
 }
 
 function ClearValues() {
@@ -242,12 +261,11 @@ function ParseValue(value, name) {
     const result = ProcessValue(value, name);
     const valid = (validValues[idx] = !isNaN(result));
 
-    if(!valid) {
-      console.error('ParseValue', { value, name, idx, result, valid });
-      throw new Error(`ParseValue name=${name} value=${value}`);
-    }
+    if(!valid || idx === undefined) console.error('ParseValue', { value, name, idx, result, valid });
 
-    values[idx] = valid ? result : NaN;
+    if(!valid || idx === undefined) throw new Error(`ParseValue idx=${idx} name=${name} value=${value}`);
+
+    values[idx] = valid ? result : undefined;
 
     return valid;
   }
@@ -256,16 +274,20 @@ function ParseValue(value, name) {
 function Update() {
   ClearValues();
 
-  QA('input').forEach(e => {
-    const { name, value } = e;
+  QA('input')
+    .slice(0, 2)
+    .forEach((e, i) => {
+      const { name, value } = e;
 
-    if(value != '' && Number.isFinite(value) && value !== Infinity) ParseValue(value, name);
-  });
+      if((typeof value == 'string' && value != '') || (typeof value == 'number' && Number.isFinite(value))) {
+        if(ParseValue(value, name)) SetField(i);
+      }
+    });
 
-  for(let i = 0; i < 3; i++)
+  /*for(let i = 0; i < 3; i++)
     try {
       SetField(i);
-    } catch(e) {}
+    } catch(e) {}*/
 }
 
 function FormatNumber(num, exp, unit, round = a => a.toFixed(12).replace(/\.0*$/g, '')) {
@@ -286,7 +308,7 @@ export function WaitFor(ms) {
 
 async function SetStatus(str, t1 = 3000, t2 = 1000) {
   const st = Q('#status');
-  console.log('Display st:', str);
+  //console.log('Display st:', str);
 
   while(st.firstElementChild) {
     if(!st.firstElementChild.nextElementSibling) break;
@@ -350,17 +372,18 @@ function ChangePrecision(p) {
   Q('#precision').value = p + '';
   Q('#precision_num').value = p + '';
 
-  config.precision = p;
+  globalThis.config.precision = p;
+  console.log('ChangePrecision', { values: [0, 1, 2].map(GetValue) });
 
-  CalcThompson();
-  Update();
+  try {
+    CalcThompson();
+    Update();
+  } catch(e) {}
 }
 
 function Init() {
   if(initialized) return;
   initialized = true;
-
-  let { L, C, f } = (config = globalThis.config = LoadConfig());
 
   QA('input').forEach(e => {
     e.addEventListener('change', OnInput, false);
@@ -368,6 +391,8 @@ function Init() {
   });
 
   SetupFields();
+
+  globalThis.config = LoadConfig();
 
   Q('#precision_num').addEventListener('change', event => {
     const { target } = event;
@@ -384,29 +409,14 @@ function Init() {
     ChangePrecision(+value);
   });
 
-  if('precision' in config) {
-    Q('#precision').value = config.precision;
-    Q('#precision_num').value = config.precision;
+  if('precision' in globalThis.config) {
+    Q('#precision').value = globalThis.config.precision;
+    Q('#precision_num').value = globalThis.config.precision;
   }
 
-  if(typeof L == 'string' && L != '') {
-    SetValue(0, L);
-    SetField(0);
-  }
-
-  if(typeof C == 'string' && C != '') {
-    SetValue(1, C);
-    SetField(1);
-  }
-
-  if(typeof f == 'string' && f != '') {
-    SetValue(2, f);
-    SetField(2);
-  }
-
-  if('selected' in config) {
-    if(config.selected >= 0 && config.selected <= 2) SelectField(config.selected);
-    else delete config.selected;
+  if('selected' in globalThis.config) {
+    if(globalThis.config.selected >= 0 && globalThis.config.selected <= 2) SelectField(globalThis.config.selected);
+    else delete globalThis.config.selected;
   }
 
   if(GetSelected() === undefined) {
@@ -415,8 +425,8 @@ function Init() {
     SelectField(f);
   }
 
-  CalcThompson();
-  Update();
+  /*CalcThompson();
+  Update();*/
 
   setInterval(() => SaveConfig(), 500);
 }
