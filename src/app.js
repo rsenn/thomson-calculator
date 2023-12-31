@@ -236,10 +236,8 @@ function OnInput(event) {
   }
 }
 
-function ClearValues() {
-  SetValue('L', undefined);
-  SetValue('C', undefined);
-  SetValue('f', undefined);
+function ClearValues(idx) {
+  for(let i = 0; i < 3; i++) if(idx === undefined || (typeof idx == 'number' && i == idx)) SetValue(i, undefined);
 }
 
 function ProcessValue(value, name) {
@@ -270,23 +268,22 @@ function ParseValue(value, name) {
   }
 }
 
-function Update() {
-  ClearValues();
+function ReadFields(name) {
+  const idx = typeof name == 'number' ? name : valueIndex[name];
+
+  ClearValues(idx);
 
   QA('input')
     .slice(0, 2)
-    .forEach((e, i) => {
-      const { name, value } = e;
-
-      if((typeof value == 'string' && value != '') || (typeof value == 'number' && Number.isFinite(value))) {
-        if(ParseValue(value, name)) SetField(i);
-      }
+    .forEach(({ name, value }, i) => {
+      if(typeof idx != 'number' || i == idx) if ((typeof value == 'string' && value != '') || (typeof value == 'number' && Number.isFinite(value))) if (ParseValue(value, name)) SetField(i);
     });
+}
 
-  /*for(let i = 0; i < 3; i++)
-    try {
-      SetField(i);
-    } catch(e) {}*/
+function WriteFields(name) {
+  const idx = typeof name == 'number' ? name : valueIndex[name];
+
+  for(let i = 0; i < 3; i++) if(idx === undefined || (typeof idx == 'number' && i == idx)) SetField(i);
 }
 
 function FormatNumber(num, exp, unit, round = a => a.toFixed(12).replace(/\.0*$/g, '')) {
@@ -372,11 +369,11 @@ function ChangePrecision(p) {
   Q('#precision_num').value = p + '';
 
   globalThis.config.precision = p;
-  console.log('ChangePrecision', { values: [0, 1, 2].map(GetValue) });
+  //console.log('ChangePrecision', { values: [0, 1, 2].map(GetValue) });
 
   try {
     CalcThompson();
-    Update();
+    ReadFields();
   } catch(e) {}
 }
 
@@ -425,41 +422,9 @@ function Init() {
   }
 
   /*CalcThompson();
-  Update();*/
+  ReadFields();*/
 
   setInterval(() => SaveConfig(), 500);
 }
 
-Object.assign(globalThis, {
-  CalcThompson,
-  CalcInductance,
-  CalcCapacity,
-  CalcFrequency,
-  ClearValues,
-  Exp2Unit,
-  Exponent,
-  FormatNumber,
-  GetFieldElements,
-  GetFieldValue,
-  GetSelected,
-  GetValue,
-  GuessField,
-  Init,
-  OnInput,
-  ParseValue,
-  ProcessValue,
-  RoundFunction,
-  SelectField,
-  SetField,
-  SetValue,
-  SetupFields,
-  Thousand,
-  Unit,
-  Update,
-  LoadConfig,
-  SaveConfig,
-  inputElements,
-  validValues,
-  Q,
-  QA
-});
+/* prettier-ignore */ Object.assign(globalThis, {CalcCapacity, CalcFrequency, CalcInductance, CalcThompson, ChangePrecision, ClearValues, CopyToClipboard, Exp2Unit, Exponent, FieldIndex, FormatNumber, GetFieldElements, GetFieldValue, GetSelected, GetValue, GuessField, Init, LoadConfig, OnInput, ParseValue, ProcessValue, RoundFunction, SaveConfig, SelectField, SetField, SetFieldValue, SetStatus, SetValue, SetupFields, Thousand, Unit, ReadFields, WriteFields, WaitFor, inputElements, validValues, Q, QA });
