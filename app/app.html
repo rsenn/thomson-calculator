@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>LC circuit calculation</title>
+  </head>
+  <body>
+    <h2>Thomson's formula</h2>
+    <img src="svg/freq-equation.svg" />
+    <form action="" onsubmit="">
+      <div id="fields" style="display: grid; grid-template-columns: 1.2em 6.5em 1fr">
+        <label class="var inductance">
+          <b>L</b>
+        </label>
+        <label class="name inductance">Inductance</label>
+        <input type="text" size="12" name="L" value="200nH" />
+        <label class="var capacitance">
+          <b>C</b>
+        </label>
+        <label class="name capacitance">Capacitance</label>
+        <input type="text" size="12" name="C" value="10pF" />
+        <label class="var frequency">
+          <b>f</b>
+        </label>
+        <label class="name frequency">Frequency</label>
+        <input type="text" size="12" name="f" />
+      </div>
+      <div id="precision_grp">
+        <label for="precision" id="precision_lbl">Precision</label>
+        <input type="range" id="precision" name="precision" min="0" max="12" />
+        <input type="number" id="precision_num" name="precision_num" value="?" size="2" />
+      </div>
+      <div id="status">&nbsp;</div>
+    </form>
+    <script src="app.js"></script>
+  </body>
+</html>
