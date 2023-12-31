@@ -1,9 +1,6 @@
 import './stylesheets/main.css';
 
-// Everything below is just a demo. You can delete all of it.
-
-/*import { ipcRenderer } from 'electron';
-import env from 'env';*/ const Q = s => document.querySelector(s);
+const Q = s => document.querySelector(s);
 const QA = s => [...(document.querySelectorAll(s) ?? [])];
 
 const values = (globalThis.values = new Float64Array(3));
@@ -33,11 +30,7 @@ function FieldIndex(arg) {
 }
 
 function SaveConfig() {
-  for(let i = 0; i < 3; i++) {
-    if(!validValues[i]) continue;
-
-    config['LCf'[i]] = GetFieldElements(i)[2].value;
-  }
+  for(let i = 0; i < 3; i++) if(validValues[i]) config['LCf'[i]] = GetFieldElements(i)[2].value;
 
   config.selected = GetSelected();
 
@@ -48,17 +41,18 @@ function LoadConfig() {
   try {
     return JSON.parse(localStorage.getItem('config') ?? '{}');
   } catch(e) {}
+
   return {};
 }
 
-function* partitionArray(a, size) {
+function* PartitionArray(a, size) {
   for(let i = 0; i < a.length; i += size) yield a.slice(i, i + size);
 }
 
 function GetFieldElements(n) {
   if(!fields) SetupFields();
 
-  return [...partitionArray([...fields.children], 3)][n];
+  return [...PartitionArray([...fields.children], 3)][n];
 }
 
 function GetFieldValue(n) {
@@ -70,9 +64,7 @@ function SelectField(i) {
   if(!(i >= 0 && i <= 2)) throw new Error(`SelectField i=${i}`);
 
   for(let j = 0; j < 3; j++) {
-    GetFieldElements(j).forEach((e, x) => {
-      /*if(x < 2)*/ e.classList[i == j ? 'add' : 'remove']('selected');
-    });
+    GetFieldElements(j).forEach((e, x) => e.classList[i == j ? 'add' : 'remove']('selected'));
 
     GetFieldElements(j)[2].disabled = i == j;
   }
@@ -169,7 +161,7 @@ function Exponent(num) {
 }
 
 function Thousand(exponent) {
-  return Math.floor(exponent / 3) * 3;
+  return Math.min(15, Math.max(-18, Math.floor(exponent / 3) * 3));
 }
 
 function Exp2Unit(exponent) {
@@ -289,18 +281,19 @@ function FormatNumber(num, exp, unit, round = a => a.toFixed(12).replace(/\.0*$/
 export function WaitFor(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-async function SetStatus(str, t1 = 3000, t2 = 1000) {
-  const status = Q('#status');
-  console.log('Display status:', str);
 
-  while(status.firstElementChild) {
-    if(!status.firstElementChild.nextElementSibling) break;
-    status.removeChild(status.firstElementChild);
+async function SetStatus(str, t1 = 3000, t2 = 1000) {
+  const st = Q('#status');
+  console.log('Display st:', str);
+
+  while(st.firstElementChild) {
+    if(!st.firstElementChild.nextElementSibling) break;
+    st.removeChild(st.firstElementChild);
   }
 
-  let e = status.firstElementChild ?? document.createElement('div');
+  let e = st.firstElementChild ?? document.createElement('div');
 
-  status.insertBefore(e, status.firstElementChild);
+  st.insertBefore(e, st.firstElementChild);
   e.style.transition = `opacity 0s`;
   e.style.opacity = '1';
 
@@ -312,10 +305,11 @@ async function SetStatus(str, t1 = 3000, t2 = 1000) {
   e.innerText = str;
 
   await WaitFor(t1);
+
   e.style.transition = `all ${t2 / 1000}s`;
   e.style.opacity = '0 ';
+
   await WaitFor(t2);
-  //status.removeChild(e);
 }
 
 async function CopyToClipboard(str) {
@@ -332,10 +326,11 @@ function SetupFields() {
 
   fields = Q('#fields');
 
-  [...partitionArray([...fields.children], 3)].forEach((a, i) => {
+  [...PartitionArray([...fields.children], 3)].forEach((a, i) => {
     a.slice(0, 2).forEach(e => e.addEventListener('click', e => SelectField(i)));
     a.forEach(e => e.addEventListener('dblclick', async e => (await CopyToClipboard(GetFieldValue(i)), e.preventDefault()), true));
   });
+
   document.body.addEventListener(
     'dblclick',
     async e => {
@@ -352,6 +347,7 @@ function SetupFields() {
 function ChangePrecision(p) {
   Q('#precision').value = p + '';
   Q('#precision_num').value = p + '';
+
   config.precision = p;
 
   CalcThompson();
@@ -423,36 +419,4 @@ function Init() {
   setInterval(() => SaveConfig(), 500);
 }
 
-Object.assign(globalThis, {
-  CalcThompson,
-  CalcInductance,
-  CalcCapacity,
-  CalcFrequency,
-  ClearValues,
-  Exp2Unit,
-  Exponent,
-  FormatNumber,
-  GetFieldElements,
-  GetFieldValue,
-  GetSelected,
-  GetValue,
-  GuessField,
-  Init,
-  OnInput,
-  ParseValue,
-  ProcessValue,
-  RoundFunction,
-  SelectField,
-  SetField,
-  SetValue,
-  SetupFields,
-  Thousand,
-  Unit,
-  Update,
-  LoadConfig,
-  SaveConfig,
-  inputElements,
-  validValues,
-  Q,
-  QA
-});
+//Object.assign(globalThis, {CalcThompson, CalcInductance, CalcCapacity, CalcFrequency, ClearValues, Exp2Unit, Exponent, FormatNumber, GetFieldElements, GetFieldValue, GetSelected, GetValue, GuessField, Init, OnInput, ParseValue, ProcessValue, RoundFunction, SelectField, SetField, SetValue, SetupFields, Thousand, Unit, Update, LoadConfig, SaveConfig, inputElements, validValues, Q, QA });

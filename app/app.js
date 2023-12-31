@@ -21,7 +21,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "html,\nbody {\n  width: 100%;\n  height: 100%;\n  margin: 0;\n  padding: 0;\n}\n\nbody {\n  display: flex;\n  flex-flow: column;\n  justify-content: center;\n  align-items: center;\n  font-family: sans-serif;\n  color: #525252;\n}\nh2 {\n  color: black;\n}\nbody {\n  user-select: none;\n}\nbody img {\n /* transform: scale(0.5) translateY(-2em);*/\n  /*filter: drop-shadow( hsla(160, 100%, 50%, 0.5) 0.3em 0.3em 0.3em);*/\n  height:  4em;\n  width: auto;\n  margin: 0.5em 0 2em 0;\n}\ninput {\n  user-select: contain;\n  margin-left: 0.5em;\n}\nform {\n  display: flex;\n  flex-flow: column;\n  align-items: center;\n  justify-content: space-between;\n}\n#fields,\n#fields input {\n  font-size: 18pt;\n}\n#status {\n  margin-top: 2em;\n  font-size: 1rem;\n  font-weight: 0;\n}\n#status > div {\n  box-shadow: 0px 0px 10px black;\n  /*border: 2px solid hsla(60, 100%, 0%, 1); */\n  padding: 0.5em;\n  color: #000;\n  background: hsla(60, 100%, 50%, 1);\n  background: linear-gradient(180deg, hsla(60, 100%, 50%, 1) 0%, hsla(50, 100%, 50%, 1));\n  font-weight: bold;\n}\n#precision_grp {\n  font-size: 12pt;\n  align-self: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n#precision_grp label {\n  font-weight: 100;\n  transform: translateY(1px);\n}\n#precision_num {\n  margin: 0 0.5em 0 0.5em;\n}\na {\n  text-decoration: none;\n  color: #cb3837;\n}\n\n.fields {\n  display: flex;\n  flex: column;\n}\nlabel {\n  padding: 2px 4px 2px 4px;\n}\nlabel b {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n  width: 100%;\n}\ninput {\n  border: 2px #eee inset;\n  text-align: right;\n  background: white;\n  padding: 0.125em 0.25em 0 0.25em;\n  margin: 0.125em 0.125em 0.125em 0.5em;\n}\n/*input.selected {\n  user-select:  none;\n} */\n\nlabel {\n  display: inline-flex;\n  align-items: center;\n}\nlabel.var.selected {\n  background: black;\n  color: white;\n}\nlabel.name.selected {\n  color: white;\n  /* font-weight: bold;*/\n  text-shadow: black 1px 1px 3px;\n}\nlabel.name.inductance.selected {\n  background: linear-gradient(90deg, hsla(30, 100%, 40%, 1) 0%, hsla(40, 100%, 50%, 1));\n}\nlabel.name.capacitance.selected {\n  background: linear-gradient(90deg, hsla(80, 100%, 40%, 1) 0%, hsla(120, 100%, 40%, 1));\n}\nlabel.name.frequency.selected {\n  background: linear-gradient(90deg, hsla(300, 100%, 40%, 1) 0%, hsla(280, 100%, 40%, 1));\n}\n#precision {\n  transform: translateY(1px);\n}\n#precision_num {\n  display: inline-flex;\n  align-items: center;\n  justify-content: flex-end;\n  text-align: center;\n  min-width: 2em;\n  max-width: 3em;\n  height: 1.5em;\n}\n#precision_grp {\n  margin-top: 2em;\n}\n", "",{"version":3,"sources":["webpack://./src/stylesheets/main.css"],"names":[],"mappings":"AAAA;;EAEE,WAAW;EACX,YAAY;EACZ,SAAS;EACT,UAAU;AACZ;;AAEA;EACE,aAAa;EACb,iBAAiB;EACjB,uBAAuB;EACvB,mBAAmB;EACnB,uBAAuB;EACvB,cAAc;AAChB;AACA;EACE,YAAY;AACd;AACA;EACE,iBAAiB;AACnB;AACA;CACC,2CAA2C;EAC1C,qEAAqE;EACrE,YAAY;EACZ,WAAW;EACX,qBAAqB;AACvB;AACA;EACE,oBAAoB;EACpB,kBAAkB;AACpB;AACA;EACE,aAAa;EACb,iBAAiB;EACjB,mBAAmB;EACnB,8BAA8B;AAChC;AACA;;EAEE,eAAe;AACjB;AACA;EACE,eAAe;EACf,eAAe;EACf,cAAc;AAChB;AACA;EACE,8BAA8B;EAC9B,4CAA4C;EAC5C,cAAc;EACd,WAAW;EACX,kCAAkC;EAClC,sFAAsF;EACtF,iBAAiB;AACnB;AACA;EACE,eAAe;EACf,kBAAkB;EAClB,aAAa;EACb,uBAAuB;EACvB,mBAAmB;AACrB;AACA;EACE,gBAAgB;EAChB,0BAA0B;AAC5B;AACA;EACE,uBAAuB;AACzB;AACA;EACE,qBAAqB;EACrB,cAAc;AAChB;;AAEA;EACE,aAAa;EACb,YAAY;AACd;AACA;EACE,wBAAwB;AAC1B;AACA;EACE,aAAa;EACb,mBAAmB;EACnB,uBAAuB;EACvB,kBAAkB;EAClB,WAAW;AACb;AACA;EACE,sBAAsB;EACtB,iBAAiB;EACjB,iBAAiB;EACjB,gCAAgC;EAChC,qCAAqC;AACvC;AACA;;GAEG;;AAEH;EACE,oBAAoB;EACpB,mBAAmB;AACrB;AACA;EACE,iBAAiB;EACjB,YAAY;AACd;AACA;EACE,YAAY;EACZ,sBAAsB;EACtB,8BAA8B;AAChC;AACA;EACE,qFAAqF;AACvF;AACA;EACE,sFAAsF;AACxF;AACA;EACE,uFAAuF;AACzF;AACA;EACE,0BAA0B;AAC5B;AACA;EACE,oBAAoB;EACpB,mBAAmB;EACnB,yBAAyB;EACzB,kBAAkB;EAClB,cAAc;EACd,cAAc;EACd,aAAa;AACf;AACA;EACE,eAAe;AACjB","sourcesContent":["html,\nbody {\n  width: 100%;\n  height: 100%;\n  margin: 0;\n  padding: 0;\n}\n\nbody {\n  display: flex;\n  flex-flow: column;\n  justify-content: center;\n  align-items: center;\n  font-family: sans-serif;\n  color: #525252;\n}\nh2 {\n  color: black;\n}\nbody {\n  user-select: none;\n}\nbody img {\n /* transform: scale(0.5) translateY(-2em);*/\n  /*filter: drop-shadow( hsla(160, 100%, 50%, 0.5) 0.3em 0.3em 0.3em);*/\n  height:  4em;\n  width: auto;\n  margin: 0.5em 0 2em 0;\n}\ninput {\n  user-select: contain;\n  margin-left: 0.5em;\n}\nform {\n  display: flex;\n  flex-flow: column;\n  align-items: center;\n  justify-content: space-between;\n}\n#fields,\n#fields input {\n  font-size: 18pt;\n}\n#status {\n  margin-top: 2em;\n  font-size: 1rem;\n  font-weight: 0;\n}\n#status > div {\n  box-shadow: 0px 0px 10px black;\n  /*border: 2px solid hsla(60, 100%, 0%, 1); */\n  padding: 0.5em;\n  color: #000;\n  background: hsla(60, 100%, 50%, 1);\n  background: linear-gradient(180deg, hsla(60, 100%, 50%, 1) 0%, hsla(50, 100%, 50%, 1));\n  font-weight: bold;\n}\n#precision_grp {\n  font-size: 12pt;\n  align-self: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n#precision_grp label {\n  font-weight: 100;\n  transform: translateY(1px);\n}\n#precision_num {\n  margin: 0 0.5em 0 0.5em;\n}\na {\n  text-decoration: none;\n  color: #cb3837;\n}\n\n.fields {\n  display: flex;\n  flex: column;\n}\nlabel {\n  padding: 2px 4px 2px 4px;\n}\nlabel b {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n  width: 100%;\n}\ninput {\n  border: 2px #eee inset;\n  text-align: right;\n  background: white;\n  padding: 0.125em 0.25em 0 0.25em;\n  margin: 0.125em 0.125em 0.125em 0.5em;\n}\n/*input.selected {\n  user-select:  none;\n} */\n\nlabel {\n  display: inline-flex;\n  align-items: center;\n}\nlabel.var.selected {\n  background: black;\n  color: white;\n}\nlabel.name.selected {\n  color: white;\n  /* font-weight: bold;*/\n  text-shadow: black 1px 1px 3px;\n}\nlabel.name.inductance.selected {\n  background: linear-gradient(90deg, hsla(30, 100%, 40%, 1) 0%, hsla(40, 100%, 50%, 1));\n}\nlabel.name.capacitance.selected {\n  background: linear-gradient(90deg, hsla(80, 100%, 40%, 1) 0%, hsla(120, 100%, 40%, 1));\n}\nlabel.name.frequency.selected {\n  background: linear-gradient(90deg, hsla(300, 100%, 40%, 1) 0%, hsla(280, 100%, 40%, 1));\n}\n#precision {\n  transform: translateY(1px);\n}\n#precision_num {\n  display: inline-flex;\n  align-items: center;\n  justify-content: flex-end;\n  text-align: center;\n  min-width: 2em;\n  max-width: 3em;\n  height: 1.5em;\n}\n#precision_grp {\n  margin-top: 2em;\n}\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "html,\nbody {\n  width: 100%;\n  height: 100%;\n  margin: 0;\n  padding: 0;\n}\n\nbody {\n  display: flex;\n  flex-flow: column;\n  justify-content: flex-start;\n  align-items: center;\n  font-family: sans-serif;\n  color: #525252;\n}\n\nh2 {\n  color: black;\n}\n\nbody {\n  padding: 2em 0;\n  overflow: hidden;\n}\n\nbody {\n  background: white;\n  /*background: linear-gradient(0deg, #eee, #fff);*/\n}\n\nbody {\n  user-select: none;\n}\n\nbody img {\n  height: 4em;\n  width: auto;\n  margin: 0.5em 0 2em 0;\n}\n\ninput {\n  user-select: contain;\n  margin-left: 0.5em;\n}\n\nform {\n  display: flex;\n  flex-flow: column;\n  align-items: center;\n  justify-content: space-between;\n}\n\n#fields,\n#fields input {\n  font-size: 18pt;\n}\n\n#status {\n  position: fixed;\n  bottom: 2em;\n}\n\n#status {\n  margin-top: 2em;\n  font-size: 1rem;\n  font-weight: 0;\n}\n\n#status > div {\n  box-shadow: 0px 0px 10px black;\n  /*border: 2px solid hsla(60, 100%, 0%, 1); */\n  padding: 0.5em;\n  color: #000;\n  background: hsla(60, 100%, 50%, 1);\n  background: linear-gradient(180deg, hsla(60, 100%, 50%, 1) 0%, hsla(50, 100%, 50%, 1));\n  font-weight: bold;\n}\n\n#precision_grp {\n  font-size: 12pt;\n  align-self: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n\n#precision_grp label {\n  font-weight: 100;\n  transform: translateY(1px);\n}\n\n#precision_num {\n  margin: 0 0.5em 0 0.5em;\n}\n\na {\n  text-decoration: none;\n  color: #cb3837;\n}\n\n.fields {\n  display: flex;\n  flex: column;\n}\n\nlabel {\n  padding: 2px 4px 2px 4px;\n}\n\nlabel b {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n  width: 100%;\n}\n\ninput {\n  border: 2px #eee inset;\n  text-align: right;\n  background: white;\n  padding: 0.125em 0.25em 0 0.25em;\n  margin: 0.125em 0.125em 0.125em 0.5em;\n}\n\n input.selected {\n  color: #d00;\n} \n\nlabel {\n  display: inline-flex;\n  align-items: center;\n}\n\nlabel.var.selected {\n  background: black;\n  color: white;\n}\n\nlabel.name.selected {\n  color: white;\n  /* font-weight: bold;*/\n  text-shadow: black 1px 1px 3px;\n}\n\nlabel.name.inductance.selected {\n  background: linear-gradient(90deg, hsla(30, 100%, 40%, 1) 0%, hsla(40, 100%, 50%, 1));\n}\n\nlabel.name.capacitance.selected {\n  background: linear-gradient(90deg, hsla(80, 100%, 40%, 1) 0%, hsla(120, 100%, 40%, 1));\n}\n\nlabel.name.frequency.selected {\n  background: linear-gradient(90deg, hsla(300, 100%, 40%, 1) 0%, hsla(280, 100%, 40%, 1));\n}\n\n#precision {\n  transform: translateY(1px);\n}\n\n#precision_num {\n  display: inline-flex;\n  align-items: center;\n  justify-content: flex-end;\n  text-align: center;\n  min-width: 2em;\n  max-width: 3em;\n  height: 1.5em;\n}\n\n#precision_grp {\n  margin-top: 2em;\n}\n", "",{"version":3,"sources":["webpack://./src/stylesheets/main.css"],"names":[],"mappings":"AAAA;;EAEE,WAAW;EACX,YAAY;EACZ,SAAS;EACT,UAAU;AACZ;;AAEA;EACE,aAAa;EACb,iBAAiB;EACjB,2BAA2B;EAC3B,mBAAmB;EACnB,uBAAuB;EACvB,cAAc;AAChB;;AAEA;EACE,YAAY;AACd;;AAEA;EACE,cAAc;EACd,gBAAgB;AAClB;;AAEA;EACE,iBAAiB;EACjB,iDAAiD;AACnD;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,WAAW;EACX,WAAW;EACX,qBAAqB;AACvB;;AAEA;EACE,oBAAoB;EACpB,kBAAkB;AACpB;;AAEA;EACE,aAAa;EACb,iBAAiB;EACjB,mBAAmB;EACnB,8BAA8B;AAChC;;AAEA;;EAEE,eAAe;AACjB;;AAEA;EACE,eAAe;EACf,WAAW;AACb;;AAEA;EACE,eAAe;EACf,eAAe;EACf,cAAc;AAChB;;AAEA;EACE,8BAA8B;EAC9B,4CAA4C;EAC5C,cAAc;EACd,WAAW;EACX,kCAAkC;EAClC,sFAAsF;EACtF,iBAAiB;AACnB;;AAEA;EACE,eAAe;EACf,kBAAkB;EAClB,aAAa;EACb,uBAAuB;EACvB,mBAAmB;AACrB;;AAEA;EACE,gBAAgB;EAChB,0BAA0B;AAC5B;;AAEA;EACE,uBAAuB;AACzB;;AAEA;EACE,qBAAqB;EACrB,cAAc;AAChB;;AAEA;EACE,aAAa;EACb,YAAY;AACd;;AAEA;EACE,wBAAwB;AAC1B;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,uBAAuB;EACvB,kBAAkB;EAClB,WAAW;AACb;;AAEA;EACE,sBAAsB;EACtB,iBAAiB;EACjB,iBAAiB;EACjB,gCAAgC;EAChC,qCAAqC;AACvC;;CAEC;EACC,WAAW;AACb;;AAEA;EACE,oBAAoB;EACpB,mBAAmB;AACrB;;AAEA;EACE,iBAAiB;EACjB,YAAY;AACd;;AAEA;EACE,YAAY;EACZ,sBAAsB;EACtB,8BAA8B;AAChC;;AAEA;EACE,qFAAqF;AACvF;;AAEA;EACE,sFAAsF;AACxF;;AAEA;EACE,uFAAuF;AACzF;;AAEA;EACE,0BAA0B;AAC5B;;AAEA;EACE,oBAAoB;EACpB,mBAAmB;EACnB,yBAAyB;EACzB,kBAAkB;EAClB,cAAc;EACd,cAAc;EACd,aAAa;AACf;;AAEA;EACE,eAAe;AACjB","sourcesContent":["html,\nbody {\n  width: 100%;\n  height: 100%;\n  margin: 0;\n  padding: 0;\n}\n\nbody {\n  display: flex;\n  flex-flow: column;\n  justify-content: flex-start;\n  align-items: center;\n  font-family: sans-serif;\n  color: #525252;\n}\n\nh2 {\n  color: black;\n}\n\nbody {\n  padding: 2em 0;\n  overflow: hidden;\n}\n\nbody {\n  background: white;\n  /*background: linear-gradient(0deg, #eee, #fff);*/\n}\n\nbody {\n  user-select: none;\n}\n\nbody img {\n  height: 4em;\n  width: auto;\n  margin: 0.5em 0 2em 0;\n}\n\ninput {\n  user-select: contain;\n  margin-left: 0.5em;\n}\n\nform {\n  display: flex;\n  flex-flow: column;\n  align-items: center;\n  justify-content: space-between;\n}\n\n#fields,\n#fields input {\n  font-size: 18pt;\n}\n\n#status {\n  position: fixed;\n  bottom: 2em;\n}\n\n#status {\n  margin-top: 2em;\n  font-size: 1rem;\n  font-weight: 0;\n}\n\n#status > div {\n  box-shadow: 0px 0px 10px black;\n  /*border: 2px solid hsla(60, 100%, 0%, 1); */\n  padding: 0.5em;\n  color: #000;\n  background: hsla(60, 100%, 50%, 1);\n  background: linear-gradient(180deg, hsla(60, 100%, 50%, 1) 0%, hsla(50, 100%, 50%, 1));\n  font-weight: bold;\n}\n\n#precision_grp {\n  font-size: 12pt;\n  align-self: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n\n#precision_grp label {\n  font-weight: 100;\n  transform: translateY(1px);\n}\n\n#precision_num {\n  margin: 0 0.5em 0 0.5em;\n}\n\na {\n  text-decoration: none;\n  color: #cb3837;\n}\n\n.fields {\n  display: flex;\n  flex: column;\n}\n\nlabel {\n  padding: 2px 4px 2px 4px;\n}\n\nlabel b {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n  width: 100%;\n}\n\ninput {\n  border: 2px #eee inset;\n  text-align: right;\n  background: white;\n  padding: 0.125em 0.25em 0 0.25em;\n  margin: 0.125em 0.125em 0.125em 0.5em;\n}\n\n input.selected {\n  color: #d00;\n} \n\nlabel {\n  display: inline-flex;\n  align-items: center;\n}\n\nlabel.var.selected {\n  background: black;\n  color: white;\n}\n\nlabel.name.selected {\n  color: white;\n  /* font-weight: bold;*/\n  text-shadow: black 1px 1px 3px;\n}\n\nlabel.name.inductance.selected {\n  background: linear-gradient(90deg, hsla(30, 100%, 40%, 1) 0%, hsla(40, 100%, 50%, 1));\n}\n\nlabel.name.capacitance.selected {\n  background: linear-gradient(90deg, hsla(80, 100%, 40%, 1) 0%, hsla(120, 100%, 40%, 1));\n}\n\nlabel.name.frequency.selected {\n  background: linear-gradient(90deg, hsla(300, 100%, 40%, 1) 0%, hsla(280, 100%, 40%, 1));\n}\n\n#precision {\n  transform: translateY(1px);\n}\n\n#precision_num {\n  display: inline-flex;\n  align-items: center;\n  justify-content: flex-end;\n  text-align: center;\n  min-width: 2em;\n  max-width: 3em;\n  height: 1.5em;\n}\n\n#precision_grp {\n  margin-top: 2em;\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -540,11 +540,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _stylesheets_main_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./stylesheets/main.css */ "./src/stylesheets/main.css");
 
-
-// Everything below is just a demo. You can delete all of it.
-
-/*import { ipcRenderer } from 'electron';
-import env from 'env';*/
 const Q = s => document.querySelector(s);
 const QA = s => [...(document.querySelectorAll(s) ?? [])];
 const values = globalThis.values = new Float64Array(3);
@@ -568,10 +563,7 @@ function FieldIndex(arg) {
   return arg;
 }
 function SaveConfig() {
-  for (let i = 0; i < 3; i++) {
-    if (!validValues[i]) continue;
-    config['LCf'[i]] = GetFieldElements(i)[2].value;
-  }
+  for (let i = 0; i < 3; i++) if (validValues[i]) config['LCf'[i]] = GetFieldElements(i)[2].value;
   config.selected = GetSelected();
   localStorage.setItem('config', JSON.stringify(config));
 }
@@ -581,12 +573,12 @@ function LoadConfig() {
   } catch (e) {}
   return {};
 }
-function* partitionArray(a, size) {
+function* PartitionArray(a, size) {
   for (let i = 0; i < a.length; i += size) yield a.slice(i, i + size);
 }
 function GetFieldElements(n) {
   if (!fields) SetupFields();
-  return [...partitionArray([...fields.children], 3)][n];
+  return [...PartitionArray([...fields.children], 3)][n];
 }
 function GetFieldValue(n) {
   const e = GetFieldElements(FieldIndex(n)).find(e => e.tagName.toLowerCase() == 'input');
@@ -595,9 +587,7 @@ function GetFieldValue(n) {
 function SelectField(i) {
   if (!(i >= 0 && i <= 2)) throw new Error(`SelectField i=${i}`);
   for (let j = 0; j < 3; j++) {
-    GetFieldElements(j).forEach((e, x) => {
-      /*if(x < 2)*/e.classList[i == j ? 'add' : 'remove']('selected');
-    });
+    GetFieldElements(j).forEach((e, x) => e.classList[i == j ? 'add' : 'remove']('selected'));
     GetFieldElements(j)[2].disabled = i == j;
   }
   selectedField = i;
@@ -661,7 +651,7 @@ function Exponent(num) {
   return Math.floor(Math.log10(num));
 }
 function Thousand(exponent) {
-  return Math.floor(exponent / 3) * 3;
+  return Math.min(15, Math.max(-18, Math.floor(exponent / 3) * 3));
 }
 function Exp2Unit(exponent) {
   /* prettier-ignore */switch (Thousand(exponent)) {
@@ -816,14 +806,14 @@ function WaitFor(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 async function SetStatus(str, t1 = 3000, t2 = 1000) {
-  const status = Q('#status');
-  console.log('Display status:', str);
-  while (status.firstElementChild) {
-    if (!status.firstElementChild.nextElementSibling) break;
-    status.removeChild(status.firstElementChild);
+  const st = Q('#status');
+  console.log('Display st:', str);
+  while (st.firstElementChild) {
+    if (!st.firstElementChild.nextElementSibling) break;
+    st.removeChild(st.firstElementChild);
   }
-  let e = status.firstElementChild ?? document.createElement('div');
-  status.insertBefore(e, status.firstElementChild);
+  let e = st.firstElementChild ?? document.createElement('div');
+  st.insertBefore(e, st.firstElementChild);
   e.style.transition = `opacity 0s`;
   e.style.opacity = '1';
   Object.assign(e.style, {
@@ -835,7 +825,6 @@ async function SetStatus(str, t1 = 3000, t2 = 1000) {
   e.style.transition = `all ${t2 / 1000}s`;
   e.style.opacity = '0 ';
   await WaitFor(t2);
-  //status.removeChild(e);
 }
 async function CopyToClipboard(str) {
   let result = await navigator.clipboard.writeText(str);
@@ -847,7 +836,7 @@ function SetupFields() {
     return;
   }
   fields = Q('#fields');
-  [...partitionArray([...fields.children], 3)].forEach((a, i) => {
+  [...PartitionArray([...fields.children], 3)].forEach((a, i) => {
     a.slice(0, 2).forEach(e => e.addEventListener('click', e => SelectField(i)));
     a.forEach(e => e.addEventListener('dblclick', async e => (await CopyToClipboard(GetFieldValue(i)), e.preventDefault()), true));
   });
@@ -926,39 +915,8 @@ function Init() {
   Update();
   setInterval(() => SaveConfig(), 500);
 }
-Object.assign(globalThis, {
-  CalcThompson,
-  CalcInductance,
-  CalcCapacity,
-  CalcFrequency,
-  ClearValues,
-  Exp2Unit,
-  Exponent,
-  FormatNumber,
-  GetFieldElements,
-  GetFieldValue,
-  GetSelected,
-  GetValue,
-  GuessField,
-  Init,
-  OnInput,
-  ParseValue,
-  ProcessValue,
-  RoundFunction,
-  SelectField,
-  SetField,
-  SetValue,
-  SetupFields,
-  Thousand,
-  Unit,
-  Update,
-  LoadConfig,
-  SaveConfig,
-  inputElements,
-  validValues,
-  Q,
-  QA
-});
+
+//Object.assign(globalThis, {CalcThompson, CalcInductance, CalcCapacity, CalcFrequency, ClearValues, Exp2Unit, Exponent, FormatNumber, GetFieldElements, GetFieldValue, GetSelected, GetValue, GuessField, Init, OnInput, ParseValue, ProcessValue, RoundFunction, SelectField, SetField, SetValue, SetupFields, Thousand, Unit, Update, LoadConfig, SaveConfig, inputElements, validValues, Q, QA });
 })();
 
 /******/ })()

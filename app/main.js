@@ -346,13 +346,13 @@ __webpack_require__.r(__webpack_exports__);
 // Save userData in separate folders for each environment.
 // Thanks to this you can use production and development versions of the app
 // on same machine like those are two separate apps.
-if (env__WEBPACK_IMPORTED_MODULE_7__.name !== "production") {
-  const userDataPath = electron__WEBPACK_IMPORTED_MODULE_2__.app.getPath("userData");
-  electron__WEBPACK_IMPORTED_MODULE_2__.app.setPath("userData", `${userDataPath} (${env__WEBPACK_IMPORTED_MODULE_7__.name})`);
+if (env__WEBPACK_IMPORTED_MODULE_7__.name !== 'production') {
+  const userDataPath = electron__WEBPACK_IMPORTED_MODULE_2__.app.getPath('userData');
+  electron__WEBPACK_IMPORTED_MODULE_2__.app.setPath('userData', `${userDataPath} (${env__WEBPACK_IMPORTED_MODULE_7__.name})`);
 }
 const setApplicationMenu = () => {
   const menus = [_menu_app_menu_template__WEBPACK_IMPORTED_MODULE_3__["default"], _menu_edit_menu_template__WEBPACK_IMPORTED_MODULE_4__["default"]];
-  if (env__WEBPACK_IMPORTED_MODULE_7__.name !== "production") {
+  if (env__WEBPACK_IMPORTED_MODULE_7__.name !== 'production') {
     menus.push(_menu_dev_menu_template__WEBPACK_IMPORTED_MODULE_5__["default"]);
   }
   electron__WEBPACK_IMPORTED_MODULE_2__.Menu.setApplicationMenu(electron__WEBPACK_IMPORTED_MODULE_2__.Menu.buildFromTemplate(menus));
@@ -360,17 +360,17 @@ const setApplicationMenu = () => {
 
 // We can communicate with our window (the renderer process) via messages.
 const initIpc = () => {
-  electron__WEBPACK_IMPORTED_MODULE_2__.ipcMain.on("need-app-path", (event, arg) => {
-    event.reply("app-path", electron__WEBPACK_IMPORTED_MODULE_2__.app.getAppPath());
+  electron__WEBPACK_IMPORTED_MODULE_2__.ipcMain.on('need-app-path', (event, arg) => {
+    event.reply('app-path', electron__WEBPACK_IMPORTED_MODULE_2__.app.getAppPath());
   });
-  electron__WEBPACK_IMPORTED_MODULE_2__.ipcMain.on("open-external-link", (event, href) => {
+  electron__WEBPACK_IMPORTED_MODULE_2__.ipcMain.on('open-external-link', (event, href) => {
     electron__WEBPACK_IMPORTED_MODULE_2__.shell.openExternal(href);
   });
 };
-electron__WEBPACK_IMPORTED_MODULE_2__.app.on("ready", () => {
+electron__WEBPACK_IMPORTED_MODULE_2__.app.on('ready', () => {
   setApplicationMenu();
   initIpc();
-  const mainWindow = (0,_helpers_window__WEBPACK_IMPORTED_MODULE_6__["default"])("main", {
+  const mainWindow = (0,_helpers_window__WEBPACK_IMPORTED_MODULE_6__["default"])('main', {
     width: 1000,
     height: 600,
     webPreferences: {
@@ -380,19 +380,19 @@ electron__WEBPACK_IMPORTED_MODULE_2__.app.on("ready", () => {
       nodeIntegration: true,
       contextIsolation: false,
       // Spectron needs access to remote module
-      enableRemoteModule: env__WEBPACK_IMPORTED_MODULE_7__.name === "test"
+      enableRemoteModule: env__WEBPACK_IMPORTED_MODULE_7__.name === 'test'
     }
   });
   mainWindow.loadURL(url__WEBPACK_IMPORTED_MODULE_1___default().format({
-    pathname: path__WEBPACK_IMPORTED_MODULE_0___default().join(__dirname, "app.html"),
-    protocol: "file:",
+    pathname: path__WEBPACK_IMPORTED_MODULE_0___default().join(__dirname, 'app.html'),
+    protocol: 'file:',
     slashes: true
   }));
-  if (env__WEBPACK_IMPORTED_MODULE_7__.name === "development") {
+  if (env__WEBPACK_IMPORTED_MODULE_7__.name === 'development') {
     mainWindow.openDevTools();
   }
 });
-electron__WEBPACK_IMPORTED_MODULE_2__.app.on("window-all-closed", () => {
+electron__WEBPACK_IMPORTED_MODULE_2__.app.on('window-all-closed', () => {
   electron__WEBPACK_IMPORTED_MODULE_2__.app.quit();
 });
 })();
