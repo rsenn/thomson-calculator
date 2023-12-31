@@ -9,13 +9,7 @@ const valueIndex = {
   C: 1,
   f: 2
 };
-
 const validValues = [false, false, false];
-const units = ['H', 'F', 'Hz'];
-const names = Object.keys(valueIndex);
-const inputElements = QA('input');
-
-let fields, selectedField, initialized;
 
 globalThis.config = {};
 document.addEventListener('load', Init);
@@ -28,11 +22,11 @@ function FieldIndex(arg) {
 }
 
 function SaveConfig() {
-  for(let i = 0; i < 3; i++) if(validValues[i]) globalThis.config['LCf'[i]] = GetFieldElements(i)[2].value;
+  for(let i = 0; i < 3; i++) if(validValues[i]) config['LCf'[i]] = GetFieldValue(i);
 
-  globalThis.config.selected = GetSelected();
+  config.selected = GetSelected();
 
-  localStorage.setItem('config', JSON.stringify(globalThis.config));
+  localStorage.setItem('config', JSON.stringify(config));
 }
 
 function LoadConfig() {
@@ -54,18 +48,16 @@ function* PartitionArray(a, size) {
 }
 
 function GetFieldElements(n) {
-  if(!fields) SetupFields();
-
-  return [...PartitionArray([...fields.children], 3)][n];
+  return [...PartitionArray([...Q('#fields').children], 3)][FieldIndex(n)];
 }
 
 function GetFieldValue(n) {
-  const e = GetFieldElements(FieldIndex(n)).find(e => e.tagName.toLowerCase() == 'input');
+  const e = GetFieldElements(n).find(e => e.tagName.toLowerCase() == 'input');
   return e.value;
 }
 
 function SetFieldValue(n, v) {
-  const e = GetFieldElements(FieldIndex(n)).find(e => e.tagName.toLowerCase() == 'input');
+  const e = GetFieldElements(n).find(e => e.tagName.toLowerCase() == 'input');
   e.value = v;
 }
 
@@ -78,8 +70,6 @@ function SelectField(i) {
     GetFieldElements(j)[2].disabled = i == j;
   }
 
-  selectedField = i;
-
   Q('img').src = `svg/${['inductance', 'capacitance', 'freq'][i]}-equation.svg`;
 }
 
@@ -90,15 +80,23 @@ function GuessField() {
 }
 
 function GetSelected() {
-  return selectedField;
+  return QA('input')
+    .map(e => e.classList.contains('selected'))
+    .indexOf(true);
 }
 
 function GetValue(name) {
-  return values[typeof name == 'number' ? name : valueIndex[name]];
+  const idx = FieldIndex(name);
+
+  while(true) {
+    if(typeof values[idx] == 'number' && Number.isFinite(values[idx]) && !isNaN(values[idx])) return values[idx];
+
+    if(!ParseValue(GetFieldValue(name), name)) return undefined;
+  }
 }
 
 function SetValue(name, value) {
-  const idx = typeof name == 'number' ? name : valueIndex[name];
+  const idx = FieldIndex(name);
 
   if(value === undefined) {
     values[idx] = undefined;
@@ -131,16 +129,16 @@ function CalcThompson() {
   }
 }
 
-function SetField(i, num, round = RoundFunction(globalThis.config.precision ?? 3)) {
+function SetField(i, num, round = RoundFunction(config.precision ?? 3)) {
   if(typeof i == 'string') i = valueIndex[i];
 
   if(typeof num != 'number') num = GetValue(i);
 
   if(typeof num != 'number') num = ProcessValue(num + '', 'LCf'[i]);
 
-  if(isNaN(num)) return; //throw new Error(`SetField(): i = ${i},  num = ${num}`);
+  if(isNaN(num)) return; //throw new Error(`SetField(): i = ${i}, num = ${num}`);
 
-  inputElements[i].value = FormatNumber(num, null, i, round);
+  QA('input')[i].value = FormatNumber(num, null, i, round);
 }
 
 function RoundFunction(prec = 3) {
@@ -182,19 +180,19 @@ function Thousand(exponent) {
 
 function Exp2Unit(exponent) {
   /* prettier-ignore */ switch (Thousand(exponent)) {
-    case -18: return 'a';
-    case -15: return 'f';
-    case -12: return 'p';
-    case -9: return 'n';
-    case -6: return 'u';
-    case -3: return 'm';
-    case 0: return '';
-    case 3: return 'k';
-    case 6: return 'M';
-    case 9: return 'G';
-    case 12: return 'T';
-    case 15: return 'P';
-  }
+ case -18: return 'a';
+ case -15: return 'f';
+ case -12: return 'p';
+ case -9: return 'n';
+ case -6: return 'u';
+ case -3: return 'm';
+ case 0: return '';
+ case 3: return 'k';
+ case 6: return 'M';
+ case 9: return 'G';
+ case 12: return 'T';
+ case 15: return 'P';
+ }
 }
 
 function Unit(str) {
@@ -206,28 +204,25 @@ function Unit(str) {
   if(isNaN(num)) console.error('Unit', { str, num, unit });
 
   /* prettier-ignore */ switch (unit[0]) {
-    case 'a': exp = -18; break;
-    case 'f': exp = -15; break;
-    case 'p': exp = -12; break;
-    case 'n': exp = -9; break;
-    case 'u': exp = -6; break;
-    case 'm': exp = -3; break;
-    default: exp = 0; break;
-    case 'k': exp = 3; break;
-    case 'M': exp = 6; break;
-    case 'G': exp = 9; break;
-    case 'T': exp = 12; break;
-  }
+ case 'a': exp = -18; break;
+ case 'f': exp = -15; break;
+ case 'p': exp = -12; break;
+ case 'n': exp = -9; break;
+ case 'u': exp = -6; break;
+ case 'm': exp = -3; break;
+ default: exp = 0; break;
+ case 'k': exp = 3; break;
+ case 'M': exp = 6; break;
+ case 'G': exp = 9; break;
+ case 'T': exp = 12; break;
+ }
 
   return [+num, exp];
 }
 
-function OnInput(event) {
-  const { target } = event;
+function OnInput({ target }) {
   const { name, value } = target;
   const idx = valueIndex[name];
-
-  //console.log('OnInput', { value, name, idx });
 
   if(idx !== undefined) {
     if(ParseValue(value, name)) CalcThompson();
@@ -250,7 +245,7 @@ function ProcessValue(value, name) {
 }
 
 function ParseValue(value, name) {
-  const idx = typeof name == 'number' ? name : valueIndex[name];
+  const idx = FieldIndex(name);
 
   if(typeof name != 'string') name = 'LCf'[idx];
 
@@ -269,7 +264,7 @@ function ParseValue(value, name) {
 }
 
 function ReadFields(name) {
-  const idx = typeof name == 'number' ? name : valueIndex[name];
+  const idx = FieldIndex(name);
 
   ClearValues(idx);
 
@@ -281,7 +276,7 @@ function ReadFields(name) {
 }
 
 function WriteFields(name) {
-  const idx = typeof name == 'number' ? name : valueIndex[name];
+  const idx = FieldIndex(name);
 
   for(let i = 0; i < 3; i++) if(idx === undefined || (typeof idx == 'number' && i == idx)) SetField(i);
 }
@@ -295,7 +290,7 @@ function FormatNumber(num, exp, unit, round = a => a.toFixed(12).replace(/\.0*$/
 
   if(expStr === undefined) console.error('FormatNumber', { num, exp, expStr, unit });
 
-  return round(num * Math.pow(10, -exp)) + ' ' + expStr + units[unit];
+  return round(num * Math.pow(10, -exp)) + ' ' + expStr + ['H', 'F', 'Hz'][unit];
 }
 
 export function WaitFor(ms) {
@@ -304,7 +299,6 @@ export function WaitFor(ms) {
 
 async function SetStatus(str, t1 = 3000, t2 = 1000) {
   const st = Q('#status');
-  //console.log('Display st:', str);
 
   while(st.firstElementChild) {
     if(!st.firstElementChild.nextElementSibling) break;
@@ -313,21 +307,19 @@ async function SetStatus(str, t1 = 3000, t2 = 1000) {
 
   let e = st.firstElementChild ?? document.createElement('div');
 
-  st.insertBefore(e, st.firstElementChild);
-  e.style.transition = `opacity 0s`;
-  e.style.opacity = '1';
+  e.innerText = str;
 
+  st.insertBefore(e, st.firstElementChild);
+
+  Object.assign(e.style, { transition: 'opacity 0s' });
   Object.assign(e.style, {
     transition: `opacity ${t1 / 1000}s`,
     opacity: '1'
   });
 
-  e.innerText = str;
-
   await WaitFor(t1);
 
-  e.style.transition = `all ${t2 / 1000}s`;
-  e.style.opacity = '0 ';
+  Object.assign(e.style, { transition: `all ${t2 / 1000}s`, opacity: '0' });
 
   await WaitFor(t2);
 }
@@ -344,9 +336,7 @@ function SetupFields() {
     return;
   }
 
-  fields = Q('#fields');
-
-  [...PartitionArray([...fields.children], 3)].forEach((a, i) => {
+  [...PartitionArray([...Q('#fields').children], 3)].forEach((a, i) => {
     a.slice(0, 2).forEach(e => e.addEventListener('click', e => SelectField(i)));
     a.forEach(e => e.addEventListener('dblclick', async e => (await CopyToClipboard(GetFieldValue(i)), e.preventDefault()), true));
   });
@@ -368,7 +358,7 @@ function ChangePrecision(p) {
   Q('#precision').value = p + '';
   Q('#precision_num').value = p + '';
 
-  globalThis.config.precision = p;
+  config.precision = p;
   //console.log('ChangePrecision', { values: [0, 1, 2].map(GetValue) });
 
   try {
@@ -378,8 +368,8 @@ function ChangePrecision(p) {
 }
 
 function Init() {
-  if(initialized) return;
-  initialized = true;
+  if(globalThis.initialized) return;
+  globalThis.initialized = true;
 
   QA('input').forEach(e => {
     e.addEventListener('change', OnInput, false);
@@ -388,7 +378,7 @@ function Init() {
 
   SetupFields();
 
-  globalThis.config = LoadConfig();
+  config = LoadConfig();
 
   Q('#precision_num').addEventListener('change', event => {
     const { target } = event;
@@ -405,14 +395,14 @@ function Init() {
     ChangePrecision(+value);
   });
 
-  if('precision' in globalThis.config) {
-    Q('#precision').value = globalThis.config.precision;
-    Q('#precision_num').value = globalThis.config.precision;
+  if('precision' in config) {
+    Q('#precision').value = config.precision;
+    Q('#precision_num').value = config.precision;
   }
 
-  if('selected' in globalThis.config) {
-    if(globalThis.config.selected >= 0 && globalThis.config.selected <= 2) SelectField(globalThis.config.selected);
-    else delete globalThis.config.selected;
+  if('selected' in config) {
+    if(config.selected >= 0 && config.selected <= 2) SelectField(config.selected);
+    else delete config.selected;
   }
 
   if(GetSelected() === undefined) {
@@ -421,10 +411,7 @@ function Init() {
     SelectField(f);
   }
 
-  /*CalcThompson();
-  ReadFields();*/
-
   setInterval(() => SaveConfig(), 500);
 }
 
-/* prettier-ignore */ Object.assign(globalThis, {CalcCapacity, CalcFrequency, CalcInductance, CalcThompson, ChangePrecision, ClearValues, CopyToClipboard, Exp2Unit, Exponent, FieldIndex, FormatNumber, GetFieldElements, GetFieldValue, GetSelected, GetValue, GuessField, Init, LoadConfig, OnInput, ParseValue, ProcessValue, RoundFunction, SaveConfig, SelectField, SetField, SetFieldValue, SetStatus, SetValue, SetupFields, Thousand, Unit, ReadFields, WriteFields, WaitFor, inputElements, validValues, Q, QA });
+/* prettier-ignore */ Object.assign(globalThis, { CalcCapacity, CalcFrequency, CalcInductance, CalcThompson, ChangePrecision, ClearValues, CopyToClipboard, Exp2Unit, Exponent, FieldIndex, FormatNumber, GetFieldElements, GetFieldValue, GetSelected, GetValue, GuessField, Init, LoadConfig, OnInput, ParseValue, ProcessValue, RoundFunction, SaveConfig, SelectField, SetField, SetFieldValue, SetStatus, SetValue, SetupFields, Thousand, Unit, ReadFields, WriteFields, WaitFor, validValues, Q, QA });

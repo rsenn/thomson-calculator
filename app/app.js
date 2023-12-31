@@ -549,10 +549,6 @@ const valueIndex = {
   f: 2
 };
 const validValues = [false, false, false];
-const units = ['H', 'F', 'Hz'];
-const names = Object.keys(valueIndex);
-const inputElements = QA('input');
-let fields, selectedField, initialized;
 globalThis.config = {};
 document.addEventListener('load', Init);
 setTimeout(Init, 100);
@@ -561,9 +557,9 @@ function FieldIndex(arg) {
   return arg;
 }
 function SaveConfig() {
-  for (let i = 0; i < 3; i++) if (validValues[i]) globalThis.config['LCf'[i]] = GetFieldElements(i)[2].value;
-  globalThis.config.selected = GetSelected();
-  localStorage.setItem('config', JSON.stringify(globalThis.config));
+  for (let i = 0; i < 3; i++) if (validValues[i]) config['LCf'[i]] = GetFieldValue(i);
+  config.selected = GetSelected();
+  localStorage.setItem('config', JSON.stringify(config));
 }
 function LoadConfig() {
   let r = {};
@@ -582,15 +578,14 @@ function* PartitionArray(a, size) {
   for (let i = 0; i < a.length; i += size) yield a.slice(i, i + size);
 }
 function GetFieldElements(n) {
-  if (!fields) SetupFields();
-  return [...PartitionArray([...fields.children], 3)][n];
+  return [...PartitionArray([...Q('#fields').children], 3)][FieldIndex(n)];
 }
 function GetFieldValue(n) {
-  const e = GetFieldElements(FieldIndex(n)).find(e => e.tagName.toLowerCase() == 'input');
+  const e = GetFieldElements(n).find(e => e.tagName.toLowerCase() == 'input');
   return e.value;
 }
 function SetFieldValue(n, v) {
-  const e = GetFieldElements(FieldIndex(n)).find(e => e.tagName.toLowerCase() == 'input');
+  const e = GetFieldElements(n).find(e => e.tagName.toLowerCase() == 'input');
   e.value = v;
 }
 function SelectField(i) {
@@ -599,7 +594,6 @@ function SelectField(i) {
     GetFieldElements(j).forEach((e, x) => e.classList[i == j ? 'add' : 'remove']('selected'));
     GetFieldElements(j)[2].disabled = i == j;
   }
-  selectedField = i;
   Q('img').src = `svg/${['inductance', 'capacitance', 'freq'][i]}-equation.svg`;
 }
 function GuessField() {
@@ -607,13 +601,17 @@ function GuessField() {
   return 0;
 }
 function GetSelected() {
-  return selectedField;
+  return QA('input').map(e => e.classList.contains('selected')).indexOf(true);
 }
 function GetValue(name) {
-  return values[typeof name == 'number' ? name : valueIndex[name]];
+  const idx = FieldIndex(name);
+  while (true) {
+    if (typeof values[idx] == 'number' && Number.isFinite(values[idx]) && !isNaN(values[idx])) return values[idx];
+    if (!ParseValue(GetFieldValue(name), name)) return undefined;
+  }
 }
 function SetValue(name, value) {
-  const idx = typeof name == 'number' ? name : valueIndex[name];
+  const idx = FieldIndex(name);
   if (value === undefined) {
     values[idx] = undefined;
     return true;
@@ -636,13 +634,13 @@ function CalcThompson() {
     [CalcInductance, CalcCapacity, CalcFrequency][sel]();
   }
 }
-function SetField(i, num, round = RoundFunction(globalThis.config.precision ?? 3)) {
+function SetField(i, num, round = RoundFunction(config.precision ?? 3)) {
   if (typeof i == 'string') i = valueIndex[i];
   if (typeof num != 'number') num = GetValue(i);
   if (typeof num != 'number') num = ProcessValue(num + '', 'LCf'[i]);
-  if (isNaN(num)) return; //throw new Error(`SetField(): i = ${i},  num = ${num}`);
+  if (isNaN(num)) return; //throw new Error(`SetField(): i = ${i}, num = ${num}`);
 
-  inputElements[i].value = FormatNumber(num, null, i, round);
+  QA('input')[i].value = FormatNumber(num, null, i, round);
 }
 function RoundFunction(prec = 3) {
   const p = Math.pow(10, prec);
@@ -745,18 +743,14 @@ function Unit(str) {
   }
   return [+num, exp];
 }
-function OnInput(event) {
-  const {
-    target
-  } = event;
+function OnInput({
+  target
+}) {
   const {
     name,
     value
   } = target;
   const idx = valueIndex[name];
-
-  //console.log('OnInput', { value, name, idx });
-
   if (idx !== undefined) {
     if (ParseValue(value, name)) CalcThompson();
     event.preventDefault();
@@ -777,7 +771,7 @@ function ProcessValue(value, name) {
   }
 }
 function ParseValue(value, name) {
-  const idx = typeof name == 'number' ? name : valueIndex[name];
+  const idx = FieldIndex(name);
   if (typeof name != 'string') name = 'LCf'[idx];
   if (value != '') {
     const result = ProcessValue(value, name);
@@ -795,7 +789,7 @@ function ParseValue(value, name) {
   }
 }
 function ReadFields(name) {
-  const idx = typeof name == 'number' ? name : valueIndex[name];
+  const idx = FieldIndex(name);
   ClearValues(idx);
   QA('input').slice(0, 2).forEach(({
     name,
@@ -805,7 +799,7 @@ function ReadFields(name) {
   });
 }
 function WriteFields(name) {
-  const idx = typeof name == 'number' ? name : valueIndex[name];
+  const idx = FieldIndex(name);
   for (let i = 0; i < 3; i++) if (idx === undefined || typeof idx == 'number' && i == idx) SetField(i);
 }
 function FormatNumber(num, exp, unit, round = a => a.toFixed(12).replace(/\.0*$/g, '')) {
@@ -818,31 +812,32 @@ function FormatNumber(num, exp, unit, round = a => a.toFixed(12).replace(/\.0*$/
     expStr,
     unit
   });
-  return round(num * Math.pow(10, -exp)) + ' ' + expStr + units[unit];
+  return round(num * Math.pow(10, -exp)) + ' ' + expStr + ['H', 'F', 'Hz'][unit];
 }
 function WaitFor(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 async function SetStatus(str, t1 = 3000, t2 = 1000) {
   const st = Q('#status');
-  //console.log('Display st:', str);
-
   while (st.firstElementChild) {
     if (!st.firstElementChild.nextElementSibling) break;
     st.removeChild(st.firstElementChild);
   }
   let e = st.firstElementChild ?? document.createElement('div');
+  e.innerText = str;
   st.insertBefore(e, st.firstElementChild);
-  e.style.transition = `opacity 0s`;
-  e.style.opacity = '1';
+  Object.assign(e.style, {
+    transition: 'opacity 0s'
+  });
   Object.assign(e.style, {
     transition: `opacity ${t1 / 1000}s`,
     opacity: '1'
   });
-  e.innerText = str;
   await WaitFor(t1);
-  e.style.transition = `all ${t2 / 1000}s`;
-  e.style.opacity = '0 ';
+  Object.assign(e.style, {
+    transition: `all ${t2 / 1000}s`,
+    opacity: '0'
+  });
   await WaitFor(t2);
 }
 async function CopyToClipboard(str) {
@@ -854,8 +849,7 @@ function SetupFields() {
     setTimeout(() => SetupFields(), 100);
     return;
   }
-  fields = Q('#fields');
-  [...PartitionArray([...fields.children], 3)].forEach((a, i) => {
+  [...PartitionArray([...Q('#fields').children], 3)].forEach((a, i) => {
     a.slice(0, 2).forEach(e => e.addEventListener('click', e => SelectField(i)));
     a.forEach(e => e.addEventListener('dblclick', async e => (await CopyToClipboard(GetFieldValue(i)), e.preventDefault()), true));
   });
@@ -870,7 +864,7 @@ function SetupFields() {
 function ChangePrecision(p) {
   Q('#precision').value = p + '';
   Q('#precision_num').value = p + '';
-  globalThis.config.precision = p;
+  config.precision = p;
   //console.log('ChangePrecision', { values: [0, 1, 2].map(GetValue) });
 
   try {
@@ -879,14 +873,14 @@ function ChangePrecision(p) {
   } catch (e) {}
 }
 function Init() {
-  if (initialized) return;
-  initialized = true;
+  if (globalThis.initialized) return;
+  globalThis.initialized = true;
   QA('input').forEach(e => {
     e.addEventListener('change', OnInput, false);
     e.addEventListener('input', OnInput, false);
   });
   SetupFields();
-  globalThis.config = LoadConfig();
+  config = LoadConfig();
   Q('#precision_num').addEventListener('change', event => {
     const {
       target
@@ -906,22 +900,18 @@ function Init() {
     } = target;
     ChangePrecision(+value);
   });
-  if ('precision' in globalThis.config) {
-    Q('#precision').value = globalThis.config.precision;
-    Q('#precision_num').value = globalThis.config.precision;
+  if ('precision' in config) {
+    Q('#precision').value = config.precision;
+    Q('#precision_num').value = config.precision;
   }
-  if ('selected' in globalThis.config) {
-    if (globalThis.config.selected >= 0 && globalThis.config.selected <= 2) SelectField(globalThis.config.selected);else delete globalThis.config.selected;
+  if ('selected' in config) {
+    if (config.selected >= 0 && config.selected <= 2) SelectField(config.selected);else delete config.selected;
   }
   if (GetSelected() === undefined) {
     let f = GuessField();
     if (typeof f != 'number' || !(f >= 0 && f <= 2)) f = 2;
     SelectField(f);
   }
-
-  /*CalcThompson();
-  ReadFields();*/
-
   setInterval(() => SaveConfig(), 500);
 }
 
@@ -961,7 +951,6 @@ Object.assign(globalThis, {
   ReadFields,
   WriteFields,
   WaitFor,
-  inputElements,
   validValues,
   Q,
   QA
