@@ -297,13 +297,14 @@ export function WaitFor(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function RemoveAllChildren(e) {
+  while(e.firstElementChild) e.removeChild(e.firstElementChild);
+}
+
 async function SetStatus(str, t1 = 3000, t2 = 1000) {
   const st = Q('#status');
 
-  while(st.firstElementChild) {
-    if(!st.firstElementChild.nextElementSibling) break;
-    st.removeChild(st.firstElementChild);
-  }
+  RemoveAllChildren(st);
 
   let e = st.firstElementChild ?? document.createElement('div');
 
