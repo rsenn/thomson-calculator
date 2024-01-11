@@ -542,22 +542,51 @@ __webpack_require__.r(__webpack_exports__);
 
 const Q = s => document.querySelector(s);
 const QA = s => [...(document.querySelectorAll(s) ?? [])];
-const values = globalThis.values = new Float64Array(3);
+const NUM_FIELDS = 3;
+const buffer = new ArrayBuffer(8 * NUM_FIELDS * 2);
+const values = new Float64Array(buffer, 0, NUM_FIELDS);
+const values2 = new Float64Array(buffer, 24, NUM_FIELDS);
 const valueIndex = {
   L: 0,
   C: 1,
   f: 2
 };
-const validValues = [false, false, false];
-globalThis.config = {};
+const validValues = new Array(NUM_FIELDS * 2).map(() => false);
+const allValues = new Float64Array(buffer);
+let config = {};
 document.addEventListener('load', Init);
 setTimeout(Init, 100);
+function OnInput({
+  target
+}) {
+  const {
+    name,
+    value
+  } = target;
+  const idx = valueIndex[name];
+  if (idx !== undefined) {
+    event.preventDefault();
+    try {
+      if (ParseValue(value, name)) CalcThompson();
+    } catch (e) {
+      const range = ParseRange(value);
+      for (let i = 0; i < 2; i++) {
+        allValues[idx + i * NUM_FIELDS] = range[i];
+        validValues[idx + i * NUM_FIELDS] = i < range.length;
+        CalcThompson();
+      }
+    }
+  }
+}
+function IsRange(fieldId) {
+  return !!validValues[NUM_FIELDS + fieldId];
+}
 function FieldIndex(arg) {
   if (typeof arg == 'string') arg = valueIndex[arg];
   return arg;
 }
 function SaveConfig() {
-  for (let i = 0; i < 3; i++) if (validValues[i]) config['LCf'[i]] = GetFieldValue(i);
+  for (let i = 0; i < NUM_FIELDS; i++) if (validValues[i]) config['LCf'[i]] = GetFieldValue(i);
   config.selected = GetSelected();
   localStorage.setItem('config', JSON.stringify(config));
 }
@@ -578,7 +607,7 @@ function* PartitionArray(a, size) {
   for (let i = 0; i < a.length; i += size) yield a.slice(i, i + size);
 }
 function GetFieldElements(n) {
-  return [...PartitionArray([...Q('#fields').children], 3)][FieldIndex(n)];
+  return [...PartitionArray([...Q('#fields').children], NUM_FIELDS)][FieldIndex(n)];
 }
 function GetFieldValue(n) {
   const e = GetFieldElements(n).find(e => e.tagName.toLowerCase() == 'input');
@@ -590,7 +619,7 @@ function SetFieldValue(n, v) {
 }
 function SelectField(i) {
   if (!(i >= 0 && i <= 2)) throw new Error(`SelectField i=${i}`);
-  for (let j = 0; j < 3; j++) {
+  for (let j = 0; j < NUM_FIELDS; j++) {
     GetFieldElements(j).forEach((e, x) => e.classList[i == j ? 'add' : 'remove']('selected'));
     GetFieldElements(j)[2].disabled = i == j;
   }
@@ -698,7 +727,7 @@ function Exp2Unit(exponent) {
 function Unit(str) {
   if (typeof str != 'string') str = str + '';
   const [num, unit = ''] = [...str.replaceAll(/\s+/g, '').matchAll(/([-Ee.\d]+|[^-Ee.\d]+)/g)].map(([a]) => a);
-  let exp = 0;
+  let exp = null;
   if (isNaN(num)) console.error('Unit', {
     str,
     num,
@@ -725,9 +754,7 @@ function Unit(str) {
     case 'm':
       exp = -3;
       break;
-    default:
-      exp = 0;
-      break;
+    //default: exp = 0; break;
     case 'k':
       exp = 3;
       break;
@@ -743,19 +770,6 @@ function Unit(str) {
   }
   return [+num, exp];
 }
-function OnInput({
-  target
-}) {
-  const {
-    name,
-    value
-  } = target;
-  const idx = valueIndex[name];
-  if (idx !== undefined) {
-    if (ParseValue(value, name)) CalcThompson();
-    event.preventDefault();
-  }
-}
 function ClearValues(idx) {
   for (let i = 0; i < 3; i++) if (idx === undefined || typeof idx == 'number' && i == idx) SetValue(i, undefined);
 }
@@ -770,6 +784,14 @@ function ProcessValue(value, name) {
     });
   }
 }
+function NumericValue([num, exp]) {
+  return Math.pow(10, exp) * num;
+}
+function ParseRange(value) {
+  const parts = value.split(/\s*-\s*/g).map(Unit).slice(0, 2);
+  if (parts[0][1] === null) parts[0][1] = parts[1][1];
+  return parts.map(NumericValue);
+}
 function ParseValue(value, name) {
   const idx = FieldIndex(name);
   if (typeof name != 'string') name = 'LCf'[idx];
@@ -783,7 +805,7 @@ function ParseValue(value, name) {
       result,
       valid
     });
-    if (!valid || idx === undefined) throw new Error(`ParseValue idx=${idx} name=${name} value=${value}`);
+    if (!valid || idx === undefined) throw new Error(`ParseValue idx=${idx} name=${name} value=${value} result=${result}`);
     values[idx] = valid ? result : undefined;
     return valid;
   }
@@ -800,7 +822,7 @@ function ReadFields(name) {
 }
 function WriteFields(name) {
   const idx = FieldIndex(name);
-  for (let i = 0; i < 3; i++) if (idx === undefined || typeof idx == 'number' && i == idx) SetField(i);
+  for (let i = 0; i < NUM_FIELDS; i++) if (idx === undefined || typeof idx == 'number' && i == idx) SetField(i);
 }
 function FormatNumber(num, exp, unit, round = a => a.toFixed(12).replace(/\.0*$/g, '')) {
   if (typeof exp != 'number') exp = Exponent(num);
@@ -817,12 +839,12 @@ function FormatNumber(num, exp, unit, round = a => a.toFixed(12).replace(/\.0*$/
 function WaitFor(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+function RemoveAllChildren(e) {
+  while (e.firstElementChild) e.removeChild(e.firstElementChild);
+}
 async function SetStatus(str, t1 = 3000, t2 = 1000) {
   const st = Q('#status');
-  while (st.firstElementChild) {
-    if (!st.firstElementChild.nextElementSibling) break;
-    st.removeChild(st.firstElementChild);
-  }
+  RemoveAllChildren(st);
   let e = st.firstElementChild ?? document.createElement('div');
   e.innerText = str;
   st.insertBefore(e, st.firstElementChild);
@@ -849,7 +871,7 @@ function SetupFields() {
     setTimeout(() => SetupFields(), 100);
     return;
   }
-  [...PartitionArray([...Q('#fields').children], 3)].forEach((a, i) => {
+  [...PartitionArray([...Q('#fields').children], NUM_FIELDS)].forEach((a, i) => {
     a.slice(0, 2).forEach(e => e.addEventListener('click', e => SelectField(i)));
     a.forEach(e => e.addEventListener('dblclick', async e => (await CopyToClipboard(GetFieldValue(i)), e.preventDefault()), true));
   });
@@ -934,10 +956,15 @@ Object.assign(globalThis, {
   GetValue,
   GuessField,
   Init,
+  IsRange,
   LoadConfig,
+  NumericValue,
   OnInput,
+  ParseRange,
   ParseValue,
   ProcessValue,
+  ReadFields,
+  RemoveAllChildren,
   RoundFunction,
   SaveConfig,
   SelectField,
@@ -948,10 +975,14 @@ Object.assign(globalThis, {
   SetupFields,
   Thousand,
   Unit,
-  ReadFields,
-  WriteFields,
   WaitFor,
+  WriteFields,
+  buffer,
+  values,
+  values2,
   validValues,
+  allValues,
+  config,
   Q,
   QA
 });
