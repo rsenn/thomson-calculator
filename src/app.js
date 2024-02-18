@@ -1,7 +1,4 @@
 import './stylesheets/main.css';
-//import './stylesheets/tlite.css';
-
-//import { tlite } from './tlite.js';
 
 const Q = s => (typeof s == 'string' ? document.querySelector(s) : s);
 const QA = (...a) => [...(document.querySelectorAll(a.join(', ')) ?? [])];
@@ -32,7 +29,10 @@ const minSize = 10;
 document.addEventListener('load', () => {
   try {
     Init();
-  } catch(e) {}
+  } catch(e) {
+    console.log('ERROR', e.message);
+    throw e;
+  }
 });
 
 setTimeout(Init, 100);
@@ -523,7 +523,10 @@ export function Init() {
 
   try {
     CalcThompson();
-  } catch(e) {}
+  } catch(e) {
+    console.log('ERROR', e.message);
+    throw e;
+  }
 
   setInterval(() => SaveConfig(), 500);
 }
