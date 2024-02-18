@@ -21,7 +21,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "html,\nbody {\n  width: 100%;\n  height: 100%;\n  margin: 0;\n  padding: 0;\n}\n\nbody {\n  display: flex;\n  flex-flow: column;\n  justify-content: flex-start;\n  align-items: center;\n  font-family: sans-serif;\n  color: #525252;\n}\n\nh2 {\n  color: black;\n}\n\nbody {\n  padding: 2em 0;\n  overflow: hidden;\n}\n\nbody {\n  background: white;\n  /*background: linear-gradient(0deg, #eee, #fff);*/\n}\n\nbody {\n  user-select: none;\n}\n\nbody img {\n  height: 4em;\n  width: auto;\n  margin: 0.5em 0 2em 0;\n}\n\ninput {\n  user-select: contain;\n  margin-left: 0.5em;\n}\n\nform {\n  display: flex;\n  flex-flow: column;\n  align-items: center;\n  justify-content: space-between;\n}\n\n#fields,\n#fields input {\n  font-size: 18pt;\n}\n\n#status {\n  position: fixed;\n  bottom: 2em;\n}\n\n#status {\n  margin-top: 2em;\n  font-size: 1rem;\n  font-weight: 0;\n}\n\n#status > div {\n  box-shadow: 0px 0px 10px black;\n  /*border: 2px solid hsla(60, 100%, 0%, 1); */\n  padding: 0.5em;\n  color: #000;\n  background: hsla(60, 100%, 50%, 1);\n  background: linear-gradient(180deg, hsla(60, 100%, 50%, 1) 0%, hsla(50, 100%, 50%, 1));\n  font-weight: bold;\n}\n\n#precision_grp {\n  font-size: 12pt;\n  align-self: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n\n#precision_grp label {\n  font-weight: 100;\n  transform: translateY(1px);\n}\n\n#precision_num {\n  margin: 0 0.5em 0 0.5em;\n}\n\na {\n  text-decoration: none;\n  color: #cb3837;\n}\n\n.fields {\n  display: flex;\n  flex: column;\n}\n\nlabel {\n  padding: 2px 4px 2px 4px;\n}\n\nlabel b {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n  width: 100%;\n}\n\ninput {\n  border: 2px #eee inset;\n  text-align: right;\n  background: white;\n  padding: 0.125em 0.25em 0 0.25em;\n  margin: 0.125em 0.125em 0.125em 0.5em;\n}\n\ninput.selected {\n  color: #d00;\n}\n\nlabel {\n  display: inline-flex;\n  align-items: center;\n}\n\nlabel.var.selected {\n  background: black;\n  color: white;\n}\n\nlabel.name.selected {\n  color: white;\n  /* font-weight: bold;*/\n  text-shadow: black 1px 1px 3px;\n}\n\nlabel.name.inductance.selected {\n  background: linear-gradient(90deg, hsla(30, 100%, 40%, 1) 0%, hsla(40, 100%, 50%, 1));\n}\n\nlabel.name.capacitance.selected {\n  background: linear-gradient(90deg, hsla(80, 100%, 40%, 1) 0%, hsla(120, 100%, 40%, 1));\n}\n\nlabel.name.frequency.selected {\n  background: linear-gradient(90deg, hsla(300, 100%, 40%, 1) 0%, hsla(280, 100%, 40%, 1));\n}\n\n#precision {\n  transform: translateY(1px);\n}\n\n#precision_num {\n  display: inline-flex;\n  align-items: center;\n  justify-content: flex-end;\n  text-align: center;\n  min-width: 2em;\n  max-width: 3em;\n  height: 1.5em;\n}\n\n#precision_grp {\n  margin-top: 2em;\n}\n", "",{"version":3,"sources":["webpack://./src/stylesheets/main.css"],"names":[],"mappings":"AAAA;;EAEE,WAAW;EACX,YAAY;EACZ,SAAS;EACT,UAAU;AACZ;;AAEA;EACE,aAAa;EACb,iBAAiB;EACjB,2BAA2B;EAC3B,mBAAmB;EACnB,uBAAuB;EACvB,cAAc;AAChB;;AAEA;EACE,YAAY;AACd;;AAEA;EACE,cAAc;EACd,gBAAgB;AAClB;;AAEA;EACE,iBAAiB;EACjB,iDAAiD;AACnD;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,WAAW;EACX,WAAW;EACX,qBAAqB;AACvB;;AAEA;EACE,oBAAoB;EACpB,kBAAkB;AACpB;;AAEA;EACE,aAAa;EACb,iBAAiB;EACjB,mBAAmB;EACnB,8BAA8B;AAChC;;AAEA;;EAEE,eAAe;AACjB;;AAEA;EACE,eAAe;EACf,WAAW;AACb;;AAEA;EACE,eAAe;EACf,eAAe;EACf,cAAc;AAChB;;AAEA;EACE,8BAA8B;EAC9B,4CAA4C;EAC5C,cAAc;EACd,WAAW;EACX,kCAAkC;EAClC,sFAAsF;EACtF,iBAAiB;AACnB;;AAEA;EACE,eAAe;EACf,kBAAkB;EAClB,aAAa;EACb,uBAAuB;EACvB,mBAAmB;AACrB;;AAEA;EACE,gBAAgB;EAChB,0BAA0B;AAC5B;;AAEA;EACE,uBAAuB;AACzB;;AAEA;EACE,qBAAqB;EACrB,cAAc;AAChB;;AAEA;EACE,aAAa;EACb,YAAY;AACd;;AAEA;EACE,wBAAwB;AAC1B;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,uBAAuB;EACvB,kBAAkB;EAClB,WAAW;AACb;;AAEA;EACE,sBAAsB;EACtB,iBAAiB;EACjB,iBAAiB;EACjB,gCAAgC;EAChC,qCAAqC;AACvC;;AAEA;EACE,WAAW;AACb;;AAEA;EACE,oBAAoB;EACpB,mBAAmB;AACrB;;AAEA;EACE,iBAAiB;EACjB,YAAY;AACd;;AAEA;EACE,YAAY;EACZ,sBAAsB;EACtB,8BAA8B;AAChC;;AAEA;EACE,qFAAqF;AACvF;;AAEA;EACE,sFAAsF;AACxF;;AAEA;EACE,uFAAuF;AACzF;;AAEA;EACE,0BAA0B;AAC5B;;AAEA;EACE,oBAAoB;EACpB,mBAAmB;EACnB,yBAAyB;EACzB,kBAAkB;EAClB,cAAc;EACd,cAAc;EACd,aAAa;AACf;;AAEA;EACE,eAAe;AACjB","sourcesContent":["html,\nbody {\n  width: 100%;\n  height: 100%;\n  margin: 0;\n  padding: 0;\n}\n\nbody {\n  display: flex;\n  flex-flow: column;\n  justify-content: flex-start;\n  align-items: center;\n  font-family: sans-serif;\n  color: #525252;\n}\n\nh2 {\n  color: black;\n}\n\nbody {\n  padding: 2em 0;\n  overflow: hidden;\n}\n\nbody {\n  background: white;\n  /*background: linear-gradient(0deg, #eee, #fff);*/\n}\n\nbody {\n  user-select: none;\n}\n\nbody img {\n  height: 4em;\n  width: auto;\n  margin: 0.5em 0 2em 0;\n}\n\ninput {\n  user-select: contain;\n  margin-left: 0.5em;\n}\n\nform {\n  display: flex;\n  flex-flow: column;\n  align-items: center;\n  justify-content: space-between;\n}\n\n#fields,\n#fields input {\n  font-size: 18pt;\n}\n\n#status {\n  position: fixed;\n  bottom: 2em;\n}\n\n#status {\n  margin-top: 2em;\n  font-size: 1rem;\n  font-weight: 0;\n}\n\n#status > div {\n  box-shadow: 0px 0px 10px black;\n  /*border: 2px solid hsla(60, 100%, 0%, 1); */\n  padding: 0.5em;\n  color: #000;\n  background: hsla(60, 100%, 50%, 1);\n  background: linear-gradient(180deg, hsla(60, 100%, 50%, 1) 0%, hsla(50, 100%, 50%, 1));\n  font-weight: bold;\n}\n\n#precision_grp {\n  font-size: 12pt;\n  align-self: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n\n#precision_grp label {\n  font-weight: 100;\n  transform: translateY(1px);\n}\n\n#precision_num {\n  margin: 0 0.5em 0 0.5em;\n}\n\na {\n  text-decoration: none;\n  color: #cb3837;\n}\n\n.fields {\n  display: flex;\n  flex: column;\n}\n\nlabel {\n  padding: 2px 4px 2px 4px;\n}\n\nlabel b {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n  width: 100%;\n}\n\ninput {\n  border: 2px #eee inset;\n  text-align: right;\n  background: white;\n  padding: 0.125em 0.25em 0 0.25em;\n  margin: 0.125em 0.125em 0.125em 0.5em;\n}\n\ninput.selected {\n  color: #d00;\n}\n\nlabel {\n  display: inline-flex;\n  align-items: center;\n}\n\nlabel.var.selected {\n  background: black;\n  color: white;\n}\n\nlabel.name.selected {\n  color: white;\n  /* font-weight: bold;*/\n  text-shadow: black 1px 1px 3px;\n}\n\nlabel.name.inductance.selected {\n  background: linear-gradient(90deg, hsla(30, 100%, 40%, 1) 0%, hsla(40, 100%, 50%, 1));\n}\n\nlabel.name.capacitance.selected {\n  background: linear-gradient(90deg, hsla(80, 100%, 40%, 1) 0%, hsla(120, 100%, 40%, 1));\n}\n\nlabel.name.frequency.selected {\n  background: linear-gradient(90deg, hsla(300, 100%, 40%, 1) 0%, hsla(280, 100%, 40%, 1));\n}\n\n#precision {\n  transform: translateY(1px);\n}\n\n#precision_num {\n  display: inline-flex;\n  align-items: center;\n  justify-content: flex-end;\n  text-align: center;\n  min-width: 2em;\n  max-width: 3em;\n  height: 1.5em;\n}\n\n#precision_grp {\n  margin-top: 2em;\n}\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "html,\nbody {\n  width: 100%;\n  height: 100%;\n}\n\nbody {\n  display: flex;\n  flex-flow: column;\n  justify-content: flex-start;\n  align-items: center;\n  font-family: sans-serif;\n  color: #525252;\n}\n\nh2 {\n  color: black;\n}\n\nbody {\n  overflow: hidden;\n}\n\nbody {\n  background: white;\n  /*background: linear-gradient(0deg, #eee, #fff);*/\n}\n\nbody {\n  user-select: none;\n}\n\nbody img {\n  height: 4em;\n  width: auto;\n  margin: 0.5em 0 2em 0;\n}\n\ninput {\n  user-select: contain;\n  margin-left: 0.5em;\n}\n\nform {\n  display: flex;\n  flex-flow: column;\n  align-items: center;\n  justify-content: space-between;\n}\n\n#fields input {\n  font-family: fixed;\n  font-size: 1rem;\n  /*padding: 0.3em 0.3em 0 0.3em;*/\n}\n\n#status {\n  position: fixed;\n  bottom: 2em;\n}\n\n#status {\n  margin-top: 2em;\n  font-size: 1rem;\n  font-weight: 0;\n}\n\n#status > div {\n  box-shadow: 0px 0px 10px black;\n  /*border: 2px solid hsla(60, 100%, 0%, 1); */\n  padding: 0.5em;\n  color: #000;\n  background: hsla(60, 100%, 50%, 1);\n  background: linear-gradient(180deg, hsla(60, 100%, 50%, 1) 0%, hsla(50, 100%, 50%, 1));\n  font-weight: bold;\n}\n\n#precision_grp {\n  font-size: 12pt;\n  align-self: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n\n#precision_grp label {\n  font-weight: 100;\n  transform: translateY(1px);\n}\n\n#precision_num {\n  margin: 0 0.5em 0 0.5em;\n}\n\na {\n  text-decoration: none;\n  color: #cb3837;\n}\n\n.fields {\n  display: flex;\n  flex: column;\n}\n\nlabel {\n  padding: 2px 4px 2px 4px;\n}\n\nlabel b {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n  width: 100%;\n}\n\ninput {\n  border: 2px #eee inset;\n  text-align: right;\n  background: white;\n  padding: 0.3em 0.3em 0 0.3em;\n  margin: 0.125em 0.125em 0.125em 0.5em;\n}\n\ninput.selected {\n  color: #d00;\n}\n\nlabel {\n  display: inline-flex;\n  align-items: center;\n}\n\nlabel.var.selected {\n  background: black;\n  color: white;\n}\n\nlabel.name.selected {\n  color: white;\n  /* font-weight: bold;*/\n  text-shadow: black 1px 1px 3px;\n}\n\nlabel.name.inductance.selected {\n  background: linear-gradient(90deg, hsla(30, 100%, 40%, 1) 0%, hsla(40, 100%, 50%, 1));\n}\n\nlabel.name.capacitance.selected {\n  background: linear-gradient(90deg, hsla(80, 100%, 40%, 1) 0%, hsla(120, 100%, 40%, 1));\n}\n\nlabel.name.frequency.selected {\n  background: linear-gradient(90deg, hsla(300, 100%, 40%, 1) 0%, hsla(280, 100%, 40%, 1));\n}\n\n#precision {\n  transform: translateY(1px);\n}\n\n#precision_num {\n  display: inline-flex;\n  align-items: center;\n  justify-content: flex-end;\n  text-align: center;\n  min-width: 2em;\n  max-width: 3em;\n  height: 1.5em;\n}\n\n#precision_grp {\n  margin-top: 2em;\n}\n\n.tooltip {\n  position: relative;\n}\n.tooltip:hover {\n  text-decoration: none;\n}\n.tooltip:after {\n  content: attr(tip);\n  font-family: Arial, Helvetica, sans-serif;\n  font-size: 90%;\n  line-height: 1.2em;\n  color: #fff;\n  width: 200px;\n  padding: 5px 10px;\n  -moz-border-radius: 6px;\n  -webkit-border-radius: 6px;\n  border-radius: 6px;\n  background: #c00d3f;\n  background: -webkit-linear-gradient(#c00d3f, #7b0a2a);\n  background: -moz-linear-gradient(#c00d3f, #7b0a2a);\n  background: -o-linear-gradient(#c00d3f, #7b0a2a);\n  background: -ms-linear-gradient(#c00d3f, #7b0a2a);\n  background: linear-gradient(#c00d3f, #7b0a2a);\n  -moz-box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.65);\n  -webkit-box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.65);\n  box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.65);\n  position: absolute;\n  top: 27px;\n  left: -10px;\n  display: none;\n}\n.tooltip:before {\n  z-index: 1000;\n  position: absolute;\n  content: '';\n  top: 15px;\n  left: 0px;\n  border-right: 7px transparent solid;\n  border-left: 7px transparent solid;\n  display: none;\n}\n.tooltip:hover {\n  z-index: 1000;\n  position: relative;\n  color: #8325f7;\n}\n.tooltip:hover:after {\n  display: block;\n}\n.tooltip:hover:before {\n  display: block;\n}\n", "",{"version":3,"sources":["webpack://./src/stylesheets/main.css"],"names":[],"mappings":"AAAA;;EAEE,WAAW;EACX,YAAY;AACd;;AAEA;EACE,aAAa;EACb,iBAAiB;EACjB,2BAA2B;EAC3B,mBAAmB;EACnB,uBAAuB;EACvB,cAAc;AAChB;;AAEA;EACE,YAAY;AACd;;AAEA;EACE,gBAAgB;AAClB;;AAEA;EACE,iBAAiB;EACjB,iDAAiD;AACnD;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,WAAW;EACX,WAAW;EACX,qBAAqB;AACvB;;AAEA;EACE,oBAAoB;EACpB,kBAAkB;AACpB;;AAEA;EACE,aAAa;EACb,iBAAiB;EACjB,mBAAmB;EACnB,8BAA8B;AAChC;;AAEA;EACE,kBAAkB;EAClB,eAAe;EACf,gCAAgC;AAClC;;AAEA;EACE,eAAe;EACf,WAAW;AACb;;AAEA;EACE,eAAe;EACf,eAAe;EACf,cAAc;AAChB;;AAEA;EACE,8BAA8B;EAC9B,4CAA4C;EAC5C,cAAc;EACd,WAAW;EACX,kCAAkC;EAClC,sFAAsF;EACtF,iBAAiB;AACnB;;AAEA;EACE,eAAe;EACf,kBAAkB;EAClB,aAAa;EACb,uBAAuB;EACvB,mBAAmB;AACrB;;AAEA;EACE,gBAAgB;EAChB,0BAA0B;AAC5B;;AAEA;EACE,uBAAuB;AACzB;;AAEA;EACE,qBAAqB;EACrB,cAAc;AAChB;;AAEA;EACE,aAAa;EACb,YAAY;AACd;;AAEA;EACE,wBAAwB;AAC1B;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,uBAAuB;EACvB,kBAAkB;EAClB,WAAW;AACb;;AAEA;EACE,sBAAsB;EACtB,iBAAiB;EACjB,iBAAiB;EACjB,4BAA4B;EAC5B,qCAAqC;AACvC;;AAEA;EACE,WAAW;AACb;;AAEA;EACE,oBAAoB;EACpB,mBAAmB;AACrB;;AAEA;EACE,iBAAiB;EACjB,YAAY;AACd;;AAEA;EACE,YAAY;EACZ,sBAAsB;EACtB,8BAA8B;AAChC;;AAEA;EACE,qFAAqF;AACvF;;AAEA;EACE,sFAAsF;AACxF;;AAEA;EACE,uFAAuF;AACzF;;AAEA;EACE,0BAA0B;AAC5B;;AAEA;EACE,oBAAoB;EACpB,mBAAmB;EACnB,yBAAyB;EACzB,kBAAkB;EAClB,cAAc;EACd,cAAc;EACd,aAAa;AACf;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE,kBAAkB;AACpB;AACA;EACE,qBAAqB;AACvB;AACA;EACE,kBAAkB;EAClB,yCAAyC;EACzC,cAAc;EACd,kBAAkB;EAClB,WAAW;EACX,YAAY;EACZ,iBAAiB;EACjB,uBAAuB;EACvB,0BAA0B;EAC1B,kBAAkB;EAClB,mBAAmB;EACnB,qDAAqD;EACrD,kDAAkD;EAClD,gDAAgD;EAChD,iDAAiD;EACjD,6CAA6C;EAC7C,gDAAgD;EAChD,mDAAmD;EACnD,2CAA2C;EAC3C,kBAAkB;EAClB,SAAS;EACT,WAAW;EACX,aAAa;AACf;AACA;EACE,aAAa;EACb,kBAAkB;EAClB,WAAW;EACX,SAAS;EACT,SAAS;EACT,mCAAmC;EACnC,kCAAkC;EAClC,aAAa;AACf;AACA;EACE,aAAa;EACb,kBAAkB;EAClB,cAAc;AAChB;AACA;EACE,cAAc;AAChB;AACA;EACE,cAAc;AAChB","sourcesContent":["html,\nbody {\n  width: 100%;\n  height: 100%;\n}\n\nbody {\n  display: flex;\n  flex-flow: column;\n  justify-content: flex-start;\n  align-items: center;\n  font-family: sans-serif;\n  color: #525252;\n}\n\nh2 {\n  color: black;\n}\n\nbody {\n  overflow: hidden;\n}\n\nbody {\n  background: white;\n  /*background: linear-gradient(0deg, #eee, #fff);*/\n}\n\nbody {\n  user-select: none;\n}\n\nbody img {\n  height: 4em;\n  width: auto;\n  margin: 0.5em 0 2em 0;\n}\n\ninput {\n  user-select: contain;\n  margin-left: 0.5em;\n}\n\nform {\n  display: flex;\n  flex-flow: column;\n  align-items: center;\n  justify-content: space-between;\n}\n\n#fields input {\n  font-family: fixed;\n  font-size: 1rem;\n  /*padding: 0.3em 0.3em 0 0.3em;*/\n}\n\n#status {\n  position: fixed;\n  bottom: 2em;\n}\n\n#status {\n  margin-top: 2em;\n  font-size: 1rem;\n  font-weight: 0;\n}\n\n#status > div {\n  box-shadow: 0px 0px 10px black;\n  /*border: 2px solid hsla(60, 100%, 0%, 1); */\n  padding: 0.5em;\n  color: #000;\n  background: hsla(60, 100%, 50%, 1);\n  background: linear-gradient(180deg, hsla(60, 100%, 50%, 1) 0%, hsla(50, 100%, 50%, 1));\n  font-weight: bold;\n}\n\n#precision_grp {\n  font-size: 12pt;\n  align-self: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n\n#precision_grp label {\n  font-weight: 100;\n  transform: translateY(1px);\n}\n\n#precision_num {\n  margin: 0 0.5em 0 0.5em;\n}\n\na {\n  text-decoration: none;\n  color: #cb3837;\n}\n\n.fields {\n  display: flex;\n  flex: column;\n}\n\nlabel {\n  padding: 2px 4px 2px 4px;\n}\n\nlabel b {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n  width: 100%;\n}\n\ninput {\n  border: 2px #eee inset;\n  text-align: right;\n  background: white;\n  padding: 0.3em 0.3em 0 0.3em;\n  margin: 0.125em 0.125em 0.125em 0.5em;\n}\n\ninput.selected {\n  color: #d00;\n}\n\nlabel {\n  display: inline-flex;\n  align-items: center;\n}\n\nlabel.var.selected {\n  background: black;\n  color: white;\n}\n\nlabel.name.selected {\n  color: white;\n  /* font-weight: bold;*/\n  text-shadow: black 1px 1px 3px;\n}\n\nlabel.name.inductance.selected {\n  background: linear-gradient(90deg, hsla(30, 100%, 40%, 1) 0%, hsla(40, 100%, 50%, 1));\n}\n\nlabel.name.capacitance.selected {\n  background: linear-gradient(90deg, hsla(80, 100%, 40%, 1) 0%, hsla(120, 100%, 40%, 1));\n}\n\nlabel.name.frequency.selected {\n  background: linear-gradient(90deg, hsla(300, 100%, 40%, 1) 0%, hsla(280, 100%, 40%, 1));\n}\n\n#precision {\n  transform: translateY(1px);\n}\n\n#precision_num {\n  display: inline-flex;\n  align-items: center;\n  justify-content: flex-end;\n  text-align: center;\n  min-width: 2em;\n  max-width: 3em;\n  height: 1.5em;\n}\n\n#precision_grp {\n  margin-top: 2em;\n}\n\n.tooltip {\n  position: relative;\n}\n.tooltip:hover {\n  text-decoration: none;\n}\n.tooltip:after {\n  content: attr(tip);\n  font-family: Arial, Helvetica, sans-serif;\n  font-size: 90%;\n  line-height: 1.2em;\n  color: #fff;\n  width: 200px;\n  padding: 5px 10px;\n  -moz-border-radius: 6px;\n  -webkit-border-radius: 6px;\n  border-radius: 6px;\n  background: #c00d3f;\n  background: -webkit-linear-gradient(#c00d3f, #7b0a2a);\n  background: -moz-linear-gradient(#c00d3f, #7b0a2a);\n  background: -o-linear-gradient(#c00d3f, #7b0a2a);\n  background: -ms-linear-gradient(#c00d3f, #7b0a2a);\n  background: linear-gradient(#c00d3f, #7b0a2a);\n  -moz-box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.65);\n  -webkit-box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.65);\n  box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.65);\n  position: absolute;\n  top: 27px;\n  left: -10px;\n  display: none;\n}\n.tooltip:before {\n  z-index: 1000;\n  position: absolute;\n  content: '';\n  top: 15px;\n  left: 0px;\n  border-right: 7px transparent solid;\n  border-left: 7px transparent solid;\n  display: none;\n}\n.tooltip:hover {\n  z-index: 1000;\n  position: relative;\n  color: #8325f7;\n}\n.tooltip:hover:after {\n  display: block;\n}\n.tooltip:hover:before {\n  display: block;\n}\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -536,26 +536,131 @@ var __webpack_exports__ = {};
   \********************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CalcCapacitance: () => (/* binding */ CalcCapacitance),
+/* harmony export */   CalcFrequency: () => (/* binding */ CalcFrequency),
+/* harmony export */   CalcInductance: () => (/* binding */ CalcInductance),
+/* harmony export */   CalcThompson: () => (/* binding */ CalcThompson),
+/* harmony export */   ChangePrecision: () => (/* binding */ ChangePrecision),
+/* harmony export */   ChangeSize: () => (/* binding */ ChangeSize),
+/* harmony export */   ClearValues: () => (/* binding */ ClearValues),
+/* harmony export */   CopyToClipboard: () => (/* binding */ CopyToClipboard),
+/* harmony export */   Exp2Unit: () => (/* binding */ Exp2Unit),
+/* harmony export */   Exponent: () => (/* binding */ Exponent),
+/* harmony export */   FieldIndex: () => (/* binding */ FieldIndex),
+/* harmony export */   FormatNumber: () => (/* binding */ FormatNumber),
+/* harmony export */   FormatRange: () => (/* binding */ FormatRange),
+/* harmony export */   GetAttributes: () => (/* binding */ GetAttributes),
+/* harmony export */   GetField: () => (/* binding */ GetField),
+/* harmony export */   GetMaxSize: () => (/* binding */ GetMaxSize),
+/* harmony export */   GetProps: () => (/* binding */ GetProps),
+/* harmony export */   GetRange: () => (/* binding */ GetRange),
+/* harmony export */   GetSelected: () => (/* binding */ GetSelected),
+/* harmony export */   GetSize: () => (/* binding */ GetSize),
+/* harmony export */   GuessField: () => (/* binding */ GuessField),
+/* harmony export */   Init: () => (/* binding */ Init),
+/* harmony export */   IsNumber: () => (/* binding */ IsNumber),
+/* harmony export */   IsRange: () => (/* binding */ IsRange),
+/* harmony export */   IsString: () => (/* binding */ IsString),
+/* harmony export */   LoadConfig: () => (/* binding */ LoadConfig),
+/* harmony export */   NumericValue: () => (/* binding */ NumericValue),
+/* harmony export */   OnInput: () => (/* binding */ OnInput),
+/* harmony export */   ParseNumber: () => (/* binding */ ParseNumber),
+/* harmony export */   ParseRange: () => (/* binding */ ParseRange),
+/* harmony export */   ParseValue: () => (/* binding */ ParseValue),
+/* harmony export */   PartitionArray: () => (/* binding */ PartitionArray),
+/* harmony export */   ProcessValue: () => (/* binding */ ProcessValue),
+/* harmony export */   ReadFields: () => (/* binding */ ReadFields),
+/* harmony export */   RemoveAllChildren: () => (/* binding */ RemoveAllChildren),
+/* harmony export */   RoundTo: () => (/* binding */ RoundTo),
+/* harmony export */   SaveConfig: () => (/* binding */ SaveConfig),
+/* harmony export */   SelectField: () => (/* binding */ SelectField),
+/* harmony export */   SetField: () => (/* binding */ SetField),
+/* harmony export */   SetRange: () => (/* binding */ SetRange),
+/* harmony export */   SetStatus: () => (/* binding */ SetStatus),
+/* harmony export */   SetupFields: () => (/* binding */ SetupFields),
+/* harmony export */   Thousand: () => (/* binding */ Thousand),
+/* harmony export */   Unit: () => (/* binding */ Unit),
 /* harmony export */   WaitFor: () => (/* binding */ WaitFor)
 /* harmony export */ });
 /* harmony import */ var _stylesheets_main_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./stylesheets/main.css */ "./src/stylesheets/main.css");
 
-const Q = s => document.querySelector(s);
-const QA = s => [...(document.querySelectorAll(s) ?? [])];
+//import './stylesheets/tlite.css';
+
+//import { tlite } from './tlite.js';
+
+const Q = s => typeof s == 'string' ? document.querySelector(s) : s;
+const QA = (...a) => [...(document.querySelectorAll(a.join(', ')) ?? [])];
+const GS = s => GetProps(window.getComputedStyle(Q(s)));
+const GA = s => GetAttributes(Q(s));
+const GR = s => Rect(Q(s)?.getBoundingClientRect());
 const NUM_FIELDS = 3;
+const $2PI = Math.PI * 2;
+const $PI2 = Math.PI ** 2;
+const Thompson = {
+  calculate: (L, C) => 1 / (Math.sqrt(L * C) * $2PI * 2),
+  inverse: (f, LC) => 1 / (4 * $PI2 * LC * f ** 2)
+};
 const buffer = new ArrayBuffer(8 * NUM_FIELDS * 2);
 const values = new Float64Array(buffer, 0, NUM_FIELDS);
 const values2 = new Float64Array(buffer, 24, NUM_FIELDS);
-const valueIndex = {
-  L: 0,
-  C: 1,
-  f: 2
-};
-const validValues = new Array(NUM_FIELDS * 2).map(() => false);
+const validValues = Array.from(new Array(NUM_FIELDS * 2), () => false);
 const allValues = new Float64Array(buffer);
-let config = {};
-document.addEventListener('load', Init);
+const fieldNames = ['L', 'C', 'f'];
+const unitNames = ['H', 'F', 'Hz'];
+const config = {};
+const minSize = 10;
+document.addEventListener('load', () => {
+  try {
+    Init();
+  } catch (e) {}
+});
 setTimeout(Init, 100);
+const rosaKm = e => Math.log(2 * Math.PI) - 1.5 - Math.log(e) / (6 * e) - 0.33084236 / e - 1 / (120 * e ** 3) + 1 / (504 * e ** 5) - 0.0011923 / e ** 7 + 5068e-7 / e ** 9;
+const rosaKs = e => 1.25 - Math.log(2 * e);
+function SeriesCaps(values) {
+  return 1 / values.map(v => 1 / ParseNumber(v)).reduce((r, v) => r + v, 0);
+}
+
+/**
+ * Calculates number of turns for a single-layer coil
+ *
+ * @param {Number} L          Inductance (µH)
+ * @param {Number} form       form diameter (mm)
+ * @param {Number} inner      inner wire diam (mm)
+ * @param {Number} outer      outer wire diam (mm)
+ *
+ * @returns {Number}  number of turns
+ */
+function CoilTurns(L, form, inner, outer) {
+  let n = 0,
+    i = 0,
+    Dk = form + outer;
+  L /= 2e-4 * Math.PI * Dk;
+  for (let Ks = rosaKs(outer / inner); i <= L;) {
+    n += 1e-4;
+    const k = n * outer / Dk;
+    i = n * (Math.log(1 + Math.PI / (2 * k)) + 1 / (2.3004 + 3.437 * k + 1.763 * k * k - 0.47 / (0.755 + 1 / k) ** 1.44));
+    i -= Ks + rosaKm(n);
+    i *= n;
+  }
+  return n;
+}
+
+/**
+ * Calculates inductance
+ *
+ * @param {Number} n     Number of turns
+ * @param {Number} form  form diameter (mm)
+ * @param {Number} len   coil length (mm)
+ *
+ * @returns {Number} inductance  (µH)
+ */
+function CoilInductance(n, form, len) {
+  const Ks = rosaKs(1.07),
+    Dk = form + len / n,
+    k = len / Dk;
+  return n * 2e-4 * Math.PI * Dk * (n * (Math.log(1 + Math.PI / (2 * k)) + 1 / (2.3004 + 3.437 * k + 1.763 * k * k - 0.47 / (0.755 + 1 / k) ** 1.44)) - (Ks + rosaKm(n)));
+}
 function OnInput({
   target
 }) {
@@ -563,30 +668,40 @@ function OnInput({
     name,
     value
   } = target;
-  const idx = valueIndex[name];
+  const idx = FieldIndex(name);
   if (idx !== undefined) {
     event.preventDefault();
-    try {
-      if (ParseValue(value, name)) CalcThompson();
-    } catch (e) {
-      const range = ParseRange(value);
-      for (let i = 0; i < 2; i++) {
-        allValues[idx + i * NUM_FIELDS] = range[i];
-        validValues[idx + i * NUM_FIELDS] = i < range.length;
-        CalcThompson();
-      }
+    const range = ParseRange(value);
+    for (let i = 0; i < 2; i++) {
+      allValues[idx + i * NUM_FIELDS] = range[i];
+      validValues[idx + i * NUM_FIELDS] = i < range.length;
     }
+    CalcThompson();
   }
 }
+function GetProps(cssStyle) {
+  return Object.fromEntries([...cssStyle].map(name => [name, cssStyle[name]]));
+}
+function GetAttributes(e) {
+  return Object.fromEntries(e.getAttributeNames().map(name => [name, e.getAttribute(name)]));
+}
 function IsRange(fieldId) {
+  return GetRange(fieldId).length > 1;
   return !!validValues[NUM_FIELDS + fieldId];
 }
 function FieldIndex(arg) {
-  if (typeof arg == 'string') arg = valueIndex[arg];
+  if (IsString(arg)) {
+    arg = fieldNames.indexOf(arg);
+    if (arg == -1) arg = {
+      L: 0,
+      C: 1,
+      f: 2
+    }[arg];
+  }
   return arg;
 }
 function SaveConfig() {
-  for (let i = 0; i < NUM_FIELDS; i++) if (validValues[i]) config['LCf'[i]] = GetFieldValue(i);
+  for (let i = 0; i < NUM_FIELDS; i++) if (validValues[i]) config['LCf'[i]] = GetField(i);
   config.selected = GetSelected();
   localStorage.setItem('config', JSON.stringify(config));
 }
@@ -595,33 +710,24 @@ function LoadConfig() {
   try {
     r = JSON.parse(localStorage.getItem('config') ?? '{}');
   } catch (e) {}
-  const {
-    L,
-    C,
-    f
-  } = r;
-  [L, C, f].forEach((v, i) => SetValue(i, typeof v == 'string' && v != '' ? v : ''));
   return r;
 }
-function* PartitionArray(a, size) {
-  for (let i = 0; i < a.length; i += size) yield a.slice(i, i + size);
-}
-function GetFieldElements(n) {
+function FieldElements(n) {
   return [...PartitionArray([...Q('#fields').children], NUM_FIELDS)][FieldIndex(n)];
 }
-function GetFieldValue(n) {
-  const e = GetFieldElements(n).find(e => e.tagName.toLowerCase() == 'input');
-  return e.value;
+function GetField(n) {
+  const e = (FieldElements(n) ?? []).find(e => e.tagName.toLowerCase() == 'input');
+  return e?.value;
 }
-function SetFieldValue(n, v) {
-  const e = GetFieldElements(n).find(e => e.tagName.toLowerCase() == 'input');
+function SetField(n, v) {
+  const e = (FieldElements(n) ?? []).find(e => e.tagName.toLowerCase() == 'input');
   e.value = v;
 }
 function SelectField(i) {
   if (!(i >= 0 && i <= 2)) throw new Error(`SelectField i=${i}`);
   for (let j = 0; j < NUM_FIELDS; j++) {
-    GetFieldElements(j).forEach((e, x) => e.classList[i == j ? 'add' : 'remove']('selected'));
-    GetFieldElements(j)[2].disabled = i == j;
+    FieldElements(j).forEach((e, x) => e.classList[i == j ? 'add' : 'remove']('selected'));
+    FieldElements(j)[2].disabled = i == j;
   }
   Q('img').src = `svg/${['inductance', 'capacitance', 'freq'][i]}-equation.svg`;
 }
@@ -632,146 +738,91 @@ function GuessField() {
 function GetSelected() {
   return QA('input').map(e => e.classList.contains('selected')).indexOf(true);
 }
-function GetValue(name) {
+function GetRange(name) {
   const idx = FieldIndex(name);
-  while (true) {
-    if (typeof values[idx] == 'number' && Number.isFinite(values[idx]) && !isNaN(values[idx])) return values[idx];
-    if (!ParseValue(GetFieldValue(name), name)) return undefined;
+  let a = [,];
+  try {
+    throw new Error();
+    for (let i = 0; i < 2; i++) {
+      if (IsNumber(allValues[idx + i * NUM_FIELDS]) && Number.isFinite(allValues[idx + i * NUM_FIELDS]) && !isNaN(allValues[idx + i * NUM_FIELDS])) {
+        a[i] = allValues[idx + i * NUM_FIELDS];
+        continue;
+      }
+      throw new Error();
+    }
+  } catch (e) {
+    a = ParseRange(GetField(idx) ?? '');
+    for (let i = 0; i < 2; i++) {
+      allValues[idx + i * NUM_FIELDS] = a[i];
+      validValues[idx + i * NUM_FIELDS] = i < a.length;
+    }
   }
+  return a;
 }
-function SetValue(name, value) {
+function SetRange(name, value) {
   const idx = FieldIndex(name);
   if (value === undefined) {
     values[idx] = undefined;
     return true;
   }
-  if (typeof value == 'number') {
-    if (!Number.isFinite(value)) throw new Error(`SetValue name=${name} value=${value}`);
-    if (isNaN(value)) throw new Error(`SetValue name=${name} value=${value}`);
+  if (IsNumber(value)) {
+    if (!Number.isFinite(value)) throw new Error(`SetRange name=${name} value=${value}`);
+    if (isNaN(value)) throw new Error(`SetRange name=${name} value=${value}`);
   }
-  const result = ParseValue(value, name);
-  //console.log('SetValue', { name, value, result });
+  const range = ParseRange(value);
 
-  if (validValues[idx]) SetField(name);
-  return result;
+  //console.log('SetRange', { name, value, range });
+
+  for (let i = 0; i < 2; i++) {
+    allValues[idx + i * NUM_FIELDS] = range[i];
+    validValues[idx + i * NUM_FIELDS] = i < range.length;
+  }
+  return range;
 }
 function CalcThompson() {
   const sel = GetSelected();
-  if (typeof sel == 'number' && !isNaN(sel)) {
-    const fn = [CalcInductance, CalcCapacity, CalcFrequency][sel];
+  if (IsNumber(sel) && !isNaN(sel)) {
+    const fn = [CalcInductance, CalcCapacitance, CalcFrequency][sel];
     if (typeof fn != 'function') throw new Error(`CalcThompson sel=${sel}`);
-    [CalcInductance, CalcCapacity, CalcFrequency][sel]();
+    [CalcInductance, CalcCapacitance, CalcFrequency][sel]();
+    const sz = GetSize(),
+      max = GetMaxSize();
+    if (max > sz || sz > minSize) ChangeSize(Math.max(minSize, max));
   }
 }
-function SetField(i, num, round = RoundFunction(config.precision ?? 3)) {
-  if (typeof i == 'string') i = valueIndex[i];
-  if (typeof num != 'number') num = GetValue(i);
-  if (typeof num != 'number') num = ProcessValue(num + '', 'LCf'[i]);
-  if (isNaN(num)) return; //throw new Error(`SetField(): i = ${i}, num = ${num}`);
-
-  QA('input')[i].value = FormatNumber(num, null, i, round);
-}
-function RoundFunction(prec = 3) {
-  const p = Math.pow(10, prec);
-  return n => Math.round(n * p) / p;
+function FormatRange(arg, unit) {
+  const results = [...arg].sort((a, b) => a - b);
+  return (results.length > 1 ? [Math.min(...results), Math.max(...results)] : results).map((n, i) => FormatNumber(n, i > 0 ? unit : undefined, config.precision <= 0 ? 'floor' : 'round', RoundTo())).join(' - ');
 }
 function CalcFrequency() {
-  SetValue('f', 1 / (Math.sqrt(GetValue('L') * GetValue('C')) * Math.PI * 2));
-  SetField(2, GetValue('f'));
-  return values[2];
+  const results = [],
+    L = GetRange('L'),
+    C = GetRange('C');
+  for (let i = 0; i < L.length; i++) for (let j = 0; j < C.length; j++) results.push(Thompson.calculate(L[i], C[j]));
+  const str = FormatRange(results, 'Hz');
+  SetField(2, str);
+  return str;
 }
 function CalcInductance() {
-  SetValue('L', 1 / (GetValue('C') * (GetValue('f') * Math.PI * 2) ** 2));
-  SetField(0, GetValue('L'));
-  return values[0];
+  const results = [],
+    f = GetRange('f'),
+    C = GetRange('C');
+  for (let i = 0; i < f.length; i++) for (let j = 0; j < C.length; j++) results.push(Thompson.inverse(f[i], C[j]));
+  const str = FormatRange(results, 'H');
+  SetField(0, str);
+  return str;
 }
-function CalcCapacity() {
-  SetValue('C', 1 / (GetValue('L') * (GetValue('f') * Math.PI * 2) ** 2));
-  SetField(1, GetValue('C'));
-  return values[1];
-}
-function Exponent(num) {
-  return Math.floor(Math.log10(num));
-}
-function Thousand(exponent) {
-  return Math.min(15, Math.max(-18, Math.floor(exponent / 3) * 3));
-}
-function Exp2Unit(exponent) {
-  /* prettier-ignore */switch (Thousand(exponent)) {
-    case -18:
-      return 'a';
-    case -15:
-      return 'f';
-    case -12:
-      return 'p';
-    case -9:
-      return 'n';
-    case -6:
-      return 'u';
-    case -3:
-      return 'm';
-    case 0:
-      return '';
-    case 3:
-      return 'k';
-    case 6:
-      return 'M';
-    case 9:
-      return 'G';
-    case 12:
-      return 'T';
-    case 15:
-      return 'P';
-  }
-}
-function Unit(str) {
-  if (typeof str != 'string') str = str + '';
-  const [num, unit = ''] = [...str.replaceAll(/\s+/g, '').matchAll(/([-Ee.\d]+|[^-Ee.\d]+)/g)].map(([a]) => a);
-  let exp = null;
-  if (isNaN(num)) console.error('Unit', {
-    str,
-    num,
-    unit
-  });
-
-  /* prettier-ignore */
-  switch (unit[0]) {
-    case 'a':
-      exp = -18;
-      break;
-    case 'f':
-      exp = -15;
-      break;
-    case 'p':
-      exp = -12;
-      break;
-    case 'n':
-      exp = -9;
-      break;
-    case 'u':
-      exp = -6;
-      break;
-    case 'm':
-      exp = -3;
-      break;
-    //default: exp = 0; break;
-    case 'k':
-      exp = 3;
-      break;
-    case 'M':
-      exp = 6;
-      break;
-    case 'G':
-      exp = 9;
-      break;
-    case 'T':
-      exp = 12;
-      break;
-  }
-  return [+num, exp];
+function CalcCapacitance() {
+  const results = [],
+    f = GetRange('f'),
+    L = GetRange('L');
+  for (let i = 0; i < f.length; i++) for (let j = 0; j < L.length; j++) results.push(Thompson.inverse(f[i], L[j]));
+  const str = FormatRange(results, 'F');
+  SetField(1, str);
+  return str;
 }
 function ClearValues(idx) {
-  for (let i = 0; i < 3; i++) if (idx === undefined || typeof idx == 'number' && i == idx) SetValue(i, undefined);
+  for (let i = 0; i < NUM_FIELDS; i++) if (idx === undefined || IsNumber(idx) && i == idx) SetRange(i, undefined);
 }
 function ProcessValue(value, name) {
   try {
@@ -784,27 +835,20 @@ function ProcessValue(value, name) {
     });
   }
 }
-function NumericValue([num, exp]) {
-  return Math.pow(10, exp) * num;
-}
 function ParseRange(value) {
   const parts = value.split(/\s*-\s*/g).map(Unit).slice(0, 2);
-  if (parts[0][1] === null) parts[0][1] = parts[1][1];
+  if (parts[0] && parts[1]) if (parts[0][1] === null) parts[0][1] = parts[1][1];
   return parts.map(NumericValue);
+}
+function ParseNumber(value) {
+  return NumericValue(Unit(value));
 }
 function ParseValue(value, name) {
   const idx = FieldIndex(name);
-  if (typeof name != 'string') name = 'LCf'[idx];
+  if (!IsString(name)) name = 'LCf'[idx];
   if (value != '') {
     const result = ProcessValue(value, name);
     const valid = validValues[idx] = !isNaN(result);
-    if (!valid || idx === undefined) console.error('ParseValue', {
-      value,
-      name,
-      idx,
-      result,
-      valid
-    });
     if (!valid || idx === undefined) throw new Error(`ParseValue idx=${idx} name=${name} value=${value} result=${result}`);
     values[idx] = valid ? result : undefined;
     return valid;
@@ -817,30 +861,21 @@ function ReadFields(name) {
     name,
     value
   }, i) => {
-    if (typeof idx != 'number' || i == idx) if (typeof value == 'string' && value != '' || typeof value == 'number' && Number.isFinite(value)) if (ParseValue(value, name)) SetField(i);
+    if (!IsNumber(idx) || i == idx) if (IsString(value) && value != '' || IsNumber(value) && Number.isFinite(value)) if (!ParseValue(value, name)) throw new Error(`ReadFields(): error parsing field '${name}'`);
   });
 }
-function WriteFields(name) {
-  const idx = FieldIndex(name);
-  for (let i = 0; i < NUM_FIELDS; i++) if (idx === undefined || typeof idx == 'number' && i == idx) SetField(i);
-}
-function FormatNumber(num, exp, unit, round = a => a.toFixed(12).replace(/\.0*$/g, '')) {
-  if (typeof exp != 'number') exp = Exponent(num);
-  exp = Thousand(exp);
+function FormatNumber(arg, unit, fn = 'round', round = RoundTo()) {
+  let [num, exp = null] = Array.isArray(arg) ? arg : [arg];
+  if (!IsNumber(exp)) exp = Exponent(num);
+  exp = Thousand(exp, fn);
   const expStr = Exp2Unit(exp);
-  if (expStr === undefined) console.error('FormatNumber', {
-    num,
-    exp,
-    expStr,
-    unit
-  });
-  return round(num * Math.pow(10, -exp)) + ' ' + expStr + ['H', 'F', 'Hz'][unit];
-}
-function WaitFor(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-function RemoveAllChildren(e) {
-  while (e.firstElementChild) e.removeChild(e.firstElementChild);
+  if (IsNumber(unit)) unit = unitNames[unit];
+  let s = round(num * Math.pow(10, -exp)) + '';
+  if (typeof unit != 'undefined') {
+    if (IsString(expStr)) s += ' ' + expStr;
+    s += unit;
+  }
+  return s;
 }
 async function SetStatus(str, t1 = 3000, t2 = 1000) {
   const st = Q('#status');
@@ -862,10 +897,6 @@ async function SetStatus(str, t1 = 3000, t2 = 1000) {
   });
   await WaitFor(t2);
 }
-async function CopyToClipboard(str) {
-  let result = await navigator.clipboard.writeText(str);
-  SetStatus(`Copied: '${str}'`);
-}
 function SetupFields() {
   if (!globalThis.document) {
     setTimeout(() => SetupFields(), 100);
@@ -873,7 +904,7 @@ function SetupFields() {
   }
   [...PartitionArray([...Q('#fields').children], NUM_FIELDS)].forEach((a, i) => {
     a.slice(0, 2).forEach(e => e.addEventListener('click', e => SelectField(i)));
-    a.forEach(e => e.addEventListener('dblclick', async e => (await CopyToClipboard(GetFieldValue(i)), e.preventDefault()), true));
+    a.forEach(e => e.addEventListener('dblclick', async e => (await CopyToClipboard(GetField(i)), e.preventDefault()), true));
   });
   document.body.addEventListener('dblclick', async e => {
     const {
@@ -883,12 +914,19 @@ function SetupFields() {
     e.preventDefault();
   }, true);
 }
+function GetSize() {
+  return +Q('input').size;
+}
+function GetMaxSize() {
+  return Math.max(...QA('input').slice(0, 3).map(e => e.value).map(v => v.length));
+}
+function ChangeSize(sz = GetMaxSize()) {
+  QA('input').slice(0, 3).forEach((e, i) => e.setAttribute('size', sz));
+}
 function ChangePrecision(p) {
   Q('#precision').value = p + '';
   Q('#precision_num').value = p + '';
   config.precision = p;
-  //console.log('ChangePrecision', { values: [0, 1, 2].map(GetValue) });
-
   try {
     CalcThompson();
     ReadFields();
@@ -897,12 +935,12 @@ function ChangePrecision(p) {
 function Init() {
   if (globalThis.initialized) return;
   globalThis.initialized = true;
-  QA('input').forEach(e => {
+  QA('input').slice(0, 3).forEach((e, i) => {
     e.addEventListener('change', OnInput, false);
-    e.addEventListener('input', OnInput, false);
+    e.addEventListener('blur', OnInput, false);
   });
   SetupFields();
-  config = LoadConfig();
+  Object.assign(config, LoadConfig());
   Q('#precision_num').addEventListener('change', event => {
     const {
       target
@@ -922,61 +960,264 @@ function Init() {
     } = target;
     ChangePrecision(+value);
   });
+  QA('#precision, #precision_num').forEach(e => e.addEventListener('wheel', ({
+    target,
+    deltaY
+  }) => {
+    let x = +target.value - Math.sign(deltaY);
+    if (!isNaN(x) && x >= 0) ChangePrecision(+x);
+  }));
   if ('precision' in config) {
     Q('#precision').value = config.precision;
     Q('#precision_num').value = config.precision;
   }
+  const {
+    L,
+    C,
+    f
+  } = config;
+  [L, C, f].forEach((v, i) => SetField(i, IsString(v) && v != '' ? v : ''));
   if ('selected' in config) {
     if (config.selected >= 0 && config.selected <= 2) SelectField(config.selected);else delete config.selected;
   }
   if (GetSelected() === undefined) {
     let f = GuessField();
-    if (typeof f != 'number' || !(f >= 0 && f <= 2)) f = 2;
+    if (!IsNumber(f) || !(f >= 0 && f <= 2)) f = 2;
     SelectField(f);
   }
+  try {
+    CalcThompson();
+  } catch (e) {}
   setInterval(() => SaveConfig(), 500);
 }
+function NumericValue([num, exp]) {
+  return Math.pow(10, exp) * num;
+}
+function WaitFor(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+function RemoveAllChildren(e) {
+  while (e.firstElementChild) e.removeChild(e.firstElementChild);
+}
+function* PartitionArray(a, size) {
+  for (let i = 0; i < a.length; i += size) yield a.slice(i, i + size);
+}
+function Exponent(num) {
+  return Math.floor(Math.log10(num));
+}
+function Thousand(exponent, fn = 'floor') {
+  return Math.min(21, Math.max(-24, Math[fn](exponent / 3) * 3));
+}
+function Exp2Unit(exponent, fn = 'floor') {
+  /* prettier-ignore */switch (Thousand(exponent, fn)) {
+    case -24:
+      return 'y';
+    case -21:
+      return 'z';
+    case -18:
+      return 'a';
+    case -15:
+      return 'f';
+    case -12:
+      return 'p';
+    case -9:
+      return 'n';
+    case -6:
+      return 'µ';
+    case -3:
+      return 'm';
+    case -2:
+      return 'c';
+    case -1:
+      return 'd';
+    case 0:
+      return '';
+    case 2:
+      return 'h';
+    case 3:
+      return 'k';
+    case 6:
+      return 'M';
+    case 9:
+      return 'G';
+    case 12:
+      return 'T';
+    case 15:
+      return 'P';
+    case 18:
+      return 'E';
+    case 21:
+      return 'Z';
+  }
+}
+function Unit(str) {
+  if (!IsString(str)) str = str + '';
+  const [num, unit = ''] = [...str.replaceAll(/\s+/g, '').matchAll(/([-Ee.\d]+|[^-Ee.\d]+)/g)].map(([a]) => a);
+  let exp = null;
+
+  /* prettier-ignore */
+  switch (unit[0]) {
+    case 'y':
+      exp = -24;
+      break;
+    case 'z':
+      exp = -21;
+      break;
+    case 'a':
+      exp = -18;
+      break;
+    case 'f':
+      exp = -15;
+      break;
+    case 'p':
+      exp = -12;
+      break;
+    case 'n':
+      exp = -9;
+      break;
+    case '\u00B5':
+    case '\u03BC':
+    case 'u':
+      exp = -6;
+      break;
+    case 'm':
+      exp = -3;
+      break;
+    case 'c':
+      exp = -2;
+      break;
+    case 'd':
+      exp = -1;
+      break;
+    case 'h':
+      exp = 2;
+      break;
+    case 'k':
+      exp = 3;
+      break;
+    case 'M':
+      exp = 6;
+      break;
+    case 'G':
+      exp = 9;
+      break;
+    case 'T':
+      exp = 12;
+      break;
+    case 'P':
+      exp = 15;
+      break;
+    case 'E':
+      exp = 18;
+      break;
+    case 'Z':
+      exp = 21;
+      break;
+  }
+  return [+num, exp];
+}
+function RoundTo(prec = config.precision) {
+  return n => n.toFixed(prec).replace(/\.(.*[^0])0*$/g, '.$1');
+}
+function IsNumber(arg) {
+  return typeof arg == 'number';
+}
+function IsString(arg) {
+  return typeof arg == 'string';
+}
+async function CopyToClipboard(str) {
+  let result = await navigator.clipboard.writeText(str);
+  SetStatus(`Copied: '${str}'`);
+}
+function Rect({
+  x,
+  y,
+  width,
+  height
+}) {
+  return Object.setPrototypeOf({
+    x,
+    y,
+    width,
+    height
+  }, Rect.prototype);
+}
+Rect.prototype[Symbol.iterator] = function* () {
+  const {
+    x,
+    y,
+    width,
+    height
+  } = this;
+  yield* [x, y, width, height];
+};
+Object.defineProperties(Rect.prototype, {
+  x2: {
+    get() {
+      return this.x + this.width;
+    }
+  },
+  y2: {
+    get() {
+      return this.y + this.height;
+    }
+  }
+});
 
 /* prettier-ignore */
 Object.assign(globalThis, {
-  CalcCapacity,
+  CalcCapacitance,
   CalcFrequency,
   CalcInductance,
   CalcThompson,
   ChangePrecision,
+  ChangeSize,
   ClearValues,
+  CoilInductance,
+  CoilTurns,
   CopyToClipboard,
   Exp2Unit,
   Exponent,
+  FieldElements,
   FieldIndex,
   FormatNumber,
-  GetFieldElements,
-  GetFieldValue,
+  FormatRange,
+  GetAttributes,
+  GetField,
+  GetMaxSize,
+  GetProps,
+  GetRange,
   GetSelected,
-  GetValue,
+  GetSize,
   GuessField,
   Init,
+  IsNumber,
   IsRange,
+  IsString,
   LoadConfig,
   NumericValue,
   OnInput,
+  ParseNumber,
   ParseRange,
   ParseValue,
   ProcessValue,
   ReadFields,
+  Rect,
   RemoveAllChildren,
-  RoundFunction,
+  RoundTo,
   SaveConfig,
   SelectField,
+  SeriesCaps,
   SetField,
-  SetFieldValue,
+  SetRange,
   SetStatus,
-  SetValue,
   SetupFields,
   Thousand,
   Unit,
-  WaitFor,
-  WriteFields,
+  WaitFor
+});
+/* prettier-ignore */
+Object.assign(globalThis, {
   buffer,
   values,
   values2,
@@ -984,7 +1225,11 @@ Object.assign(globalThis, {
   allValues,
   config,
   Q,
-  QA
+  QA,
+  GS,
+  GA,
+  GR,
+  Thompson
 });
 })();
 
