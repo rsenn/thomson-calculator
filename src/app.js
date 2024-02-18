@@ -1,4 +1,4 @@
-import './stylesheets/main.css';
+//import './stylesheets/main.css';
 
 const Q = s => (typeof s == 'string' ? document.querySelector(s) : s);
 const QA = (...a) => [...(document.querySelectorAll(a.join(', ')) ?? [])];
