@@ -1,4 +1,4 @@
-//import './stylesheets/main.css';
+import './stylesheets/main.css';
 
 const Q = s => (typeof s == 'string' ? document.querySelector(s) : s);
 const QA = (...a) => [...(document.querySelectorAll(a.join(', ')) ?? [])];
@@ -525,7 +525,7 @@ export function Init() {
     CalcThompson();
   } catch(e) {
     console.log('ERROR', e.message);
-    throw e;
+    //throw e;
   }
 
   setInterval(() => SaveConfig(), 500);
