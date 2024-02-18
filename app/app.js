@@ -791,7 +791,7 @@ function CalcThompson() {
 }
 function FormatRange(arg, unit) {
   const results = [...arg].sort((a, b) => a - b);
-  return (results.length > 1 ? [Math.min(...results), Math.max(...results)] : results).map((n, i) => FormatNumber(n, i > 0 ? unit : undefined, config.precision <= 0 ? 'floor' : 'round', RoundTo())).join(' - ');
+  return (results.length > 1 ? [Math.min(...results), Math.max(...results)] : results).map((n, i) => FormatNumber(n, results.length <= 1 || i > 0 ? unit : undefined, config.precision <= 0 ? 'floor' : 'round', RoundTo())).join(' - ');
 }
 function CalcFrequency() {
   const results = [],
