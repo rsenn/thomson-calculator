@@ -63,12 +63,7 @@ tlite.show = function(el, opts, isAuto) {
       var tooltipHeight = tooltipEl.offsetHeight;
       var tooltipWidth = tooltipEl.offsetWidth;
       var centerEl = left + width / 2;
-      tooltipEl.style.top =
-        (vertGrav === 's'
-          ? top - tooltipHeight - arrowSize
-          : vertGrav === 'n'
-            ? top + height + arrowSize
-            : top + height / 2 - tooltipHeight / 2) + 'px';
+      tooltipEl.style.top = (vertGrav === 's' ? top - tooltipHeight - arrowSize : vertGrav === 'n' ? top + height + arrowSize : top + height / 2 - tooltipHeight / 2) + 'px';
       tooltipEl.style.left =
         (horzGrav === 'w'
           ? left

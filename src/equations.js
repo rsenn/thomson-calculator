@@ -1,7 +1,11 @@
 const $2PI = Math.PI * 2;
 const $PI2 = Math.PI ** 2;
 
-/* Basic building blocks */
+/**
+ * This class models an RLC component with a designator
+ *
+ * @class      ComponentNode (name)
+ */
 export class ComponentNode {
   constructor(name) {
     this.name = name;
@@ -24,14 +28,16 @@ export class ComponentNode {
   }
 }
 
-Object.defineProperties(ComponentNode.prototype, {
-  name: {
-    value: undefined,
-    writable: true,
-  },
-  [Symbol.toStringTag]: { value: 'ComponentNode' },
-});
+ComponentNode.prototype[Symbol.toStringTag] = 'ComponentNode';
 
+/**
+ * This class models several components of the same type in a series circuit
+ *
+ * @class      SeriesGroup
+ *
+ * @param {Array}  nodes   The nodes/groups
+ * @param {String} unit    The unit (L, C, R)
+ */
 export class SeriesGroup {
   constructor(nodes, unit) {
     this.nodes = nodes;
@@ -54,8 +60,7 @@ export class SeriesGroup {
 
     /* 1 / (1/a + 1/b) -> simplified for 2 nodes: (a * b) / (a + b) */
     if(this.unit == 'C') {
-      if(exprs.length == 2)
-        return `((${exprs[0]} * ${exprs[1]}) / (${exprs[0]} + ${exprs[1]}))`;
+      if(exprs.length == 2) return `((${exprs[0]} * ${exprs[1]}) / (${exprs[0]} + ${exprs[1]}))`;
 
       return `(1 / (${exprs.map(e => `(1 / ${e})`).join(' + ')}))`;
     }
@@ -83,6 +88,14 @@ export class SeriesGroup {
 
 SeriesGroup.prototype[Symbol.toStringTag] = 'SeriesGroup';
 
+/**
+ * This class models several components of the same type in a parallel circuit
+ *
+ * @class      SeriesGroup
+ *
+ * @param {Array}  nodes   The nodes/groups
+ * @param {String} unit    The unit (L, C, R)
+ */
 export class ParallelGroup {
   constructor(nodes, unit) {
     this.nodes = nodes;
@@ -107,8 +120,7 @@ export class ParallelGroup {
     if(this.unit == 'C') return `(${exprs.join(' + ')})`;
 
     /* Inductors in parallel: 1 / (1/L1 + 1/L2 + ...) */
-    if(exprs.length == 2)
-      return `((${exprs[0]} * ${exprs[1]}) / (${exprs[0]} + ${exprs[1]}))`;
+    if(exprs.length == 2) return `((${exprs[0]} * ${exprs[1]}) / (${exprs[0]} + ${exprs[1]}))`;
 
     return `(1 / (${exprs.map(e => `(1 / ${e})`).join(' + ')}))`;
   }
@@ -136,6 +148,14 @@ export class ParallelGroup {
 
 ParallelGroup.prototype[Symbol.toStringTag] = 'ParallelGroup';
 
+/**
+ * This class models the Thomson formula
+ *
+ * @class      ThomsonEquation
+ *
+ * @param {Object} L_network    The inductance network
+ * @param {Object} C_network    The capacitance network
+ */
 export class ThomsonEquation {
   constructor(L_network, C_network) {
     this.L = L_network; /* ComponentNode or Group */
@@ -154,10 +174,8 @@ export class ThomsonEquation {
     const svgL = this.L.toSVG();
     const svgC = this.C.toSVG();
 
-    const isLGroup =
-      this.L instanceof SeriesGroup || this.L instanceof ParallelGroup;
-    const isCGroup =
-      this.C instanceof SeriesGroup || this.C instanceof ParallelGroup;
+    const isLGroup = this.L instanceof SeriesGroup || this.L instanceof ParallelGroup;
+    const isCGroup = this.C instanceof SeriesGroup || this.C instanceof ParallelGroup;
 
     const wrappedL = isLGroup ? svgL : `<text font-size="22">${svgL}</text>`;
     const wrappedC = isCGroup ? svgC : `<text font-size="22">${svgC}</text>`;
@@ -198,10 +216,8 @@ export class ThomsonEquation {
   calculateTargetEquivalent(target, { f }) {
     const reqProduct = 1 / (4 * $PI2 * f ** 2); /* Leq * Ceq */
 
-    if(target == 'L')
-      return reqProduct / this.C.evaluate(values); /* Returns required Leq */
-    if(target == 'C')
-      return reqProduct / this.L.evaluate(values); /* Returns required Ceq */
+    if(target == 'L') return reqProduct / this.C.evaluate(values); /* Returns required Leq */
+    if(target == 'C') return reqProduct / this.L.evaluate(values); /* Returns required Ceq */
   }
 
   /* 1. Universal evaluator for the whole tank */
@@ -212,25 +228,20 @@ export class ThomsonEquation {
     return { Leq, Ceq, freq: 1 / ($2PI * Math.sqrt(Leq * Ceq)) };
   }
 
+  toJS(p = '') {
+    const lExpr = this.L.toJS(p);
+    const cExpr = this.C.toJS(p);
+
+    return `1 / (2 * Math.PI * Math.sqrt(${lExpr} * ${cExpr}))`;
+  }
+
   /**
    * Synthesizes and compiles a specialized JS calculation function
    * for any target variable (e.g., 'f', 'L1', 'C1', 'C2')
    */
-  compileSolver(targetName) {
+  compileSolver(target) {
     /* f = 1 / (2 * pi * sqrt(Leq * Ceq)) */
-    if(targetName == 'f') {
-      const lExpr = this.L.toJS('values');
-      const cExpr = this.C.toJS('values');
-
-      return new Function(
-        'values',
-        [
-          `const Leq = ${lExpr};`,
-          `const Ceq = ${cExpr};`,
-          `return 1 / (2 * Math.PI * Math.sqrt(Leq * Ceq));`,
-        ].join('\n'),
-      );
-    }
+    if(target == 'f') return new Function('values', `return ${this.toJS('values')};`);
 
     /* For component targets (e.g., solving C1 given frequency f and other
        values) Uses a robust bisection numerical solver over evaluate() */
@@ -239,8 +250,8 @@ export class ThomsonEquation {
 
       for(let i = 0; i < 50; i++) {
         const guess = (min + max) / 2;
-        values[targetName] = guess;
-        const { freq } = this.evaluate(values);
+
+        const { freq } = this.evaluate({ ...values, [target]: guess });
 
         /* Depending on whether freq increases/decreases with value */
         if(freq > f) min = guess;

@@ -148,7 +148,7 @@ export function Unit(str) {
 }
 
 export function RoundTo(prec) {
-  return n => n.toFixed(prec).replace(/\.(.*[^0])0*$/g, '.$1');
+  return IsNumber(prec) ? n => n.toFixed(prec).replace(/\.(.*[^0])0*$/g, '.$1') : n => n;
 }
 
 export function IsNumber(arg) {

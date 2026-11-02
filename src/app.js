@@ -1,5 +1,5 @@
-import { ComponentNode, ParallelGroup, SeriesGroup, ThomsonEquation, } from './equations.js';
-import { Exp2Unit, Exponent, FormatNumber, IsNumber, IsString, NumericValue, RoundTo, Thousand, Unit, } from './numbers.js';
+import { ComponentNode, ParallelGroup, SeriesGroup, ThomsonEquation } from './equations.js';
+import { Exp2Unit, Exponent, FormatNumber, IsNumber, IsString, NumericValue, RoundTo, Thousand, Unit } from './numbers.js';
 
 // import './stylesheets/main.css';
 
@@ -59,10 +59,7 @@ export function ParseValue(value, name) {
     const result = NumericValue(Unit(value, name));
     const valid = (validValues[idx] = !isNaN(result));
 
-    if(!valid || idx === undefined)
-      throw new Error(
-        `ParseValue idx=${idx} name=${name} value=${value} result=${result}`,
-      );
+    if(!valid || idx === undefined) throw new Error(`ParseValue idx=${idx} name=${name} value=${value} result=${result}`);
 
     values[idx] = valid ? result : undefined;
 
@@ -70,15 +67,7 @@ export function ParseValue(value, name) {
   }
 }
 
-const rosaKm = e =>
-  Math.log(2 * Math.PI) -
-  1.5 -
-  Math.log(e) / (6 * e) -
-  0.33084236 / e -
-  1 / (120 * e ** 3) +
-  1 / (504 * e ** 5) -
-  0.0011923 / e ** 7 +
-  5068e-7 / e ** 9;
+const rosaKm = e => Math.log(2 * Math.PI) - 1.5 - Math.log(e) / (6 * e) - 0.33084236 / e - 1 / (120 * e ** 3) + 1 / (504 * e ** 5) - 0.0011923 / e ** 7 + 5068e-7 / e ** 9;
 const rosaKs = e => 1.25 - Math.log(2 * e);
 
 function SeriesCaps(values) {
@@ -107,14 +96,7 @@ function CoilTurns(L, form, inner, outer) {
 
     const k = (n * outer) / Dk;
 
-    i =
-      n *
-      (Math.log(1 + Math.PI / (2 * k)) +
-        1 /
-          (2.3004 +
-            3.437 * k +
-            1.763 * k * k -
-            0.47 / (0.755 + 1 / k) ** 1.44));
+    i = n * (Math.log(1 + Math.PI / (2 * k)) + 1 / (2.3004 + 3.437 * k + 1.763 * k * k - 0.47 / (0.755 + 1 / k) ** 1.44));
     i -= Ks + rosaKm(n);
     i *= n;
   }
@@ -136,20 +118,7 @@ function CoilInductance(n, form, len) {
     Dk = form + len / n,
     k = len / Dk;
 
-  return (
-    n *
-    2e-4 *
-    Math.PI *
-    Dk *
-    (n *
-      (Math.log(1 + Math.PI / (2 * k)) +
-        1 /
-          (2.3004 +
-            3.437 * k +
-            1.763 * k * k -
-            0.47 / (0.755 + 1 / k) ** 1.44)) -
-      (Ks + rosaKm(n)))
-  );
+  return n * 2e-4 * Math.PI * Dk * (n * (Math.log(1 + Math.PI / (2 * k)) + 1 / (2.3004 + 3.437 * k + 1.763 * k * k - 0.47 / (0.755 + 1 / k) ** 1.44)) - (Ks + rosaKm(n)));
 }
 
 export function OnInput({ target }) {
@@ -177,9 +146,7 @@ export function GetProps(cssStyle) {
 }
 
 export function GetAttributes(e) {
-  return Object.fromEntries(
-    e.getAttributeNames().map(name => [name, e.getAttribute(name)]),
-  );
+  return Object.fromEntries(e.getAttributeNames().map(name => [name, e.getAttribute(name)]));
 }
 
 export function IsRange(fieldId) {
@@ -201,8 +168,7 @@ export function FieldIndex(arg) {
 }
 
 export function SaveConfig() {
-  for(let i = 0; i < NUM_FIELDS; i++)
-    if(validValues[i]) config['LCf'[i]] = GetField(i);
+  for(let i = 0; i < NUM_FIELDS; i++) if(validValues[i]) config['LCf'[i]] = GetField(i);
 
   config.selected = GetSelected();
 
@@ -220,22 +186,16 @@ export function LoadConfig() {
 }
 
 function FieldElements(n) {
-  return [...PartitionArray([...Q('#fields').children], NUM_FIELDS)][
-    FieldIndex(n)
-  ];
+  return [...PartitionArray([...Q('#fields').children], NUM_FIELDS)][FieldIndex(n)];
 }
 
 export function GetField(n) {
-  const e = (FieldElements(n) ?? []).find(
-    e => e.tagName.toLowerCase() == 'input',
-  );
+  const e = (FieldElements(n) ?? []).find(e => e.tagName.toLowerCase() == 'input');
   return e?.value;
 }
 
 export function SetField(n, v) {
-  const e = (FieldElements(n) ?? []).find(
-    e => e.tagName.toLowerCase() == 'input',
-  );
+  const e = (FieldElements(n) ?? []).find(e => e.tagName.toLowerCase() == 'input');
   e.value = v;
 }
 
@@ -243,9 +203,7 @@ export function SelectField(i) {
   if(!(i >= 0 && i <= 2)) throw new Error(`SelectField i=${i}`);
 
   for(let j = 0; j < NUM_FIELDS; j++) {
-    FieldElements(j).forEach((e, x) =>
-      e.classList[i == j ? 'add' : 'remove']('selected'),
-    );
+    FieldElements(j).forEach((e, x) => e.classList[i == j ? 'add' : 'remove']('selected'));
 
     FieldElements(j)[2].disabled = i == j;
   }
@@ -254,8 +212,7 @@ export function SelectField(i) {
 }
 
 export function GuessField() {
-  if(validValues.filter(v => v === true).length == 2)
-    return validValues.indexOf(false);
+  if(validValues.filter(v => v === true).length == 2) return validValues.indexOf(false);
 
   return 0;
 }
@@ -274,11 +231,7 @@ export function GetRange(name) {
   try {
     throw new Error();
     for(let i = 0; i < 2; i++) {
-      if(
-        IsNumber(allValues[idx + i * NUM_FIELDS]) &&
-        Number.isFinite(allValues[idx + i * NUM_FIELDS]) &&
-        !isNaN(allValues[idx + i * NUM_FIELDS])
-      ) {
+      if(IsNumber(allValues[idx + i * NUM_FIELDS]) && Number.isFinite(allValues[idx + i * NUM_FIELDS]) && !isNaN(allValues[idx + i * NUM_FIELDS])) {
         a[i] = allValues[idx + i * NUM_FIELDS];
         continue;
       }
@@ -304,8 +257,7 @@ export function SetRange(name, value) {
   }
 
   if(IsNumber(value)) {
-    if(!Number.isFinite(value))
-      throw new Error(`SetRange name=${name} value=${value}`);
+    if(!Number.isFinite(value)) throw new Error(`SetRange name=${name} value=${value}`);
 
     if(isNaN(value)) throw new Error(`SetRange name=${name} value=${value}`);
   }
@@ -342,17 +294,8 @@ export function CalcThompson() {
 export function FormatRange(arg, unit) {
   const results = [...arg].sort((a, b) => a - b);
 
-  return (
-    results.length > 1 ? [Math.min(...results), Math.max(...results)] : results
-  )
-    .map((n, i) =>
-      FormatNumber(
-        n,
-        results.length <= 1 || i > 0 ? unit : undefined,
-        config.precision <= 0 ? 'floor' : 'round',
-        RoundTo(config.precision),
-      ),
-    )
+  return (results.length > 1 ? [Math.min(...results), Math.max(...results)] : results)
+    .map((n, i) => FormatNumber(n, results.length <= 1 || i > 0 ? unit : undefined, config.precision <= 0 ? 'floor' : 'round', RoundTo(config.precision)))
     .join(' - ');
 }
 
@@ -361,9 +304,7 @@ export function CalcFrequency() {
     L = GetRange('L'),
     C = GetRange('C');
 
-  for(let i = 0; i < L.length; i++)
-    for(let j = 0; j < C.length; j++)
-      results.push(Thompson.calculate(L[i], C[j]));
+  for(let i = 0; i < L.length; i++) for (let j = 0; j < C.length; j++) results.push(Thompson.calculate(L[i], C[j]));
 
   const str = FormatRange(results, 'Hz');
 
@@ -377,9 +318,7 @@ export function CalcInductance() {
     f = GetRange('f'),
     C = GetRange('C');
 
-  for(let i = 0; i < f.length; i++)
-    for(let j = 0; j < C.length; j++)
-      results.push(Thompson.inverse(f[i], C[j]));
+  for(let i = 0; i < f.length; i++) for (let j = 0; j < C.length; j++) results.push(Thompson.inverse(f[i], C[j]));
 
   const str = FormatRange(results, 'H');
 
@@ -393,9 +332,7 @@ export function CalcCapacitance() {
     f = GetRange('f'),
     L = GetRange('L');
 
-  for(let i = 0; i < f.length; i++)
-    for(let j = 0; j < L.length; j++)
-      results.push(Thompson.inverse(f[i], L[j]));
+  for(let i = 0; i < f.length; i++) for (let j = 0; j < L.length; j++) results.push(Thompson.inverse(f[i], L[j]));
 
   console.log('CalcCapacitance', { f, L, results });
 
@@ -407,9 +344,7 @@ export function CalcCapacitance() {
 }
 
 export function ClearValues(idx) {
-  for(let i = 0; i < NUM_FIELDS; i++)
-    if(idx === undefined || (IsNumber(idx) && i == idx))
-      SetRange(i, undefined);
+  for(let i = 0; i < NUM_FIELDS; i++) if(idx === undefined || (IsNumber(idx) && i == idx)) SetRange(i, undefined);
 }
 
 export function ReadFields(name) {
@@ -421,12 +356,7 @@ export function ReadFields(name) {
     .slice(0, 2)
     .forEach(({ name, value }, i) => {
       if(!IsNumber(idx) || i == idx)
-        if(
-          (IsString(value) && value != '') ||
-          (IsNumber(value) && Number.isFinite(value))
-        )
-          if(!ParseValue(value, name))
-            throw new Error(`ReadFields(): error parsing field '${name}'`);
+        if((IsString(value) && value != '') || (IsNumber(value) && Number.isFinite(value))) if (!ParseValue(value, name)) throw new Error(`ReadFields(): error parsing field '${name}'`);
     });
 }
 
@@ -459,28 +389,17 @@ export function SetupFields() {
     return;
   }
 
-  [...PartitionArray([...Q('#fields').children], NUM_FIELDS)].forEach(
-    (a, i) => {
-      a.slice(0, 2).forEach(e =>
-        e.addEventListener('click', e => SelectField(i)),
-      );
-      a.forEach(e =>
-        e.addEventListener(
-          'dblclick',
-          async e => (await CopyToClipboard(GetField(i)), e.preventDefault()),
-          true,
-        ),
-      );
-    },
-  );
+  [...PartitionArray([...Q('#fields').children], NUM_FIELDS)].forEach((a, i) => {
+    a.slice(0, 2).forEach(e => e.addEventListener('click', e => SelectField(i)));
+    a.forEach(e => e.addEventListener('dblclick', async e => (await CopyToClipboard(GetField(i)), e.preventDefault()), true));
+  });
 
   document.body.addEventListener(
     'dblclick',
     async e => {
       const { target } = e;
 
-      if(target.tagName.toLowerCase() == 'input')
-        await CopyToClipboard(target.value);
+      if(target.tagName.toLowerCase() == 'input') await CopyToClipboard(target.value);
 
       e.preventDefault();
     },
@@ -567,8 +486,7 @@ export function Init() {
   [L, C, f].forEach((v, i) => SetField(i, IsString(v) && v != '' ? v : ''));
 
   if('selected' in config) {
-    if(config.selected >= 0 && config.selected <= 2)
-      SelectField(config.selected);
+    if(config.selected >= 0 && config.selected <= 2) SelectField(config.selected);
     else delete config.selected;
   }
 
