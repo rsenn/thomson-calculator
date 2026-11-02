@@ -12,7 +12,7 @@ export class ComponentNode {
   }
 
   get unit() {
-    if(/[RCLX]/y.test(this.name[0])) return this.name[0];
+    if (/[RCLX]/y.test(this.name[0])) return this.name[0];
   }
 
   evaluate(values) {
@@ -26,6 +26,45 @@ export class ComponentNode {
   toSVG() {
     return `<tspan font-style="italic">${this.name}</tspan>`;
   }
+
+  /**
+   * Renders a vertical schematic SVG element spanning exactly 100px in height (y=0 to y=100)
+   */
+  drawCircuit() {
+    const type = this.unit;
+    let symbolMarkup = '';
+
+    if (type === 'C') {
+      // Capacitor: top lead to plate 1, plate 2 to bottom lead
+      symbolMarkup = `
+        <line x1="0" y1="0" x2="0" y2="40" stroke="black" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+        <line x1="-14" y1="40" x2="14" y2="40" stroke="black" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
+        <line x1="-14" y1="50" x2="14" y2="50" stroke="black" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
+        <line x1="0" y1="50" x2="0" y2="100" stroke="black" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+      `;
+    } else if (type === 'L') {
+      // Inductor: top lead, 4 loops, bottom lead
+      symbolMarkup = `
+        <line x1="0" y1="0" x2="0" y2="16" stroke="black" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+        <path d="M 0 16 C -12 16, -12 24, 0 24 C -12 24, -12 32, 0 32 C -12 32, -12 40, 0 40 C -12 40, -12 48, 0 48 L 0 84" fill="none" stroke="black" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+        <line x1="0" y1="84" x2="0" y2="100" stroke="black" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+      `;
+    } else {
+      // Resistor: top lead, zigzag, bottom lead
+      symbolMarkup = `
+        <line x1="0" y1="0" x2="0" y2="20" stroke="black" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+        <path d="M 0 20 L -6 26 L 6 32 L -6 38 L 6 44 L -6 50 L 6 56 L 0 62" fill="none" stroke="black" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+        <line x1="0" y1="62" x2="0" y2="100" stroke="black" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+      `;
+    }
+
+    return `
+      <g class="component-node" data-name="${this.name}">
+        ${symbolMarkup}
+        <text x="20" y="54" font-size="14" font-family="sans-serif" font-style="italic" fill="black">${this.name}</text>
+      </g>
+    `;
+  }
 }
 
 ComponentNode.prototype[Symbol.toStringTag] = 'ComponentNode';
@@ -34,20 +73,17 @@ ComponentNode.prototype[Symbol.toStringTag] = 'ComponentNode';
  * This class models several components of the same type in a series circuit
  *
  * @class      SeriesGroup
- *
- * @param {Array}  nodes   The nodes/groups
- * @param {String} unit    The unit (L, C, R)
  */
 export class SeriesGroup {
   constructor(nodes, unit) {
-    this.nodes = nodes;
+    this.nodes = nodes ?? [];
     this.unit = unit ?? nodes?.find(n => n.unit)?.unit; /* 'C' or 'L' */
   }
 
   evaluate(values) {
     const vals = this.nodes.map(n => n.evaluate(values));
 
-    if(this.unit == 'C') {
+    if (this.unit == 'C') {
       const invSum = vals.reduce((sum, v) => sum + (v ? 1 / v : 0), 0);
       return invSum ? 1 / invSum : 0;
     }
@@ -58,9 +94,8 @@ export class SeriesGroup {
   toJS(p) {
     const exprs = this.nodes.map(n => n.toJS(p));
 
-    /* 1 / (1/a + 1/b) -> simplified for 2 nodes: (a * b) / (a + b) */
-    if(this.unit == 'C') {
-      if(exprs.length == 2) return `((${exprs[0]} * ${exprs[1]}) / (${exprs[0]} + ${exprs[1]}))`;
+    if (this.unit == 'C') {
+      if (exprs.length == 2) return `((${exprs[0]} * ${exprs[1]}) / (${exprs[0]} + ${exprs[1]}))`;
 
       return `(1 / (${exprs.map(e => `(1 / ${e})`).join(' + ')}))`;
     }
@@ -69,20 +104,31 @@ export class SeriesGroup {
   }
 
   toSVG() {
-    /* Formats symbolically: (C1 · C2) / (C1 + C2) for 2 caps */
-    if(this.unit == 'C' && this.nodes.length == 2) {
+    if (this.unit == 'C' && this.nodes.length == 2) {
       const [n1, n2] = this.nodes.map(n => n.toSVG());
 
       return (
         `<g class="fraction">` +
         `<text x="0" y="-6" font-size="18">${n1} &#183; ${n2}</text>` +
-        `<line x1="-2" y1="0" x2="55" y2="0" stroke="black" stroke-width="1.5" />` +
+        `<line x1="-2" y1="0" x2="55" y2="0" stroke="black" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" />` +
         `<text x="0" y="20" font-size="18">${n1} + ${n2}</text>` +
         `</g>`
       );
     }
 
     return `<text font-size="18">(${this.nodes.map(n => n.toSVG()).join(' + ')})</text>`;
+  }
+
+  /**
+   * Renders child elements stacked vertically in series (each taking 50px of the 100px block)
+   */
+  drawCircuit() {
+    const spacing = 50;
+    const elements = this.nodes
+      .map((node, i) => `<g transform="translate(0, ${i * spacing}) scale(1, 0.5)">${node.drawCircuit()}</g>`)
+      .join('');
+
+    return `<g class="series-group">${elements}</g>`;
   }
 }
 
@@ -91,24 +137,19 @@ SeriesGroup.prototype[Symbol.toStringTag] = 'SeriesGroup';
 /**
  * This class models several components of the same type in a parallel circuit
  *
- * @class      SeriesGroup
- *
- * @param {Array}  nodes   The nodes/groups
- * @param {String} unit    The unit (L, C, R)
+ * @class      ParallelGroup
  */
 export class ParallelGroup {
   constructor(nodes, unit) {
-    this.nodes = nodes;
+    this.nodes = nodes ?? [];
     this.unit = unit ?? nodes?.find(n => n.unit)?.unit; /* 'C' or 'L' */
   }
 
   evaluate(values) {
     const vals = this.nodes.map(n => n.evaluate(values));
 
-    /* Capacitors in parallel: C1 + C2 + ... */
-    if(this.unit == 'C') return vals.reduce((sum, v) => sum + v, 0);
+    if (this.unit == 'C') return vals.reduce((sum, v) => sum + v, 0);
 
-    /* Inductors in parallel: 1 / (1/L1 + 1/L2 + ...) */
     const invSum = vals.reduce((sum, v) => sum + (v ? 1 / v : 0), 0);
     return invSum ? 1 / invSum : 0;
   }
@@ -116,33 +157,59 @@ export class ParallelGroup {
   toJS(p) {
     const exprs = this.nodes.map(n => n.toJS(p));
 
-    /* Capacitors in parallel: C1 + C2 + ... */
-    if(this.unit == 'C') return `(${exprs.join(' + ')})`;
+    if (this.unit == 'C') return `(${exprs.join(' + ')})`;
 
-    /* Inductors in parallel: 1 / (1/L1 + 1/L2 + ...) */
-    if(exprs.length == 2) return `((${exprs[0]} * ${exprs[1]}) / (${exprs[0]} + ${exprs[1]}))`;
+    if (exprs.length == 2) return `((${exprs[0]} * ${exprs[1]}) / (${exprs[0]} + ${exprs[1]}))`;
 
     return `(1 / (${exprs.map(e => `(1 / ${e})`).join(' + ')}))`;
   }
 
   toSVG() {
-    if(this.unit == 'C') {
+    if (this.unit == 'C') {
       const inner = this.nodes.map(n => n.toSVG()).join(' + ');
       return `<text font-size="18">(${inner})</text>`;
     }
 
-    /* Parallel inductors */
-    if(this.nodes.length == 2) {
+    if (this.nodes.length == 2) {
       const [n1, n2] = this.nodes.map(n => n.toSVG());
-      return;
-      `<g class="fraction">` +
+      return (
+        `<g class="fraction">` +
         `<text x="0" y="-6" font-size="18">${n1} &#183; ${n2}</text>` +
-        `<line x1="-2" y1="0" x2="55" y2="0" stroke="black" stroke-width="1.5" />` +
+        `<line x1="-2" y1="0" x2="55" y2="0" stroke="black" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" />` +
         `<text x="0" y="20" font-size="18">${n1} + ${n2}</text>` +
-        `</g>`;
+        `</g>`
+      );
     }
 
     return `<text font-size="18">(${this.nodes.map(n => n.toSVG()).join(' + ')})</text>`;
+  }
+
+  /**
+   * Renders child elements side-by-side in parallel branches spanning y=0 to y=100
+   */
+  drawCircuit() {
+    const branchWidth = 55;
+    const count = this.nodes.length;
+    const totalWidth = (count - 1) * branchWidth;
+    const startX = -totalWidth / 2;
+
+    const branches = this.nodes.map((node, i) => {
+      const x = startX + i * branchWidth;
+      return `<g transform="translate(${x}, 0)">${node.drawCircuit()}</g>`;
+    }).join('');
+
+    return `
+      <g class="parallel-group">
+        <!-- Top horizontal rail -->
+        <line x1="${startX}" y1="0" x2="${startX + totalWidth}" y2="0" stroke="black" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+        
+        <!-- Parallel branches -->
+        ${branches}
+
+        <!-- Bottom horizontal rail -->
+        <line x1="${startX}" y1="100" x2="${startX + totalWidth}" y2="100" stroke="black" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+      </g>
+    `;
   }
 }
 
@@ -152,9 +219,6 @@ ParallelGroup.prototype[Symbol.toStringTag] = 'ParallelGroup';
  * This class models the Thomson formula
  *
  * @class      ThomsonEquation
- *
- * @param {Object} L_network    The inductance network
- * @param {Object} C_network    The capacitance network
  */
 export class ThomsonEquation {
   constructor(L_network, C_network) {
@@ -189,14 +253,14 @@ export class ThomsonEquation {
   <text x="230" y="30" font-size="28">1</text>
 
   <!-- Fraction Bar -->
-  <line x1="90" y1="42" x2="370" y2="42" stroke="black" stroke-width="2.5" />
+  <line x1="90" y1="42" x2="370" y2="42" stroke="black" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
 
   <!-- Denominator: 2 * pi * sqrt( Leq * Ceq ) -->
   <g transform="translate(90, 85)" font-size="28">
     <text x="0" y="5">2&#960;</text>
 
     <!-- Radical Sign -->
-    <path d="M 45 0 L 50 0 L 56 15 L 66 -35 L 270 -35" fill="none" stroke="black" stroke-width="2" />
+    <path d="M 45 0 L 50 0 L 56 15 L 66 -35 L 270 -35" fill="none" stroke="black" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
 
     <!-- Radicand (L * C networks) -->
     <g transform="translate(75, -10)">
@@ -212,16 +276,46 @@ export class ThomsonEquation {
 </svg>`;
   }
 
-  /* 3. Synthesize component target solving: solve for Leq or Ceq */
-  calculateTargetEquivalent(target, { f }) {
-    const reqProduct = 1 / (4 * $PI2 * f ** 2); /* Leq * Ceq */
+  /**
+   * Renders a complete LC tank schematic diagram with smooth linejoins
+   */
+  drawCircuit() {
+    const drawL = this.L.drawCircuit();
+    const drawC = this.C.drawCircuit();
 
-    if(target == 'L') return reqProduct / this.C.evaluate(values); /* Returns required Leq */
-    if(target == 'C') return reqProduct / this.L.evaluate(values); /* Returns required Ceq */
+    return `
+<svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+  <!-- Tank Top Rail -->
+  <path d="M 60 40 L 260 40" stroke="black" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round" />
+  
+  <!-- Left Branch (Inductance Network) -->
+  <g transform="translate(60, 40)">
+    ${drawL}
+  </g>
+  
+  <!-- Right Branch (Capacitance Network) -->
+  <g transform="translate(260, 40)">
+    ${drawC}
+  </g>
+  
+  <!-- Tank Bottom Rail -->
+  <path d="M 60 140 L 260 140" stroke="black" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round" />
+</svg>`;
+  }
+
+  /* 3. Synthesize component target solving */
+  calculateTargetEquivalent(target, values) {
+    const { f } = values;
+    const reqProduct = 1 / (4 * $PI2 * f ** 2);
+
+    if (target == 'L') return reqProduct / this.C.evaluate(values);
+    if (target == 'C') return reqProduct / this.L.evaluate(values);
   }
 
   /* 1. Universal evaluator for the whole tank */
   evaluate(values) {
+    const Leq = this.L.evaluate(values);
+    const Ceq = this.C.evaluate(values);
     return { Leq, Ceq, freq: this.calculateFrequency(values) };
   }
 
@@ -232,35 +326,25 @@ export class ThomsonEquation {
     return `1 / (2 * Math.PI * Math.sqrt(${lExpr} * ${cExpr}))`;
   }
 
-  /**
-   * Synthesizes and compiles a specialized JS calculation function
-   * for any target variable (e.g., 'f', 'L1', 'C1', 'C2')
-   */
   compileSolver(target) {
-    /* f = 1 / (2 * pi * sqrt(Leq * Ceq)) */
-    if(target === 'f') return new Function('values', `return ${this.toJS('values')};`);
+    if (target === 'f') return new Function('values', `return ${this.toJS('values')};`);
 
-    /* For component targets (e.g., solving C1 given frequency f and other values)
-       Uses a robust logarithmic bisection numerical solver over evaluate() */
     return (values, min = 1e-12, max = 1.0, tolerance = 1e-2) => {
       const targetFreq = values.f;
       let lowLog = Math.log10(min);
       let highLog = Math.log10(max);
       let guess = min;
 
-      for(let i = 0; i < 50; i++) {
+      for (let i = 0; i < 50; i++) {
         const midLog = (lowLog + highLog) / 2;
         guess = Math.pow(10, midLog);
 
         const { freq } = this.evaluate({ ...values, [target]: guess });
         const diff = freq - targetFreq;
 
-        /* Early exit if within tolerance */
-        if(Math.abs(diff) < tolerance) break;
+        if (Math.abs(diff) < tolerance) break;
 
-        /* Frequency is inversely proportional to component value:
-           If calculated freq is too high, we need a larger component value. */
-        if(freq > targetFreq) lowLog = midLog;
+        if (freq > targetFreq) lowLog = midLog;
         else highLog = midLog;
       }
 
