@@ -3,17 +3,17 @@
 // It doesn't have any windows which you can see on screen, but we can open
 // window from here.
 
-import path from 'path';
-import url from 'url';
-import { app, Menu, ipcMain, shell } from 'electron';
-import appMenuTemplate from './menu/app_menu_template';
-import editMenuTemplate from './menu/edit_menu_template';
-import devMenuTemplate from './menu/dev_menu_template';
-import createWindow from './helpers/window';
-
+import { app, ipcMain, Menu, shell } from 'electron';
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
 import env from 'env';
+import path from 'path';
+import url from 'url';
+
+import createWindow from './helpers/window';
+import appMenuTemplate from './menu/app_menu_template';
+import devMenuTemplate from './menu/dev_menu_template';
+import editMenuTemplate from './menu/edit_menu_template';
 
 // Save userData in separate folders for each environment.
 // Thanks to this you can use production and development versions of the app
@@ -55,16 +55,16 @@ app.on('ready', () => {
       nodeIntegration: true,
       contextIsolation: false,
       // Spectron needs access to remote module
-      enableRemoteModule: env.name === 'test'
-    }
+      enableRemoteModule: env.name === 'test',
+    },
   });
 
   mainWindow.loadURL(
     url.format({
       pathname: path.join(__dirname, 'app.html'),
       protocol: 'file:',
-      slashes: true
-    })
+      slashes: true,
+    }),
   );
 
   if(env.name === 'development') mainWindow.openDevTools();
