@@ -490,7 +490,7 @@ export function Init() {
     else delete config.selected;
   }
 
-  if(GetSelected() === undefined) {
+  if(GetSelected() == -1) {
     let f = GuessField();
     if(!IsNumber(f) || !(f >= 0 && f <= 2)) f = 2;
     SelectField(f);
