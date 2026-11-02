@@ -36,44 +36,25 @@ export function Thousand(exponent, fn = 'floor') {
 
 export function Exp2Unit(exponent, fn = 'floor') {
   /* prettier-ignore */ switch (Thousand(exponent, fn)) {
-  case -24:
-    return 'y';
-  case -21:
-    return 'z';
-  case -18:
-    return 'a';
-  case -15:
-    return 'f';
-  case -12:
-    return 'p';
-  case -9:
-    return 'n';
-  case -6:
-    return 'µ';
-  case -3:
-    return 'm';
-  case -2:
-    return 'c';
-  case -1:
-    return 'd';
-  case 0:
-    return '';
-  case 2:
-    return 'h';
-  case 3:
-    return 'k';
-  case 6:
-    return 'M';
-  case 9:
-    return 'G';
-  case 12:
-    return 'T';
-  case 15:
-    return 'P';
-  case 18:
-    return 'E';
-  case 21:
-    return 'Z';
+    case -24: return 'y';
+    case -21: return 'z';
+    case -18: return 'a';
+    case -15: return 'f';
+    case -12: return 'p';
+    case -9: return 'n';
+    case -6: return 'µ';
+    case -3: return 'm';
+    case -2: return 'c';
+    case -1: return 'd';
+    case 0: return '';
+    case 2: return 'h';
+    case 3: return 'k';
+    case 6: return 'M';
+    case 9: return 'G';
+    case 12: return 'T';
+    case 15: return 'P';
+    case 18: return 'E';
+    case 21: return 'Z';
   }
 }
 

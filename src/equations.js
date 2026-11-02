@@ -222,10 +222,7 @@ export class ThomsonEquation {
 
   /* 1. Universal evaluator for the whole tank */
   evaluate(values) {
-    const Leq = this.L.evaluate(values);
-    const Ceq = this.C.evaluate(values);
-
-    return { Leq, Ceq, freq: 1 / ($2PI * Math.sqrt(Leq * Ceq)) };
+    return { Leq, Ceq, freq: this.calculateFrequency(values) };
   }
 
   toJS(p = '') {
@@ -241,21 +238,30 @@ export class ThomsonEquation {
    */
   compileSolver(target) {
     /* f = 1 / (2 * pi * sqrt(Leq * Ceq)) */
-    if(target == 'f') return new Function('values', `return ${this.toJS('values')};`);
+    if(target === 'f') return new Function('values', `return ${this.toJS('values')};`);
 
-    /* For component targets (e.g., solving C1 given frequency f and other
-       values) Uses a robust bisection numerical solver over evaluate() */
-    return (values, min = 1e-15, max = 1.0) => {
-      const { f } = values;
+    /* For component targets (e.g., solving C1 given frequency f and other values)
+       Uses a robust logarithmic bisection numerical solver over evaluate() */
+    return (values, min = 1e-12, max = 1.0, tolerance = 1e-2) => {
+      const targetFreq = values.f;
+      let lowLog = Math.log10(min);
+      let highLog = Math.log10(max);
+      let guess = min;
 
       for(let i = 0; i < 50; i++) {
-        const guess = (min + max) / 2;
+        const midLog = (lowLog + highLog) / 2;
+        guess = Math.pow(10, midLog);
 
         const { freq } = this.evaluate({ ...values, [target]: guess });
+        const diff = freq - targetFreq;
 
-        /* Depending on whether freq increases/decreases with value */
-        if(freq > f) min = guess;
-        else max = guess;
+        /* Early exit if within tolerance */
+        if(Math.abs(diff) < tolerance) break;
+
+        /* Frequency is inversely proportional to component value:
+           If calculated freq is too high, we need a larger component value. */
+        if(freq > targetFreq) lowLog = midLog;
+        else highLog = midLog;
       }
 
       return guess;
