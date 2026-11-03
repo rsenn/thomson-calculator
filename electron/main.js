@@ -16,7 +16,7 @@ function CreateWindow() {
     width: 800,
     height: 600,
     title: 'Thomson formula calculation',
-    icon: path.join(root, 'src', 'favicon.png'),
+    icon: path.join(root, 'electron', 'icon.png'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

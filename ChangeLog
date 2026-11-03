@@ -1,3 +1,32 @@
+2026-11-04  Roman Senn  <roman.l.senn@gmail.com>
+
+	Icons rebuilt from the new src/svg/favicon.svg, equations typeset
+	with TeX metrics from a generated Computer Modern glyph set, and an
+	Advanced mode that takes the L and C of the tank as networks of
+	parts (selectable in the schematic and in the equation).
+
+	* src/favicon.png, src/favicon.ico:
+	Regenerated from the new src/svg/favicon.svg (16 px PNG; ICO with
+	16, 32, 48, 64, 128 and 256 px layers stored as PNG, 28 KB).
+
+	* electron/main.js (CreateWindow), electron/icon.png [new]:
+	The window icon was src/favicon.png, 16x16, which the window
+	manager scaled up into a blur. It is now electron/icon.png, a
+	256x256 render of src/svg/favicon.svg (electron/ is part of the
+	packaged files).
+
+	* src-tauri/icons/*, resources/icons/512x512.png:
+	Regenerated from src/svg/favicon.svg with `tauri icon` (the
+	Android/iOS sets and 64x64.png are dropped to keep the bundle
+	slim). tauri.conf.json already lists these files, so the Tauri
+	app and its bundles now use the new icon; Electron builds use
+	resources/icons/512x512.png.
+
+	* tools/favicon.sh [new]:
+	Rebuilds both files from src/svg/favicon.svg with rsvg-convert and
+	a small python ICO writer, and also the Tauri, resources and
+	Electron icons, so every icon follows the SVG.
+
 2026-11-03  Roman Senn  <roman.l.senn@gmail.com>
 
 	Calculator reworked and packaged. Every field takes a range, a fixed
