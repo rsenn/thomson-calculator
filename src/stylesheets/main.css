@@ -224,3 +224,13 @@ label.name.frequency.selected {
 .tooltip:hover:before {
   display: block;
 }
+
+#note {
+  margin-top: 1em;
+  max-width: 28em;
+  min-height: 2.5em;
+  text-align: center;
+  font-size: 0.85em;
+  user-select: text;
+  cursor: text;
+}

@@ -1,4 +1,5 @@
 import { ComponentNode, ParallelGroup, SeriesGroup, ThomsonEquation } from './equations.js';
+import { Cover, Thompson } from './thomson.js';
 import { Exp2Unit, Exponent, FormatNumber, IsNumber, IsString, NumericValue, ParseRange, RoundTo, Thousand, Unit } from './numbers.js';
 
 // import './stylesheets/main.css';
@@ -10,14 +11,6 @@ const GA = s => GetAttributes(Q(s));
 const GR = s => Rect(Q(s)?.getBoundingClientRect());
 
 const NUM_FIELDS = 3;
-
-const $2PI = Math.PI * 2;
-const $PI2 = Math.PI ** 2;
-
-const Thompson = {
-  calculate: (L, C) => 1 / (Math.sqrt(L * C) * $2PI),
-  inverse: (f, LC) => 1 / (4 * $PI2 * LC * f ** 2),
-};
 
 const buffer = new ArrayBuffer(8 * NUM_FIELDS * 2);
 const values = new Float64Array(buffer, 0, NUM_FIELDS);
@@ -241,6 +234,8 @@ export function SetRange(name, value) {
 export function CalcThompson() {
   const sel = GetSelected();
 
+  SetNote('');
+
   if(IsNumber(sel) && !isNaN(sel)) {
     const fn = [CalcInductance, CalcCapacitance, CalcFrequency][sel];
 
@@ -287,32 +282,53 @@ export function CalcFrequency() {
   return str;
 }
 
-export function CalcInductance() {
-  const results = [],
-    f = GetRange('f'),
-    C = GetRange('C');
+/*
+ * Solve for the fixed component (field 0 = L, 1 = C, 'H'/'F') from the
+ * frequency and the other component. A single range is the span the output
+ * has to cover; with a band and a tuning range on both inputs the output is
+ * one value that lets the tuning range cover the band.
+ */
+function CalcFixed(field, unit, other) {
+  const f = GetRange('f'),
+    Y = GetRange(other);
 
-  for(let i = 0; i < f.length; i++) for (let j = 0; j < C.length; j++) results.push(Thompson.inverse(f[i], C[j]));
+  if(f.length > 1 && Y.length > 1) {
+    const { min, max, best, feasible, band } = Cover(f, Y);
+    const str = FormatRange([best], unit);
 
-  const str = FormatRange(results, 'H');
+    SetField(field, str);
+    SetNote(
+      feasible
+        ? `${str} tunes ${FormatRange(band, 'Hz')} (any value from ${FormatRange([min, max], unit)} covers the band)`
+        : `${other} range too small for the band: ${str} tunes only ${FormatRange(band, 'Hz')}`,
+    );
 
-  SetField(0, str);
+    return str;
+  }
+
+  const results = [];
+
+  for(let i = 0; i < f.length; i++) for (let j = 0; j < Y.length; j++) results.push(Thompson.inverse(f[i], Y[j]));
+
+  const str = FormatRange(results, unit);
+
+  SetField(field, str);
 
   return str;
 }
 
+export function CalcInductance() {
+  return CalcFixed(0, 'H', 'C');
+}
+
 export function CalcCapacitance() {
-  const results = [],
-    f = GetRange('f'),
-    L = GetRange('L');
+  return CalcFixed(1, 'F', 'L');
+}
 
-  for(let i = 0; i < f.length; i++) for (let j = 0; j < L.length; j++) results.push(Thompson.inverse(f[i], L[j]));
+export function SetNote(str) {
+  const e = Q('#note');
 
-  const str = FormatRange(results, 'F');
-
-  SetField(1, str);
-
-  return str;
+  if(e) e.textContent = str;
 }
 
 export function ClearValues(idx) {
@@ -582,6 +598,7 @@ Object.assign(globalThis, {
   SeriesCaps,
   SetField,
   SetRange,
+  SetNote,
   SetStatus,
   SetupFields,
   WaitFor,
@@ -599,5 +616,6 @@ Object.assign(globalThis, {
   GS,
   GA,
   GR,
-  Thompson
+  Thompson,
+  Cover
 });
