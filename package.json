@@ -2,67 +2,53 @@
   "name": "thomson-calculator",
   "productName": "Thomson formula calculation",
   "description": "Calculates LC tank values",
-  "version": "1.0",
+  "version": "1.0.0",
   "author": "Roman Senn <roman.l.senn@gmail.com>",
   "homepage": "https://gitlab.com/rsenn/thomson-calculator",
-  "main": "app/main.js",
+  "main": "electron/main.js",
   "build": {
     "appId": "com.rlsenn.thomson-calculator",
+    "productName": "Thomson formula calculation",
     "files": [
-      "app/**/*",
-      "node_modules/**/*",
+      "electron/**/*",
+      "src/**/*",
       "package.json"
     ],
     "directories": {
+      "output": "release",
       "buildResources": "resources"
     },
-    "publish": null,
-    "extraFiles": [
-      {
-        "from": "build/mac/bin",
-        "to": "Resources/bin",
-        "filter": [
-          "**/*"
-        ]
-      }
-    ]
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.utilities"
+    }
   },
   "scripts": {
-    "postinstall": "electron-builder install-app-deps",
-    "preunit": "webpack --config=build/webpack.unit.config.js --env=test",
-    "unit": "electron-mocha temp/specs.js --renderer --color --require source-map-support/register",
-    "pree2e": "webpack --config=build/webpack.app.config.js --env=test && webpack --config=build/webpack.e2e.config.js --env=test",
-    "e2e": "mocha temp/e2e.js --require source-map-support/register",
-    "test": "npm run unit && npm run e2e",
-    "start": "electron-forge start",
-    "release": "npm test && webpack --config=build/webpack.app.config.js --env=production && electron-builder",
-    "package": "electron-forge package",
-    "packager": "npx electron-packager . thomson-calculator",
-    "packager-all": "npx electron-packager . thomson-calculator --all",
-    "make": "electron-forge make"
+    "start": "electron .",
+    "web": "bun src/app.html",
+    "test": "bun test test/",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "dependencies": {
-    "electron-root-path": "^1.1.0",
-    "electron-squirrel-startup": "^1.0.0",
-    "fs-jetpack": "^4.1.0"
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-opener": "^2"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "@electron-forge/cli": "^7.2.0",
-    "@electron/packager": "^18.1.3",
-    "babel-loader": "^8.2.2",
-    "chai": "^4.1.0",
-    "css-loader": "^5.2.0",
-    "electron": "^13.0.1",
-    "electron-mocha": "^10.0.0",
-    "mocha": "^8.3.2",
-    "source-map-support": "^0.5.6",
-    "spectron": "^15.0.0",
-    "style-loader": "^2.0.0",
-    "webpack": "^5.30.0",
-    "webpack-cli": "^4.6.0",
-    "webpack-merge": "^5.7.3",
-    "webpack-node-externals": "^3.0.0"
-  }
+    "@tauri-apps/cli": "^2",
+    "@types/bun": "^1.4.4",
+    "electron": "45.2.1",
+    "electron-builder": "^26.18.0"
+  },
+  "type": "module"
 }

@@ -1,33 +1,52 @@
 const unitNames = ['H', 'F', 'Hz'];
 
-export function FormatNumber(arg, unit, fn = 'round', round = RoundTo()) {
+export function FormatNumber(arg, unit, fn = 'floor', round = RoundTo()) {
   let [num, exp = null] = Array.isArray(arg) ? arg : [arg];
 
-  if(!IsNumber(exp)) exp = Exponent(num);
-  exp = Thousand(exp, fn);
-  const expStr = Exp2Unit(exp);
+  if(IsNumber(exp)) num = NumericValue([num, exp]);
   if(IsNumber(unit)) unit = unitNames[unit];
+  if(!IsBigInt(num) && !Number.isFinite(num)) return num + '';
 
-  let s = round(num * Math.pow(10, -exp)) + '';
+  let e = Thousand(Exponent(num), fn);
+  let s = round(Shift(num, -e));
+
+  // rounding may carry into the next prefix (999.96 -> 1000)
+  if(Math.abs(+s) >= 1000 && e < 21) s = round(Shift(num, -(e += 3)));
 
   if(typeof unit != 'undefined') {
+    const expStr = Exp2Unit(e);
+
     if(IsString(expStr)) s += ' ' + expStr;
     s += unit;
   }
 
-  return s;
+  return s + '';
+}
+
+/* multiply by 10^by without binary floating point noise (4.7e-9 * 1e9) */
+function Shift(num, by) {
+  if(IsBigInt(num)) num = Number(num);
+  if(!Number.isFinite(num)) return num;
+
+  const [m, e] = num.toExponential().split('e');
+
+  return +`${m}e${+e + by}`;
 }
 
 export function NumericValue([num, exp]) {
+  exp ??= 0;
+
   if(IsBigInt(num) || IsBigInt(exp)) return 10n ** BigInt(exp) * BigInt(num);
 
-  return Math.pow(10, exp) * num;
+  return Shift(num, exp);
 }
 
 export function Exponent(num) {
   if(IsBigInt(num)) return num.toString().length - 1;
+  if(!Number.isFinite(num)) return 0;
 
-  return Math.floor(Math.log10(num));
+  // exact, unlike Math.floor(Math.log10(num)) which misjudges e.g. 1e-7
+  return +num.toExponential().split('e')[1];
 }
 
 export function Thousand(exponent, fn = 'floor') {
@@ -58,78 +77,55 @@ export function Exp2Unit(exponent, fn = 'floor') {
   }
 }
 
+const prefixes = { y: -24, z: -21, a: -18, f: -15, p: -12, n: -9, '\u00B5': -6, '\u03BC': -6, u: -6, m: -3, c: -2, d: -1, k: 3, M: 6, G: 9, T: 12, P: 15, E: 18, Z: 21 };
+
+const NUMBER = String.raw`[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?`;
+const TOKEN = String.raw`(${NUMBER})\s*([A-Za-z\u00B5\u03BC]*)`;
+const RANGE = new RegExp(String.raw`^\s*${TOKEN}(?:\s*(?:\.\.\.?|\u2026|[-\u2013\u2014~])\s*${TOKEN})?\s*$`);
+
+/* SI prefix of a unit string like 'MHz', 'pF', 'Hz' or 'H' (null if none) */
+function PrefixExp(unit) {
+  // base units themselves: 'Hz' (any case), 'H', 'F', and 'h' for Henry
+  if(/^hz$/i.test(unit) || unit == 'H' || unit == 'F' || unit == 'h') return null;
+
+  return prefixes[unit[0]] ?? null;
+}
+
+/* parses a single value like '4.7 nF' into [4.7, -9], NaN if invalid */
 export function Unit(str) {
-  if(!IsString(str)) str = str + '';
+  const m = RANGE.exec(IsString(str) ? str : str + '');
 
-  str = str.replaceAll(/\s+/g, '');
-  const [num] = str.match(/[+-]?(?:\d+\.\d*|\d*\.\d+|\d+)(?:[eE][+-]?\d+)?/gy) ?? [''];
-  const unit = str.slice(num.length);
-  let exp = null;
+  if(!m || m[3] !== undefined) return [NaN, null];
 
-  /* prettier-ignore */ switch (unit[0]) {
-  case 'y':
-    exp = -24;
-    break;
-  case 'z':
-    exp = -21;
-    break;
-  case 'a':
-    exp = -18;
-    break;
-  case 'f':
-    exp = -15;
-    break;
-  case 'p':
-    exp = -12;
-    break;
-  case 'n':
-    exp = -9;
-    break;
-  case '\u00B5':
-  case '\u03BC':
-  case 'u':
-    exp = -6;
-    break;
-  case 'm':
-    exp = -3;
-    break;
-  case 'c':
-    exp = -2;
-    break;
-  case 'd':
-    exp = -1;
-    break;
-  case 'h':
-    exp = 2;
-    break;
-  case 'k':
-    exp = 3;
-    break;
-  case 'M':
-    exp = 6;
-    break;
-  case 'G':
-    exp = 9;
-    break;
-  case 'T':
-    exp = 12;
-    break;
-  case 'P':
-    exp = 15;
-    break;
-  case 'E':
-    exp = 18;
-    break;
-  case 'Z':
-    exp = 21;
-    break;
-  }
+  return [+m[1], PrefixExp(m[2])];
+}
 
-  return [+num, exp];
+/*
+ * parses 'a', or a range 'a - b' ('87.5 - 108MHz', '1e-6..1e-3', '1u~5u')
+ * into an array of plain numbers: [], [a] or [a, b]. A missing prefix on
+ * the first value is taken from the second one.
+ */
+export function ParseRange(value) {
+  const m = RANGE.exec(IsString(value) ? value : value + '');
+
+  if(!m) return [];
+
+  const a = [+m[1], PrefixExp(m[2])];
+  const b = m[3] === undefined ? null : [+m[3], PrefixExp(m[4])];
+
+  if(b && m[2] === '') a[1] = b[1];
+
+  return [a, b].filter(Boolean).map(NumericValue);
 }
 
 export function RoundTo(prec) {
-  return IsNumber(prec) ? n => n.toFixed(prec).replace(/\.(.*[^0])0*$/g, '.$1') : n => n;
+  if(!IsNumber(prec)) return n => n;
+
+  return n => {
+    const s = n.toFixed(prec);
+
+    return s.includes('.') ? s.replace(/\.?0+$/, '') : s;
+  };
 }
 
 export function IsNumber(arg) {
