@@ -104,3 +104,18 @@ bun --hot ./index.ts
 ```
 
 For more information, read the Bun API docs in `node_modules/bun-types/docs/**.mdx`.
+
+## ChangeLog
+
+Keep a changelog in `./ChangeLog`, in the GNU style of `../qjs-nanovg/ChangeLog`.
+Add the entry in the same change as the code, so it is part of the commit.
+
+- Newest entry first. One header per day: `YYYY-MM-DD  Name  <email>` (two
+  spaces between the parts, the author of the previous entries), a blank line,
+  then everything indented with one tab. Add to today's entry if there is one.
+- A short tab-indented paragraph that says what the change as a whole is.
+- Then one `* file (symbol, symbol):` item per changed file or function, new or
+  removed files marked `[new]` / `[removed]`, followed by what changed and why
+  (the bug and its effect, not just the diff). Several points go in `  - `
+  sub-bullets, continuation lines indented four spaces after the tab.
+- Wrap at about 70 columns of text (78 with the tab). Blank line between items.

@@ -1,0 +1,166 @@
+2026-11-03  Roman Senn  <roman.l.senn@gmail.com>
+
+	Calculator reworked and packaged. Every field takes a range, a fixed
+	L or C is solved against a tuning range, the app builds for Electron
+	and Tauri, and src/equations.js now models, draws and solves composed
+	LC networks. Several bugs fixed, among them frequencies that came out
+	halved. 26 bun tests pass (bun test test/).
+
+	* src/app.js (Thompson.calculate):
+	Remove the stray `* 2`. The formula is f = 1 / (2 pi sqrt(L C));
+	every frequency the calculator printed was half of that.
+	Thompson.inverse, which solves L and C from a frequency, was right.
+
+	* src/numbers.js (Unit, ParseRange, NumericValue, FormatNumber,
+	RoundTo, Exponent):
+	  - Unit and ParseRange share one parser. Empty or invalid input is
+	    NaN or [] instead of 0, which used to count as a valid value.
+	  - Ranges: `a - b`, `a..b`, `a~b` and en/em dash. `1e-6` is no
+	    longer split at its minus sign. A first value without a prefix
+	    takes the second one's (`2-20pF`).
+	  - `100hz` is no longer hecto-hertz; Hz, H, F and a lone h are
+	    base units.
+	  - NumericValue and FormatNumber shift the decimal exponent
+	    exactly, so 4.7e-9 * 1e9 no longer prints 4.700000000000001.
+	    Exponent comes from toExponential, not Math.log10 (which
+	    misjudges 1e-7).
+	  - FormatNumber floors the prefix (100 nH, not 0.1 uH) and carries
+	    into the next prefix when rounding reaches 1000 (999.9996 kHz
+	    -> 1 MHz). A value of 0 prints as 0.
+	  - RoundTo drops trailing zeros (2.000 -> 2, which it left alone
+	    before).
+	  - ParseRange moved here from app.js.
+
+	* src/app.js (Init, OnInput, SetupFields, GuessField, SaveConfig,
+	GetRange, ChangePrecision, CopyToClipboard):
+	  - Init runs on DOMContentLoaded; the document 'load' listener
+	    never fired and a 100 ms timer papered over it.
+	  - Enter no longer reloads the page (the form had no submit
+	    handler). Fields recalculate on input, and selecting another
+	    output field recalculates.
+	  - OnInput takes the event as a parameter instead of the global
+	    `event`.
+	  - SaveConfig stores every field; an emptied field used to keep
+	    its stale saved value and come back on reload. GuessField picks
+	    the single empty field, else frequency.
+	  - GetRange always parses the field (an unconditional throw made
+	    its cache dead code). ReadFields covers all three fields.
+	  - Double-click copies once (two handlers fired), failures are
+	    reported instead of unhandled. Precision is clamped to 0..9 on
+	    the wheel, default 3.
+	  - SeriesCaps called a ParseNumber that does not exist.
+
+	* src/thomson.js [new] (Thompson, Cover), src/app.js (CalcFixed,
+	SetResult, SetNote, FormatRange):
+	With a frequency band and a tuning range on the other component
+	(87.5-108 MHz with a 2-20 pF trimmer) the output used to be the
+	corner combinations, i.e. an adjustable L. Cover(f, Y, tol) now gives
+	the interval of one fixed X that lets Y cover the band, its geometric
+	centre as the best X, whether it is feasible, and the band the best X
+	really tunes. The UI shows that single value and a note below the
+	fields: the valid interval, or a warning that the range is too small.
+	Symmetric for L and C. With one range input the output is still the
+	range it requires.
+
+	* src/app.js (GetRange, SetResult), src/thomson.js (Cover):
+	Switching the output field fed the rounded text of the previous
+	result back in as input, so a band that fitted exactly could be
+	reported as too small (0.0005% short). Computed fields now remember
+	the unrounded numbers behind their text and use them until the text
+	is edited. Cover also takes a relative tolerance and reports `exact`;
+	the UI passes 10^-precision (at most 1%) and says "just covers the
+	band, within rounding" instead of warning. Genuine misses still warn.
+
+	* src/app.html, src/stylesheets/main.css:
+	Add the #note line under the precision slider. Its text is
+	selectable; the rest of the page keeps user-select: none.
+
+	* src/equations.js:
+	Rewritten around one idea: a network is a two-terminal
+	series/parallel tree of inductors and capacitors, with no adjustable
+	parts in the model. ComponentNode, SeriesGroup, ParallelGroup and
+	ThomsonEquation keep working.
+	  - Parse('(L1=27n | C1=470p) + C2=3p') builds a network,
+	    toString() round-trips it. `+` is series, `|` parallel.
+	  - resonances(): series and parallel resonances, found by scanning
+	    the reactance for sign changes and bisecting. A rise through
+	    zero is a series, a fall a parallel resonance. Cells that fall
+	    without a sign change are refined, so close zero/pole pairs are
+	    found.
+	  - solve(name, f, values, {type, index}): bisect a component value
+	    so a resonance lands on f. band(name, [lo, hi]): the band a
+	    resonance covers while that component is swept.
+	  - schematic(): small vertical schematics (plates, coils, junction
+	    dots, ports or ground, name over value). equationSVG(): the
+	    impedance Z(jw) typeset with fractions.
+	    ThomsonEquation.renderFrequencySVG() uses the same typesetter
+	    and brackets sums correctly.
+	  - evaluate(), toJS() keep their meaning for networks of one kind
+	    of part; mixed networks throw. drawCircuit() and toSVG()
+	    changed output.
+
+	* src/favicon.ico, src/svg/:
+	favicon.ico 361 KB -> 23 KB: the same six sizes as PNG layers.
+	src/svg was a symlink to ../app/svg, which a static host would not
+	serve; it is a real directory now.
+
+	* electron/main.js [new; was src/main.js]:
+	Electron 45.2.1 shell that loads src/app.html as it is hosted.
+	Sandboxed, no node integration, external links open in the browser.
+	`electron .` uses its own "(dev)" profile directory, so development
+	runs no longer share saved fields (localStorage) with an installed
+	build.
+
+	* package.json, bun.lock:
+	Bun scripts: start, web, test, electron:pack, electron:dist,
+	tauri:dev, tauri:build, build. electron-builder config: the deb
+	installs to /opt/thomson-calculator (productName thomson-calculator),
+	icon and menu entry named thomson-calculator, output in release/. The
+	Tauri JS packages are dev dependencies, so the Electron bundle no
+	longer contains them.
+
+	* src-tauri/ (Cargo.toml, Cargo.lock [new], tauri.conf.json,
+	src/lib.rs):
+	  - Package renamed from `app`: /usr/bin/thomson-calculator and
+	    thomson-calculator.png icons; real maintainer, description,
+	    licence and homepage instead of the template's.
+	  - The window loads app.html; Tauri's default index.html does not
+	    exist, so every earlier bundle showed "asset not found:
+	    index.html".
+	  - Release profile: opt-level s, LTO, one codegen unit, panic
+	    abort, strip. tauri-plugin-log, log, serde and serde_json
+	    removed; Tauri without its default features except wry, x11 and
+	    common-controls-v6. Binary 11.1 MB -> 3.2 MB, deb and rpm 2.85
+	    MiB -> 1.31 MiB.
+	  - AppImage (81 MiB, it bundles WebKitGTK) is not in the default
+	    targets: bun run tauri:build -- --bundles appimage.
+	  - beforeBuildCommand (bun build) removed, beforeDevCommand is bun
+	    run web.
+
+	* app/, build/, e2e/, config/, src/hello_world/, src/helpers/,
+	src/menu/ [removed]:
+	The unused webpack, electron-forge and spectron boilerplate,
+	including a stale built copy of app.js. Nothing referenced it except
+	tauri.conf.json, which now points at ../src.
+
+	* test/numbers.test.js, test/thomson.test.js, test/equations.test.js
+	[new]:
+	bun tests: parsing and formatting, the fixed-part solver (rounded
+	inputs, exact fits, genuine misses), and the network model against
+	closed forms, including a random-network check that the automatic
+	frequency range loses nothing but zero/pole pairs closer than one
+	scan cell.
+
+	* README.md, CLAUDE.md, ChangeLog [new]:
+	README.md rewritten (usage, ranges, running, building, equations.js).
+	CLAUDE.md now says to keep this ChangeLog. ChangeLog [new] is this
+	file.
+
+2026-11-02  Roman Senn  <roman.l.senn@gmail.com>
+
+	* src/app.js, src/numbers.js, src/equations.js, src/formula.js:
+	Split the single-file app into modules: numbers.js (parsing and
+	formatting of values), equations.js (components, series and parallel
+	groups, the Thomson equation) and app.js (the page). formula.js was
+	added and merged back the same night. Further refactoring of
+	numbers.js and equations.js followed on 2026-11-03.
