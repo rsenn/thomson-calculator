@@ -19,6 +19,8 @@ const validValues = Array.from(new Array(NUM_FIELDS * 2), () => false);
 const allValues = new Float64Array(buffer);
 const fieldNames = ['L', 'C', 'f'];
 const config = {};
+/* unrounded numbers behind the text of computed fields: [{ text, range }] */
+const computed = [];
 const minSize = 10;
 const DEFAULT_PRECISION = 3;
 
@@ -164,9 +166,18 @@ export function GetField(n) {
   return e?.value;
 }
 
-export function SetField(n, v) {
+export function SetField(n, v, range) {
   const e = (FieldElements(n) ?? []).find(e => e.tagName.toLowerCase() == 'input');
   e.value = v;
+  computed[FieldIndex(n)] = range && { text: v, range };
+}
+
+/* set a computed field, remembering the unrounded numbers behind its text */
+function SetResult(n, str, results) {
+  const r = results.filter(Number.isFinite);
+  const count = ParseRange(str).length;
+
+  SetField(n, str, r.length && count ? (count > 1 ? [Math.min(...r), Math.max(...r)] : [r.reduce((s, v) => s + v, 0) / r.length]) : undefined);
 }
 
 export function SelectField(i) {
@@ -195,7 +206,9 @@ export function GetSelected() {
 
 export function GetRange(name) {
   const idx = FieldIndex(name);
-  const a = ParseRange(GetField(idx) ?? '');
+  const text = GetField(idx) ?? '';
+  /* a computed field that was not edited since still has its full precision */
+  const a = computed[idx]?.text === text ? [...computed[idx].range] : ParseRange(text);
 
   for(let i = 0; i < 2; i++) {
     allValues[idx + i * NUM_FIELDS] = a[i] ?? NaN;
@@ -277,7 +290,7 @@ export function CalcFrequency() {
 
   const str = FormatRange(results, 'Hz');
 
-  SetField(2, str);
+  SetResult(2, str, results);
 
   return str;
 }
@@ -293,14 +306,18 @@ function CalcFixed(field, unit, other) {
     Y = GetRange(other);
 
   if(f.length > 1 && Y.length > 1) {
-    const { min, max, best, feasible, band } = Cover(f, Y);
+    /* values shown with N decimals carry about 10^-N relative error */
+    const tol = Math.min(0.01, 10 ** -(config.precision ?? DEFAULT_PRECISION));
+    const { min, max, best, feasible, exact, band } = Cover(f, Y, tol);
     const str = FormatRange([best], unit);
 
-    SetField(field, str);
+    SetResult(field, str, [best]);
     SetNote(
-      feasible
-        ? `${str} tunes ${FormatRange(band, 'Hz')} (any value from ${FormatRange([min, max], unit)} covers the band)`
-        : `${other} range too small for the band: ${str} tunes only ${FormatRange(band, 'Hz')}`,
+      !feasible
+        ? `${other} range too small for the band: ${str} tunes only ${FormatRange(band, 'Hz')}`
+        : exact
+          ? `${str} tunes ${FormatRange(band, 'Hz')} (any value from ${FormatRange([min, max], unit)} covers the band)`
+          : `${str} just covers the band, within rounding (${FormatRange(band, 'Hz')})`,
     );
 
     return str;
@@ -312,7 +329,7 @@ function CalcFixed(field, unit, other) {
 
   const str = FormatRange(results, unit);
 
-  SetField(field, str);
+  SetResult(field, str, results);
 
   return str;
 }

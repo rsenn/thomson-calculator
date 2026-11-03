@@ -29,3 +29,26 @@ test('trimmer too small for the band is flagged', () => {
   expect(r.feasible).toBe(false);
   expect(r.band[1] / r.band[0]).toBeLessThan(108 / 87.5);
 });
+
+test('rounded inputs: a tiny shortfall is feasible only with a tolerance', () => {
+  /* what the UI shows after rounding the exact 87.5-108MHz / 500nH answer to 3 decimals */
+  const f = [87.499e6, 108.004e6],
+    C = [4.343e-12, 6.617e-12];
+
+  expect(Cover(f, C).feasible).toBe(false);
+  expect(Cover(f, C, 1e-3).feasible).toBe(true);
+  expect(Cover(f, C, 1e-3).exact).toBe(false);
+  expect(Cover(f, C, 1e-3).best).toBeCloseTo(500e-9, 10);
+});
+
+test('a genuine miss stays infeasible whatever the rounding tolerance', () => {
+  expect(Cover([87.5e6, 108e6], [10e-12, 11e-12], 0.01).feasible).toBe(false);
+});
+
+test('an exactly fitting range is exact despite float noise', () => {
+  const C = f => 1 / ((2 * Math.PI * f) ** 2 * 500e-9);
+  const r = Cover([87.5e6, 108e6], [C(108e6), C(87.5e6)]);
+
+  expect(r.feasible).toBe(true);
+  expect(r.exact).toBe(true);
+});

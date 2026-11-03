@@ -16,8 +16,12 @@ export const Thompson = {
  * Returns the valid interval [min, max], whether it is non-empty, the
  * geometric centre of it as the best X (equal margin at both band edges)
  * and the band [lo, hi] that best X really covers.
+ *
+ * `tol` is a relative slack on min <= max, for values that were rounded
+ * for display: with it, `feasible` also holds when the tuning range falls
+ * short by less than that, and `exact` tells if no slack was needed.
  */
-export function Cover(f, Y) {
+export function Cover(f, Y, tol = 0) {
   const [flo, fhi] = [Math.min(...f), Math.max(...f)];
   const [ylo, yhi] = [Math.min(...Y), Math.max(...Y)];
   const min = Thompson.inverse(flo, yhi),
@@ -28,7 +32,8 @@ export function Cover(f, Y) {
     min,
     max,
     best,
-    feasible: min <= max,
+    feasible: min <= max * (1 + Math.max(tol, 1e-9)),
+    exact: min <= max * (1 + 1e-9),
     band: [Thompson.calculate(best, yhi), Thompson.calculate(best, ylo)],
   };
 }
