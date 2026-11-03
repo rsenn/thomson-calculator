@@ -43,6 +43,8 @@
   "scripts": {
     "start": "electron .",
     "web": "bun src/app.html",
+    "equations": "bun tools/equations.js",
+    "glyphs": "bun tools/glyphs.js",
     "test": "bun test test/",
     "electron:pack": "electron-builder --dir",
     "electron:dist": "electron-builder",
@@ -56,7 +58,8 @@
     "@tauri-apps/plugin-opener": "^2",
     "@types/bun": "^1.4.4",
     "electron": "45.2.1",
-    "electron-builder": "^26.18.0"
+    "electron-builder": "^26.18.0",
+    "mathjax-full": "^3.2.2"
   },
   "type": "module"
 }

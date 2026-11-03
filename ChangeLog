@@ -27,6 +27,48 @@
 	a small python ICO writer, and also the Tauri, resources and
 	Electron icons, so every icon follows the SVG.
 
+	* src/equations.js (Part, layoutPart, Sym):
+	Every part is drawn as <g data-part="name"> with a transparent
+	hit rectangle, in the schematic and in the equations, so a page
+	can select it in both drawings at once.
+
+	* src/equations.js (Text, Glyph, Script, Sym, Op, Frac, Paren, Sqrt,
+	ThomsonEquation#renderSVG, #toLaTeX, Network#toLaTeX):
+	The equation typesetter drew <text> in whatever Times the machine
+	had, with guessed glyph widths, a hand-drawn radical and
+	parentheses, and a dot between L and C. It now draws Computer
+	Modern outlines (src/glyphs.js) as paths with TeX metrics: axis
+	and rule thickness, numerator/denominator shifts and clearance,
+	delimiter sizes picked like TeX, a radical from the font, sub- and
+	superscripts, operator spacing. The output no longer depends on
+	installed fonts. L C is now written as a juxtaposition, as in the
+	old images.
+	- renderSVG(target) typesets f, L or C (renderFrequencySVG,
+	  renderInductanceSVG and renderCapacitanceSVG are thin wrappers);
+	  composed networks appear as factors, sums in parentheses, and as
+	  L_eq / C_eq on the left side.
+	- toLaTeX() gives the same equations (and Z(j omega) of a network)
+	  as LaTeX source, the input of tools/equations.js.
+
+	* src/glyphs.js [new], tools/glyphs.js [new]:
+	Generated glyph atlas (digits, Latin and Greek letters, operators,
+	delimiters in the five TeX sizes, radical) from MathJax's TeX font,
+	91 KB. `bun run glyphs` rebuilds it.
+
+	* src/svg/{freq,inductance,capacitance}-equation.svg,
+	tools/equations.js [new]:
+	The three basic-mode images are now rendered by MathJax (SVG
+	output, plain paths) from ThomsonEquation#toLaTeX(), so they
+	follow the model. `bun run equations` regenerates them;
+	RenderLaTeX() in the same file renders any LaTeX string.
+
+	* package.json, bun.lock:
+	Dev dependency mathjax-full (build time only, not packaged);
+	scripts `equations` and `glyphs`.
+
+	* test/equations.test.js:
+	Test for the glyph-based SVG output and the LaTeX source.
+
 2026-11-03  Roman Senn  <roman.l.senn@gmail.com>
 
 	Calculator reworked and packaged. Every field takes a range, a fixed

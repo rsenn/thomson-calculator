@@ -1,4 +1,5 @@
 import { FormatNumber, NumericValue, RoundTo, Unit } from './numbers.js';
+import { DELIMS, GLYPHS } from './glyphs.js';
 
 const $2PI = Math.PI * 2;
 const $PI2 = Math.PI ** 2;
@@ -59,7 +60,7 @@ class Network {
       for(let i = 1; i <= n; i++) {
         const wr = i == n ? b : a * r ** i,
           xr = X(wr);
-
+          
         if(sign(xl) != sign(xr)) {
           let lo = wl,
             hi = wr;
@@ -145,6 +146,11 @@ class Network {
 
   drawCircuit(opts) {
     return this.schematic(opts);
+  }
+
+  /* composite impedance equation Z(jw) = ... as LaTeX source */
+  toLaTeX() {
+    return `Z(j\\omega) = ${LaTeXZ(this)}`;
   }
 
   /* composite impedance equation Z(jw) = ... as a complete <svg> string */
@@ -440,7 +446,7 @@ function layoutPart(c, o) {
       s += `<text x="${fmt(x + lx)}" y="${fmt(value ? cy - 1.5 : cy + fs * 0.35)}" ${font}>${c.name}</text>`;
       if(value) s += `<text x="${fmt(x + lx)}" y="${fmt(cy + fs)}" ${font}>${value}</text>`;
 
-      return s;
+      return `<g data-part="${attr(c.name)}"><rect x="${fmt(x)}" y="${fmt(y)}" width="${fmt(lx + tw + 2)}" height="${h}" fill="transparent" stroke="none"/>${s}</g>`;
     },
   };
 }
@@ -555,43 +561,86 @@ export function Schematic(node, opts) {
  * baseline at y, ascent a above and descent d below it.
  * ------------------------------------------------------------------------ */
 
-const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+/*
+ * Metrics follow TeX (display style), in em: axis height .25, rule
+ * thickness .04, numerator raised .677, denominator lowered .686. Glyphs
+ * are the Computer Modern outlines of src/glyphs.js, drawn as paths, so
+ * the output looks the same everywhere and needs no installed font.
+ */
+const AXIS = 0.25,
+  RULE = 0.04;
 
-function glyphWidth(ch) {
-  if('ijl1tf.,:;()| ·'.includes(ch)) return 0.3;
-  if('mwMW'.includes(ch)) return 0.78;
-  if('ω'.includes(ch)) return 0.68;
+function Glyph(g, fs, x, y) {
+  const k = fmt3(fs / 1000);
 
-  return 0.52;
+  return `<path transform="translate(${fmt(x)} ${fmt(y)}) scale(${k} ${-k})" d="${g[3]}"/>`;
+}
+
+const fmt3 = n => +n.toFixed(5);
+
+/* glyph for one character: italic (variable) or upright, with fallbacks */
+function Lookup(c, italic) {
+  if(c == '-') c = '−';
+
+  return (italic ? GLYPHS['*' + c] ?? GLYPHS[c] : GLYPHS[c] ?? GLYPHS['*' + c]) ?? GLYPHS['?'] ?? GLYPHS['.'];
 }
 
 function Text(str, fs, italic = false) {
+  const gs = [...str].map(c => Lookup(c, italic)),
+    k = fs / 1000;
+
   return {
-    w: [...str].reduce((s, c) => s + glyphWidth(c) * fs, 0) + 0.04 * fs,
-    a: 0.72 * fs,
-    d: 0.22 * fs,
-    draw: (x, y) => `<text x="${fmt(x)}" y="${fmt(y)}" font-size="${fmt(fs)}"${italic ? ' font-style="italic"' : ''}>${esc(str)}</text>`,
+    w: gs.reduce((s, g) => s + g[0] * k, 0),
+    a: Math.max(...gs.map(g => g[1] * k)),
+    d: Math.max(0, ...gs.map(g => g[2] * k)),
+    draw(x, y) {
+      let s = '';
+
+      for(const g of gs) {
+        s += Glyph(g, fs, x, y);
+        x += g[0] * k;
+      }
+
+      return s;
+    },
   };
 }
 
-/* variable name, with trailing digits as a subscript: L1 -> L_1 */
+/* b with a script (sub and/or sup) attached, like TeX's sub1 / sup1 */
+function Script(b, fs, sub, sup) {
+  const sf = 0.7 * fs,
+    s = sub && Text(sub, sf),
+    p = sup && (typeof sup == 'string' ? Text(sup, sf) : sup),
+    dn = s ? Math.max(0.15 * fs, s.a - 0.8 * 0.43 * fs) : 0,
+    up = p ? Math.max(0.413 * fs, p.d + 0.25 * 0.43 * fs) : 0;
+
+  return {
+    w: b.w + Math.max(s?.w ?? 0, p?.w ?? 0) + 0.05 * fs * !!(s || p),
+    a: Math.max(b.a, p ? up + p.a : 0),
+    d: Math.max(b.d, s ? dn + s.d : 0),
+    draw: (x, y) => b.draw(x, y) + (s ? s.draw(x + b.w, y + dn) : '') + (p ? p.draw(x + b.w, y - up) : ''),
+  };
+}
+
+/* variable name: the first letter italic, the rest a subscript (L1 -> L_1) */
 function Sym(name, fs) {
-  const m = /^(\D+?)(\d+)$/.exec(name);
+  const [, base, rest] = /^(\p{L}[̀-ͯ]*)(.*)$/u.exec(name) ?? [, name, ''],
+    box = Script(Text(base, fs, true), fs, rest.replace(/_/g, '') || undefined);
 
-  if(!m) return Text(name, fs, true);
+  return Part(name, box);
+}
 
-  const base = Text(m[1], fs, true),
-    sub = Text(m[2], fs * 0.7);
-
+/* a box that belongs to the part `name`: grouped, with a hit area, so a page can select it */
+function Part(name, box) {
   return {
-    w: base.w + sub.w,
-    a: base.a,
-    d: Math.max(base.d, 0.25 * fs + sub.d),
-    draw: (x, y) => base.draw(x, y) + sub.draw(x + base.w, y + 0.25 * fs),
+    ...box,
+    draw: (x, y) => `<g data-part="${attr(name)}"><rect x="${fmt(x)}" y="${fmt(y - box.a)}" width="${fmt(box.w)}" height="${fmt(box.a + box.d)}" fill="transparent" stroke="none"/>${box.draw(x, y)}</g>`,
   };
 }
 
-function Row(items, fs, gap = 0.25) {
+const attr = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+function Row(items, fs, gap = 0) {
   const g = gap * fs;
 
   return {
@@ -611,82 +660,90 @@ function Row(items, fs, gap = 0.25) {
   };
 }
 
+/* an operator with TeX spacing: 4/18 em around a binary one, 5/18 around a relation */
+function Op(str, fs, rel = false) {
+  const t = Text(str, fs),
+    sp = (rel ? 5 / 18 : 4 / 18) * fs;
+
+  return { ...t, w: t.w + 2 * sp, draw: (x, y) => t.draw(x + sp, y) };
+}
+
 function Sum(items, fs) {
   const parts = [];
 
-  items.forEach((b, i) => parts.push(...(i ? [Text('+', fs), b] : [b])));
+  items.forEach((b, i) => parts.push(...(i ? [Op('+', fs), b] : [b])));
 
-  return { ...Row(parts, fs, 0.3), sum: true };
+  return { ...Row(parts, fs), sum: true };
 }
 
 function Frac(n, d, fs) {
-  const pad = 0.2 * fs,
-    gap = 0.18 * fs,
-    axis = 0.3 * fs,
-    t = Math.max(1, fs * 0.07),
-    w = Math.max(n.w, d.w) + 2 * pad;
+  const t = RULE * fs,
+    axis = AXIS * fs,
+    clear = 3 * t,
+    nup = Math.max(0.677 * fs, axis + t / 2 + clear + n.d),
+    ddn = Math.max(0.686 * fs, d.a + clear - (axis - t / 2)),
+    inner = Math.max(n.w, d.w),
+    pad = 0.12 * fs,
+    w = inner + 2 * pad;
 
   return {
     w,
-    a: axis + gap + n.d + n.a,
-    d: Math.max(0, d.a + d.d + gap - axis),
+    a: nup + n.a,
+    d: ddn + d.d,
     draw(x, y) {
-      const bar = y - axis;
-
-      return (
-        n.draw(x + (w - n.w) / 2, bar - gap - n.d) +
-        `<line x1="${fmt(x + pad / 2)}" x2="${fmt(x + w - pad / 2)}" y1="${fmt(bar)}" y2="${fmt(bar)}" stroke="currentColor" stroke-width="${fmt(t)}"/>` +
-        d.draw(x + (w - d.w) / 2, bar + gap + d.a)
-      );
+      return n.draw(x + (w - n.w) / 2, y - nup) + `<rect x="${fmt(x + pad)}" y="${fmt(y - axis - t / 2)}" width="${fmt(inner)}" height="${fmt(t)}"/>` + d.draw(x + (w - d.w) / 2, y + ddn);
     },
   };
 }
 
-function Paren(b, fs) {
-  const h = b.a + b.d + 0.1 * fs,
-    pw = 0.3 * fs,
-    top = -b.a - 0.05 * fs,
-    bot = b.d + 0.05 * fs;
+/* delimiter size for content extending `ext` above/below the axis (TeX delimiterfactor .901) */
+function DelimSize(list, ext, fs) {
+  const i = list.findIndex(g => (g[1] + g[2]) * (fs / 1000) >= 0.901 * 2 * ext);
+
+  return list[i < 0 ? list.length - 1 : i];
+}
+
+function Paren(b, fs, [l, r] = ['(', ')']) {
+  const ext = Math.max(b.a - AXIS * fs, b.d + AXIS * fs),
+    gl = DelimSize(DELIMS[l], ext, fs),
+    gr = DelimSize(DELIMS[r], ext, fs),
+    k = fs / 1000;
 
   return {
-    w: b.w + 2 * pw,
-    a: b.a + 0.05 * fs,
-    d: b.d + 0.05 * fs,
-    draw: (x, y) =>
-      `<path d="M${fmt(x + pw * 0.8)},${fmt(y + top)}Q${fmt(x)},${fmt(y + (top + bot) / 2)} ${fmt(x + pw * 0.8)},${fmt(y + bot)}M${fmt(x + pw + b.w + pw * 0.2)},${fmt(y + top)}Q${fmt(x + 2 * pw + b.w)},${fmt(y + (top + bot) / 2)} ${fmt(x + pw + b.w + pw * 0.2)},${fmt(y + bot)}" fill="none" stroke="currentColor" stroke-width="${fmt(Math.max(1, fs * 0.06))}" stroke-linecap="round"/>` +
-      b.draw(x + pw, y),
+    w: (gl[0] + gr[0]) * k + b.w,
+    a: Math.max(b.a, gl[1] * k),
+    d: Math.max(b.d, gl[2] * k),
+    draw: (x, y) => Glyph(gl, fs, x, y) + b.draw(x + gl[0] * k, y) + Glyph(gr, fs, x + gl[0] * k + b.w, y),
   };
 }
 
 function Sqrt(b, fs) {
-  const gap = 0.15 * fs,
-    t = Math.max(1, fs * 0.07),
-    lead = 0.7 * fs;
+  const t = RULE * fs,
+    psi = t + 0.25 * 0.431 * fs,
+    need = b.a + b.d + psi + t,
+    list = DELIMS['√'],
+    i = list.findIndex(g => (g[1] + g[2]) * (fs / 1000) >= need),
+    g = list[i < 0 ? list.length - 1 : i],
+    k = fs / 1000,
+    extra = Math.max(0, (g[1] + g[2]) * k - need) / 2,
+    top = b.a + psi + extra + t;
 
   return {
-    w: lead + b.w + 0.15 * fs,
-    a: b.a + gap + t,
-    d: b.d,
-    draw(x, y) {
-      const top = y - b.a - gap,
-        bot = y + b.d + 0.05 * fs;
-
-      return (
-        `<path d="M${fmt(x)},${fmt(y - 0.3 * fs)}L${fmt(x + 0.12 * fs)},${fmt(y - 0.34 * fs)}L${fmt(x + 0.34 * fs)},${fmt(bot)}L${fmt(x + lead - 0.1 * fs)},${fmt(top)}H${fmt(x + lead + b.w + 0.1 * fs)}" fill="none" stroke="currentColor" stroke-width="${fmt(t)}" stroke-linejoin="round" stroke-linecap="round"/>` +
-        b.draw(x + lead, y)
-      );
-    },
+    w: g[0] * k + b.w + 0.03 * fs,
+    a: top,
+    d: Math.max(b.d, g[2] * k - (g[1] * k - top)),
+    draw: (x, y) => Glyph(g, fs, x, y - top + g[1] * k) + `<rect x="${fmt(x + g[0] * k - 0.5)}" y="${fmt(y - top)}" width="${fmt(b.w + 0.03 * fs + 0.5)}" height="${fmt(t)}"/>` + b.draw(x + g[0] * k, y),
   };
 }
 
-const jw = fs => Row([Text('j', fs, true), Text('ω', fs, true)], fs, 0.05);
+const jw = fs => Row([Text('j', fs, true), Text('ω', fs, true)], fs);
 
 /* impedance Z and admittance Y of a node as boxes, mutually recursive */
 function ZBox(node, fs, lv = 0) {
   const f = fs * Math.max(0.6, 1 - 0.1 * lv);
 
   if(node instanceof ComponentNode) {
-    const part = Row([jw(f), Sym(node.name, f)], f, 0.05);
+    const part = Row([jw(f), Sym(node.name, f)], f, 0.02);
 
     return node.kind == 'L' ? part : Frac(Text('1', f), part, f);
   }
@@ -700,7 +757,7 @@ function YBox(node, fs, lv = 0) {
   const f = fs * Math.max(0.6, 1 - 0.1 * lv);
 
   if(node instanceof ComponentNode) {
-    const part = Row([jw(f), Sym(node.name, f)], f, 0.05);
+    const part = Row([jw(f), Sym(node.name, f)], f, 0.02);
 
     return node.kind == 'C' ? part : Frac(Text('1', f), part, f);
   }
@@ -721,7 +778,7 @@ function EffectiveBox(node, fs) {
   if(kids.length == 2) {
     const p = kids.map(k => (k.sum ? Paren(k, fs) : k));
 
-    return Frac(Row([p[0], Text('·', fs), p[1]], fs, 0.15), Sum(kids, fs), fs);
+    return Frac(Row(p, fs, 0.04), Sum(kids, fs), fs);
   }
 
   return Frac(Text('1', fs), Sum(kids.map(k => Frac(Text('1', fs), k, fs)), fs), fs);
@@ -738,9 +795,56 @@ function Page(box, fs, color = '#1a1a1a', margin = 0.5) {
 export function EquationSVG(node, { fontSize = 18, color } = {}) {
   const fs = fontSize;
 
-  const lhs = Row([Text('Z(', fs, true), jw(fs), Text(')', fs)], fs, 0.02);
+  const lhs = Row([Text('Z', fs, true), Text('(', fs), jw(fs), Text(')', fs)], fs);
 
-  return Page(Row([lhs, Text('=', fs), ZBox(node, fs)], fs, 0.3), fs, color);
+  return Page(Row([lhs, Op('=', fs, true), ZBox(node, fs)], fs), fs, color);
+}
+
+/* ------------------------------------------------------------------------ *
+ * LaTeX source of the same equations, for tools/equations.js (MathJax)
+ * ------------------------------------------------------------------------ */
+
+/* L1 -> L_{1}, Ctrim -> C_{\mathrm{trim}} */
+function LaTeXName(name) {
+  const [, base, rest] = /^(\p{L})(.*)$/u.exec(name) ?? [, name, ''];
+  const sub = rest.replace(/_/g, '');
+
+  if(!sub) return base;
+
+  return `${base}_{${/^\d+$/.test(sub) ? sub : `\\mathrm{${sub}}`}}`;
+}
+
+function LaTeXEffective(node) {
+  if(node instanceof ComponentNode) return LaTeXName(node.name);
+
+  const kids = node.nodes.map(LaTeXEffective);
+
+  if(node.adds(node.kind)) return kids.join(' + ');
+
+  const p = node.nodes.map((n, i) => (n instanceof Group && n.adds(n.kind) ? `\\left(${kids[i]}\\right)` : kids[i]));
+
+  if(kids.length == 2) return `\\frac{${p[0]}${p[1]}}{${kids.join(' + ')}}`;
+
+  return `\\frac{1}{${kids.map(k => `\\frac{1}{${k}}`).join(' + ')}}`;
+}
+
+/* impedance Z and admittance Y of a node, mirroring ZBox and YBox */
+function LaTeXZ(node) {
+  const part = () => `j\\omega ${LaTeXName(node.name)}`;
+
+  if(node instanceof ComponentNode) return node.kind == 'L' ? part() : `\\frac{1}{${part()}}`;
+  if(node instanceof SeriesGroup) return node.nodes.map(LaTeXZ).join(' + ');
+
+  return `\\frac{1}{${LaTeXY(node)}}`;
+}
+
+function LaTeXY(node) {
+  const part = () => `j\\omega ${LaTeXName(node.name)}`;
+
+  if(node instanceof ComponentNode) return node.kind == 'C' ? part() : `\\frac{1}{${part()}}`;
+  if(node instanceof ParallelGroup) return node.nodes.map(LaTeXY).join(' + ');
+
+  return `\\frac{1}{${LaTeXZ(node)}}`;
 }
 
 /**
@@ -767,18 +871,61 @@ export class ThomsonEquation {
     return 1 / ($2PI * Math.sqrt(Leq * Ceq));
   }
 
-  /* 2. Frequency formula as a complete <svg> string */
-  renderFrequencySVG({ fontSize = 20, color } = {}) {
+  /*
+   * The tank equation solved for `target` ('f' | 'L' | 'C') as a complete
+   * <svg> string, typeset with the TeX metrics of the glyph set:
+   *   f = 1 / (2 pi sqrt(L C))     L = 1 / (4 pi^2 C f^2)     C = 1 / (4 pi^2 L f^2)
+   * A composed network stands in for L or C as a factor (in parentheses
+   * when it is a sum), and on the left side as L_eq / C_eq.
+   */
+  renderSVG(target = 'f', { fontSize = 20, color } = {}) {
     const fs = fontSize,
       factor = n => {
         const b = EffectiveBox(n, fs);
 
         return b.sum ? Paren(b, fs) : b;
       },
-      radicand = Row([factor(this.L), Text('·', fs), factor(this.C)], fs, 0.2),
-      den = Row([Text('2π', fs), Sqrt(radicand, fs)], fs, 0.1);
+      one = Text('1', fs),
+      eq = lhs => Page(Row([lhs, Op('=', fs, true)], fs), fs, color, 0.5),
+      row = (lhs, den) => Page(Row([lhs, Op('=', fs, true), Frac(one, den, fs)], fs), fs, color),
+      pi = () => Text('π', fs, true);
 
-    return Page(Row([Text('f', fs, true), Text('=', fs), Frac(Text('1', fs), den, fs)], fs, 0.3), fs, color);
+    if(target == 'f') return row(Text('f', fs, true), Row([Text('2', fs), pi(), Sqrt(Row([factor(this.L), factor(this.C)], fs, 0.04), fs)], fs, 0.04));
+
+    const [mine, other] = target == 'L' ? [this.L, this.C] : [this.C, this.L],
+      name = mine instanceof ComponentNode ? mine.name : target + 'eq',
+      den = Row([Text('4', fs), Script(pi(), fs, null, '2'), factor(other), Script(Text('f', fs, true), fs, null, '2')], fs, 0.04);
+
+    return row(Sym(name, fs), den);
+  }
+
+  /* 2. Frequency formula as a complete <svg> string */
+  renderFrequencySVG(opts) {
+    return this.renderSVG('f', opts);
+  }
+
+  renderInductanceSVG(opts) {
+    return this.renderSVG('L', opts);
+  }
+
+  renderCapacitanceSVG(opts) {
+    return this.renderSVG('C', opts);
+  }
+
+  /* the same equations as LaTeX source, see tools/equations.js */
+  toLaTeX(target = 'f') {
+    const factor = n => {
+      const t = LaTeXEffective(n);
+
+      return n instanceof Group && n.adds(n.kind) ? `\\left(${t}\\right)` : t;
+    };
+
+    if(target == 'f') return `f = \\frac{1}{2\\pi\\sqrt{${factor(this.L)}${factor(this.C)}}}`;
+
+    const [mine, other] = target == 'L' ? [this.L, this.C] : [this.C, this.L],
+      name = mine instanceof ComponentNode ? LaTeXName(mine.name) : `${target}_{\\mathrm{eq}}`;
+
+    return `${name} = \\frac{1}{4\\pi^2${factor(other)}f^2}`;
   }
 
   /* schematic of the tank */

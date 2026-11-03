@@ -154,3 +154,20 @@ test('automatic frequency range is wide enough for random networks', () => {
     }
   }
 });
+
+test('equations are typeset from glyph outlines and also given as LaTeX', () => {
+  const t = new ThomsonEquation(Parse('L1 + L2'), Parse('C1 | C2'));
+
+  for(const k of ['f', 'L', 'C']) {
+    const svg = t.renderSVG(k);
+
+    expect(svg).toStartWith('<svg');
+    expect(svg).toContain('<path');
+    expect(svg).not.toContain('<text');
+    expect(svg).not.toMatch(/NaN|undefined|Infinity/);
+  }
+
+  expect(t.toLaTeX('f')).toBe('f = \\frac{1}{2\\pi\\sqrt{\\left(L_{1} + L_{2}\\right)\\left(C_{1} + C_{2}\\right)}}');
+  expect(new ThomsonEquation(Parse('L'), Parse('C')).toLaTeX('L')).toBe('L = \\frac{1}{4\\pi^2Cf^2}');
+  expect(Parse('L1 | C1').toLaTeX()).toStartWith('Z(j\\omega) = \\frac{1}');
+});
