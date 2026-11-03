@@ -8,7 +8,7 @@
   "main": "electron/main.js",
   "build": {
     "appId": "com.rlsenn.thomson-calculator",
-    "productName": "Thomson formula calculation",
+    "productName": "thomson-calculator",
     "files": [
       "electron/**/*",
       "src/**/*",
@@ -23,7 +23,14 @@
         "AppImage",
         "deb"
       ],
-      "category": "Utility"
+      "category": "Utility",
+      "icon": "resources/icons",
+      "desktop": {
+        "entry": {
+          "Name": "Thomson calculator",
+          "Comment": "Calculates LC tank values"
+        }
+      }
     },
     "win": {
       "target": "nsis"
@@ -37,15 +44,16 @@
     "start": "electron .",
     "web": "bun src/app.html",
     "test": "bun test test/",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
-  },
-  "dependencies": {
-    "@tauri-apps/api": "^2",
-    "@tauri-apps/plugin-opener": "^2"
+    "electron:pack": "electron-builder --dir",
+    "electron:dist": "electron-builder",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "build": "bun run electron:dist && bun run tauri:build"
   },
   "devDependencies": {
+    "@tauri-apps/api": "^2",
     "@tauri-apps/cli": "^2",
+    "@tauri-apps/plugin-opener": "^2",
     "@types/bun": "^1.4.4",
     "electron": "45.2.1",
     "electron-builder": "^26.18.0"

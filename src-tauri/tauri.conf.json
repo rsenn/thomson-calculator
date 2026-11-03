@@ -6,8 +6,7 @@
   "build": {
     "frontendDist": "../src",
     "devUrl": "http://localhost:3000",
-    "beforeDevCommand": "bun dev",
-    "beforeBuildCommand": "bun build"
+    "beforeDevCommand": "bun run web"
   },
   "app": {
     "windows": [
@@ -16,7 +15,8 @@
         "width": 800,
         "height": 600,
         "resizable": true,
-        "fullscreen": false
+        "fullscreen": false,
+        "url": "app.html"
       }
     ],
     "security": {
@@ -25,7 +25,14 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": [
+      "deb",
+      "rpm",
+      "nsis",
+      "msi",
+      "app",
+      "dmg"
+    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -35,6 +42,12 @@
     ],
     "android": {
       "debugApplicationIdSuffix": ".debug"
-    }
-  }
+    },
+    "category": "Utility",
+    "shortDescription": "Calculates LC tank values",
+    "longDescription": "Thomson formula calculator for LC circuits: solve L, C or f, with ranges and tuning bands.",
+    "publisher": "Roman Senn",
+    "homepage": "https://github.com/rsenn/thomson-calculator"
+  },
+  "mainBinaryName": "thomson-calculator"
 }

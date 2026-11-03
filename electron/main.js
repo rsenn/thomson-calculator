@@ -7,6 +7,10 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 
+// `electron .` must not share localStorage (the saved fields) with an
+// installed build, they would resolve to the same profile directory
+if(!app.isPackaged) app.setPath('userData', `${app.getPath('userData')} (dev)`);
+
 function CreateWindow() {
   const win = new BrowserWindow({
     width: 800,
