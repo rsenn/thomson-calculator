@@ -69,6 +69,42 @@
 	* test/equations.test.js:
 	Test for the glyph-based SVG output and the LaTeX source.
 
+	* src/network-ui.js [new], src/app.html, src/app.js (SetAdvanced,
+	Init), src/stylesheets/main.css:
+	Advanced mode, a second view next to the Thomson calculator. An
+	"Advanced" checkbox (top right) hides the basic view (class
+	`basic`). A tank has one inductance and one capacitance, each
+	possibly composed of several parts, but never mixed, so there are
+	two fields, L and C, each a network of its own kind (`+` series,
+	`|` parallel, parentheses): L `(100n | 47n) + 250n`, C
+	`(27p + 470p) | 5p`. Bare values name themselves (L1, L2, ...;
+	a named part like Ltrim=5u is kept), and a part of the wrong
+	kind (C1 in the L field) is an error shown under the fields.
+	- The tank is drawn as a schematic next to the Thomson equation
+	  f = 1 / (2 pi sqrt(L C)) with the two networks as factors, and
+	  L, C and f are calculated when all parts have values, printed
+	  like the basic mode does, without a space (281.9728nH).
+	- The text of both fields and the mode are kept in the saved
+	  config; the first time the fields are seeded with the values of
+	  the basic mode when they are plain numbers.
+	- A value may carry its unit or prefix after a space (`10 u`,
+	  `4.7 nF`, `Ltrim = 5 u`); it used to be split into two tokens
+	  and failed with "unexpected 'u'". The tokenizer of the fields
+	  (TOKENS) joins them and Expand() hands Parse() the compact form.
+	- The code is loaded with import() on first use, so basic mode
+	  loads nothing extra.
+	- A part can be selected, by clicking it in the schematic or in
+	  the equation: both drawings mark it (hovering marks it red,
+	  the selection purple) and a panel shows its name and value.
+	  Enter a frequency and Solve gives the value of that part that
+	  puts the tank on it (Network#solve, the other parts keep their
+	  values); Use writes it into the field of the part, whether
+	  that was a bare value, a named one or one without a value
+	  (Scan, SetValue). The selection survives edits as long as the
+	  part exists.
+	- test/equations.test.js: tests for the text scanning, value
+	  replacement, units after a space and solving a part.
+
 2026-11-03  Roman Senn  <roman.l.senn@gmail.com>
 
 	Calculator reworked and packaged. Every field takes a range, a fixed

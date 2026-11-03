@@ -171,3 +171,46 @@ test('equations are typeset from glyph outlines and also given as LaTeX', () => 
   expect(new ThomsonEquation(Parse('L'), Parse('C')).toLaTeX('L')).toBe('L = \\frac{1}{4\\pi^2Cf^2}');
   expect(Parse('L1 | C1').toLaTeX()).toStartWith('Z(j\\omega) = \\frac{1}');
 });
+
+test('advanced mode fields: bare values are named, kinds are checked', async () => {
+  const { Expand, ParseKind, Seed } = await import('../src/network-ui.js');
+
+  expect(Expand('(100n | 47n) + 250n', 'L')).toBe('( L1=100n | L2=47n ) + L3=250n');
+  expect(Expand('L2=1u + 3u', 'L')).toBe('L2=1u + L1=3u');
+  // C parts in series add reciprocally, in parallel directly: (27p + 470p) | 5p
+  close(ParseKind('(27p + 470p) | 5p', 'C').evaluate(), 1 / (1 / 27e-12 + 1 / 470e-12) + 5e-12);
+  expect(() => ParseKind('100n | C1', 'L')).toThrow(/not an inductor/);
+  expect(ParseKind('  ', 'L')).toBeUndefined();
+  expect(Seed('10 u')).toBe('10u');
+  expect(Seed('1u..2u')).toBe('');
+});
+
+test('advanced mode: parts are found in the text, set, and solved for', async () => {
+  const { Scan, SetValue, ParseKind, ParseFrequency, SolvePart } = await import('../src/network-ui.js');
+
+  expect(Scan('(100n | L1=47n) + 250n', 'L').map(k => k.name)).toEqual([undefined, 'L2', undefined, 'L1', undefined, undefined, 'L3']);
+  expect(SetValue('(100n | 47n) + 250n', 'L', 'L2', '51n')).toBe('(100n | 51n) + 250n');
+  expect(SetValue('L1=5n + L2', 'L', 'L2', '8n')).toBe('L1=5n + L2=8n');
+  expect(SetValue('L1=5n + L2=9n', 'L', 'L1', '6n')).toBe('L1=6n + L2=9n');
+  close(ParseFrequency('433.92MHz'), 433.92e6);
+  expect(() => ParseFrequency('abc')).toThrow();
+
+  // the L3 that tunes (100n | 47n) + L3 against 30.5332p to 54.2413 MHz is 250n
+  const L = ParseKind('(100n | 47n) + L3', 'L'),
+    C = ParseKind('(27p + 470p) | 5p', 'C');
+
+  close(SolvePart(L, C, 'L3', 54.2413e6), 250e-9, 1e-4);
+  close(SolvePart(ParseKind('(100n | 47n) + 250n', 'L'), C, 'C3', 54.2413e6), 5e-12, 1e-3);
+});
+
+test('advanced mode: a value may carry its unit after a space', async () => {
+  const { Expand, ParseKind, SetValue } = await import('../src/network-ui.js');
+
+  expect(Expand('10 u + 4.7 u', 'L')).toBe('L1=10u + L2=4.7u');
+  expect(Expand('Ltrim = 5 u | 100n', 'L')).toBe('Ltrim=5u | L1=100n');
+  expect(Expand('(2.2 nF | 100 pF)', 'C')).toBe('( C1=2.2nF | C2=100pF )');
+  expect(Expand('10 L2', 'L')).toBe('L1=10 L2');
+  close(ParseKind('10 u | 10 u', 'L').evaluate(), 5e-6);
+  close(ParseKind('2.2 n + 3.3 n', 'C').evaluate(), 1 / (1 / 2.2e-9 + 1 / 3.3e-9));
+  expect(SetValue('10 u + 4.7 u', 'L', 'L2', '5u')).toBe('10 u + 5u');
+});

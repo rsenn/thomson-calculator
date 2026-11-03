@@ -234,3 +234,122 @@ label.name.frequency.selected {
   user-select: text;
   cursor: text;
 }
+
+/* advanced mode: body.advanced hides the basic view and shows the network view */
+#advanced,
+#network_error {
+  display: none;
+}
+
+body.advanced .basic {
+  display: none;
+}
+
+body.advanced #advanced {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  overflow: auto;
+  max-height: 100%;
+  width: 100%;
+}
+
+#network_fields {
+  display: inline-grid;
+  grid-template-columns: 1.2em 6.5em 1fr;
+  width: min(44em, 92%);
+}
+
+#network_fields input {
+  font-family: monospace;
+  font-size: 1.1rem;
+  text-align: left;
+}
+
+#network_fields input.error {
+  color: #d00;
+  border-color: #d00;
+}
+
+#network_result {
+  font-family: monospace;
+  font-size: 1.1rem;
+  color: #000;
+  margin-bottom: 0.5em;
+  user-select: text;
+}
+
+body.advanced #network_error:not([hidden]) {
+  display: block;
+  color: #d00;
+  margin: 0.5em;
+  white-space: pre-line;
+}
+
+#network_views {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 2em;
+  align-items: center;
+  justify-content: center;
+  margin: 1em 0;
+  user-select: text;
+}
+
+#network_help {
+  font-size: 0.9rem;
+  margin-bottom: 1em;
+}
+
+#mode {
+  position: fixed;
+  top: 0.5em;
+  right: 0.8em;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+#mode input {
+  margin: 0 0.4em 0 0;
+  padding: 0;
+}
+
+/* parts are selectable in the schematic and in the equation */
+#network_views [data-part] {
+  cursor: pointer;
+}
+
+#network_views [data-part].hot {
+  color: #d00;
+}
+
+#network_views [data-part].sel {
+  color: #8325f7;
+}
+
+#part_panel {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 0.8em;
+  color: #000;
+}
+
+#part_panel[hidden] {
+  display: none;
+}
+
+#part_panel input {
+  text-align: left;
+  margin: 0;
+}
+
+#part_result.error {
+  color: #d00;
+}
+
+#part_panel .sep {
+  color: #aaa;
+}

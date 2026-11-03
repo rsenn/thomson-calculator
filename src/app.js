@@ -139,6 +139,29 @@ export function FieldIndex(arg) {
   return arg;
 }
 
+/* advanced mode: the free network view, its code is loaded on first use */
+let network;
+
+export async function SetAdvanced(on, init = false) {
+  document.body.classList.toggle('advanced', on);
+  Q('#advanced_toggle').checked = on;
+  config.advanced = on;
+
+  if(!init) SaveConfig();
+  if(!on) return;
+
+  network ??= await import('./network-ui.js');
+
+  // the first time, start from the values of the basic mode
+  config.networkL ??= network.Seed(GetField(0));
+  config.networkC ??= network.Seed(GetField(1));
+  network.InitAdvanced({ L: config.networkL, C: config.networkC }, ({ L, C }) => {
+    config.networkL = L;
+    config.networkC = C;
+    SaveConfig();
+  });
+}
+
 export function SaveConfig() {
   for(let i = 0; i < NUM_FIELDS; i++) config['LCf'[i]] = GetField(i) ?? '';
 
@@ -467,6 +490,9 @@ export function Init() {
   SetupFields();
 
   Object.assign(config, LoadConfig());
+
+  Q('#advanced_toggle').addEventListener('change', event => SetAdvanced(event.target.checked));
+  SetAdvanced(!!config.advanced, true);
 
   if(!IsNumber(config.precision)) config.precision = DEFAULT_PRECISION;
 

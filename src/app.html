@@ -9,9 +9,9 @@
     <script src="app.js" type="module"></script>
   </head>
   <body>
-    <h2>Thomson's formula</h2>
-    <img src="svg/freq-equation.svg" />
-    <form action="" onsubmit="">
+    <h2 class="basic">Thomson's formula</h2>
+    <img class="basic" src="svg/freq-equation.svg" />
+    <form class="basic" action="" onsubmit="">
       <div id="fields" style="display: inline-grid; grid-template-columns: 1.2em 6.5em 1fr">
         <label class="var inductance"><b>L</b></label>
         <label class="name inductance">Inductance</label>
@@ -31,5 +31,33 @@
       <div id="note">&nbsp;</div>
       <div id="status">&nbsp;</div>
     </form>
+    <section id="advanced">
+      <h2>Tank networks</h2>
+      <div id="network_fields">
+        <label class="var inductance"><b>L</b></label>
+        <label class="name inductance">Inductance</label>
+        <input type="text" id="network_L" spellcheck="false" autocomplete="off" placeholder="(100n | 47n) + 250n" />
+        <label class="var capacitance"><b>C</b></label>
+        <label class="name capacitance">Capacitance</label>
+        <input type="text" id="network_C" spellcheck="false" autocomplete="off" placeholder="(27p + 470p) | 5p" />
+      </div>
+      <div id="network_error" hidden></div>
+      <div id="network_views">
+        <div id="schematic"></div>
+        <div id="equation"></div>
+      </div>
+      <div id="network_result"></div>
+      <div id="part_panel" hidden>
+        <b id="part_name"></b> <span id="part_value"></span>
+        <span class="sep">|</span>
+        <label for="part_target">for f =</label>
+        <input type="text" id="part_target" size="10" placeholder="100M" spellcheck="false" autocomplete="off" />
+        <button type="button" id="part_solve">Solve</button>
+        <span id="part_result"></span>
+        <button type="button" id="part_use" hidden>Use</button>
+      </div>
+      <div id="network_help"><b>+</b> series &nbsp; <b>|</b> parallel &nbsp; <b>( )</b> group &nbsp; values like <b>100n</b> or a named part <b>Ltrim=5u</b> &nbsp; click a part to select it</div>
+    </section>
+    <label id="mode" title="Switch between the Thomson calculator and the free network view"><input type="checkbox" id="advanced_toggle" /> Advanced</label>
   </body>
 </html>
