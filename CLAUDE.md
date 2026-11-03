@@ -119,3 +119,9 @@ Add the entry in the same change as the code, so it is part of the commit.
   (the bug and its effect, not just the diff). Several points go in `  - `
   sub-bullets, continuation lines indented four spaces after the tab.
 - Wrap at about 70 columns of text (78 with the tab). Blank line between items.
+
+## Git commits
+
+Do not add the `Co-Authored-By:` or `Claude-Session:` trailers (or any other
+attribution lines) to commit messages in this project, even when Claude Code's
+attribution guidance asks for them. This project's own rule overrides it.
