@@ -1,4 +1,4 @@
-import { FormatNumber, NumericValue, RoundTo, Unit } from './numbers.js';
+import { FormatNumber, NumericValue, ParseRange, RoundTo, Unit } from './numbers.js';
 import { DELIMS, GLYPHS } from './glyphs.js';
 
 const $2PI = Math.PI * 2;
@@ -166,7 +166,7 @@ class Network {
  * @class      ComponentNode (name, value)
  */
 export class ComponentNode extends Network {
-  constructor(name, value, kind = String(name)[0]?.toUpperCase()) {
+  constructor(name, value, kind = String(name)[0]?.toUpperCase(), range) {
     super();
 
     if(!(kind in UNITS)) throw new Error(`ComponentNode: '${name}' is neither an inductor nor a capacitor (names start with L or C)`);
@@ -174,6 +174,9 @@ export class ComponentNode extends Network {
     this.name = name;
     this.value = value;
     this.kind = kind;
+
+    /* [min, max] of a part that is adjustable (a knob); `value` is then the maximum */
+    if(range) this.range = range;
   }
 
   get unit() {
@@ -209,7 +212,9 @@ export class ComponentNode extends Network {
   }
 
   toText() {
-    return this.name + (this.value != null ? '=' + FormatNumber(this.value, '', 'floor', RoundTo(6)).replace(/\s/g, '') : '');
+    const f = v => FormatNumber(v, '', 'floor', RoundTo(6)).replace(/\s/g, '');
+
+    return this.name + (this.range ? `=${f(this.range[0])}..${f(this.range[1])}` : this.value != null ? '=' + f(this.value) : '');
   }
 
   toSVG() {
@@ -359,15 +364,24 @@ export function Parse(str) {
     if(/^[()+|]$/.test(t)) throw new SyntaxError(`Parse: unexpected '${t}' in '${str}'`);
 
     const [name, val] = t.split(/\s*=\s*/);
-    let value;
+    let value, range;
 
     if(val !== undefined) {
-      value = NumericValue(Unit(val));
+      if(/\.\.|\u2026/.test(val)) {
+        /* `3.8p..85.8p`: adjustable between the two values */
+        range = ParseRange(val);
 
-      if(!(value > 0)) throw new SyntaxError(`Parse: bad value '${val}' for ${name}`);
+        if(range.length != 2 || !(range[0] > 0) || !(range[0] < range[1])) throw new SyntaxError(`Parse: bad range '${val}' for ${name}`);
+
+        value = range[1];
+      } else {
+        value = NumericValue(Unit(val));
+
+        if(!(value > 0)) throw new SyntaxError(`Parse: bad value '${val}' for ${name}`);
+      }
     }
 
-    return new ComponentNode(name, value);
+    return new ComponentNode(name, value, undefined, range);
   };
 
   const parallel = () => list(atom, '|', ParallelGroup);
@@ -407,15 +421,51 @@ const SCH = {
 const fmt = n => +n.toFixed(2);
 
 function Label(c) {
-  return c.value != null ? FormatNumber(c.value, UNITS[c.kind], 'floor', RoundTo(3)).replace(/\s/g, '') : null;
+  const f = v => FormatNumber(v, UNITS[c.kind], 'floor', RoundTo(3)).replace(/\s/g, '');
+
+  if(c.range) {
+    const [a, b] = c.range.map(f),
+      unit = /[^\d.]+$/.exec(b)?.[0];
+
+    /* 3.8pF..85.8pF -> 3.8..85.8pF */
+    return `${unit && a.endsWith(unit) ? a.slice(0, -unit.length) : a}..${b}`;
+  }
+
+  return c.value != null ? f(c.value) : null;
+}
+
+/*
+ * The adjustability mark of a part with a range, the trimmer symbol: a
+ * diagonal line through the symbol, as thick as its leads, that ends in a
+ * short bar across its upper end. It reaches past the plates (or the
+ * coil) on both sides. A coil also gets a dotted line beside it, the
+ * ferrite core that is being moved.
+ */
+function AdjustableMark(cx, cy, isC, o) {
+  const [x0, y0, x1, y1] = isC ? [cx - 11, cy + 15, cx + 11, cy - 15] : [cx - 8, cy + 19, cx + 16, cy - 19],
+    len = Math.hypot(x1 - x0, y1 - y0),
+    half = 4.6,
+    nx = (-(y1 - y0) / len) * half, // the bar stands perpendicular on the line
+    ny = ((x1 - x0) / len) * half;
+  let s = `<path class="adj" d="M${fmt(x0)},${fmt(y0)}L${fmt(x1)},${fmt(y1)}M${fmt(x1 - nx)},${fmt(y1 - ny)}L${fmt(x1 + nx)},${fmt(y1 + ny)}"/>`;
+
+  if(!isC) {
+    const x = cx + o.loopRx + 3.2,
+      h = o.loops * o.loopRy;
+
+    s += `<path d="M${fmt(x)},${fmt(cy - h - 2)}V${fmt(cy + h + 2)}" stroke-width="${fmt(o.stroke * 0.65)}" stroke-dasharray="1.2 2.4" stroke-linecap="butt"/>`;
+  }
+
+  return s;
 }
 
 function layoutPart(c, o) {
   const isC = c.kind == 'C',
     value = Label(c),
     fs = o.fontSize,
-    ax = isC ? o.plateW / 2 + 2 : 4,
-    lx = ax + (isC ? o.plateW / 2 : o.loopRx) + 5,
+    adj = !!c.range,
+    ax = isC ? o.plateW / 2 + 2 : adj ? 8 : 4,
+    lx = ax + (isC ? o.plateW / 2 : o.loopRx) + 5 + (adj && !isC ? 12 : 0),
     tw = Math.max(c.name.length, value?.length ?? 0) * fs * 0.62;
 
   return {
@@ -440,6 +490,8 @@ function layoutPart(c, o) {
 
         s = `<path d="M${fmt(cx)},${fmt(y)}V${fmt(y0)}${`a${o.loopRx},${o.loopRy} 0 0 1 0,${2 * o.loopRy}`.repeat(o.loops)}V${fmt(y + h)}"/>`;
       }
+
+      if(adj) s += AdjustableMark(cx, cy, isC, o);
 
       const font = `font-family="Helvetica,Arial,sans-serif" font-weight="bold" font-size="${fs}" fill="currentColor" stroke="none"`;
 
@@ -485,8 +537,15 @@ function layoutParallel(g, o) {
 
   const spine = i => xs[i] + kids[i].ax,
     first = spine(0),
-    last = spine(kids.length - 1),
-    ax = (first + last) / 2;
+    last = spine(kids.length - 1);
+  let ax = (first + last) / 2;
+
+  /*
+   * With an odd number of branches the port lands next to the junction dot
+   * of the middle one, two dots a pixel apart. A branch that close shares
+   * its dot with the port instead.
+   */
+  for(let i = 1; i < kids.length - 1; i++) if(Math.abs(spine(i) - ax) <= 10) ax = spine(i);
 
   return {
     ax,

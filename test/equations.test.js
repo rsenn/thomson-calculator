@@ -214,3 +214,45 @@ test('advanced mode: a value may carry its unit after a space', async () => {
   close(ParseKind('2.2 n + 3.3 n', 'C').evaluate(), 1 / (1 / 2.2e-9 + 1 / 3.3e-9));
   expect(SetValue('10 u + 4.7 u', 'L', 'L2', '5u')).toBe('10 u + 5u');
 });
+
+test('a range makes a part adjustable (a polyvaricon section with its trimmer)', async () => {
+  // Mitsumi PVC-2LXT-L5, AM oscillator section: 82 pF swing on 3.8 pF minimum, trimmer 0..7 pF set to its middle
+  const c = Parse('Cosc=3.8p..85.8p | Ctrim=3.5p'),
+    [osc, trim] = c.leaves();
+
+  expect(osc.range).toEqual([3.8e-12, 85.8e-12]);
+  expect(osc.value).toBe(85.8e-12);
+  expect(trim.range).toBeUndefined();
+  expect(c.toText()).toBe('Cosc=3.8p..85.8p | Ctrim=3.5p');
+  close(c.evaluate(), 89.3e-12);
+  close(c.evaluate({ Cosc: 3.8e-12 }), 7.3e-12);
+  expect(() => Parse('C1=5p..1p')).toThrow(/bad range/);
+  expect(() => Parse('C1=0..1p')).toThrow(/bad range/);
+  expect(c.schematic()).toContain('3.8..85.8pF');
+
+  const { ParseKind } = await import('../src/network-ui.js');
+
+  expect(ParseKind('Cosc=3.8p..85.8p | Ctrim=3.5p', 'C').leaves()[0].range[1]).toBe(85.8e-12);
+});
+
+test('schematic: the port shares the junction dot of a middle branch next to it', () => {
+  const dots = svg => (svg.match(/r="2\.4"/g) ?? []).length;
+
+  // three branches: one dot at the top and one at the bottom, not two each
+  expect(dots(Parse('L1=300u | (C1=27p + C2=470p) | C3=5p').schematic())).toBe(2);
+  // four branches: the port is between two of them, all four dots stay
+  expect(dots(Parse('L1=300u | C1=27p | C2=5p | C3=1p').schematic())).toBe(6);
+});
+
+test('schematic: an adjustable part carries the trimmer mark, a coil also its core', () => {
+  const mark = svg => (svg.match(/class="adj"/g) ?? []).length;
+
+  expect(mark(Parse('C1=5p | C2=3p').schematic())).toBe(0);
+  expect(mark(Parse('C1=3.8p..85.8p | C2=3p').schematic())).toBe(1);
+
+  const coil = Parse('L1=10u..300u | C1=3p').schematic();
+
+  expect(mark(coil)).toBe(1);
+  expect(coil).toContain('stroke-dasharray');
+  expect(Parse('L1=10u | C1=3p').schematic()).not.toContain('stroke-dasharray');
+});

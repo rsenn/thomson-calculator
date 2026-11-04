@@ -5,6 +5,27 @@
 	Advanced mode that takes the L and C of the tank as networks of
 	parts (selectable in the schematic and in the equation).
 
+	* src/equations.js (AdjustableMark, layoutPart), test:
+	A part with a range is drawn as adjustable with the trimmer
+	symbol: a diagonal line through the plates (or the coil), as thick
+	as the leads and reaching past them, ending in a short bar across
+	its upper end. A coil also gets a dotted line beside it, the
+	ferrite core. The labels of a coil move over to make room.
+
+	* src/equations.js (layoutParallel), test:
+	With an odd number of parallel branches the port is placed at the
+	midpoint of the outer ones, which lands a pixel or two beside the
+	middle branch, so the rail got two overlapping junction dots at
+	the top and at the bottom. A branch within 10 units of the port
+	now takes over the port position and shares its dot.
+
+	* src/equations.js (Parse, ComponentNode, Label):
+	A part value `a..b` (`Cosc=3.8p..85.8p`) makes the part adjustable
+	by a knob: ComponentNode#range holds [min, max], `value` stays
+	the maximum so everything that evaluates a network keeps working.
+	Parse() rejects a range that is reversed or starts at 0, toText()
+	writes it back, and the schematic labels it `3.8..85.8pF`.
+
 	* src/favicon.png, src/favicon.ico:
 	Regenerated from the new src/svg/favicon.svg (16 px PNG; ICO with
 	16, 32, 48, 64, 128 and 256 px layers stored as PNG, 28 KB).
