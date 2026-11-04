@@ -5,6 +5,25 @@
 	Advanced mode that takes the L and C of the tank as networks of
 	parts (selectable in the schematic and in the equation).
 
+	* src/network-ui.js (ShowNetworks, FormatSpan), src/app.html,
+	src/stylesheets/main.css:
+	L, C and f of the tank are shown as a table, one row per quantity,
+	in the style of the basic mode (the black letter cell, the orange,
+	green and purple name cell as wide as the widest, a boxed value on
+	the same line), instead of one line of text. The rows are built
+	from a list (ShowResult), so rows for the single parts can follow.
+	The table is only as wide as its widest value. A span is written
+	`7.3 – 89.3 pF`, with the unit once when both ends share it; the
+	block is hidden while the networks are incomplete.
+
+	* src/network-ui.js (ShowNetworks), src/app.html, test:
+	L, C and f are shown for both ends of the knob when a part is a
+	range (`C = 7.3pF..89.3pF   f = 30.7MHz..107.5MHz`). The example
+	in the C field is now the AM oscillator section of the Mitsumi
+	PVC-2LXT-L5 polyvaricon (also the CBM-443DF): 82 pF swing on a
+	3.8 pF minimum, `Cosc=3.8p..85.8p`, in parallel with its trimmer
+	(0 to 7 pF, set to the middle, `Ctrim=3.5p`).
+
 	* src/equations.js (AdjustableMark, layoutPart), test:
 	A part with a range is drawn as adjustable with the trimmer
 	symbol: a diagonal line through the plates (or the coil), as thick

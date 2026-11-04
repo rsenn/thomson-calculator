@@ -256,3 +256,12 @@ test('schematic: an adjustable part carries the trimmer mark, a coil also its co
   expect(coil).toContain('stroke-dasharray');
   expect(Parse('L1=10u | C1=3p').schematic()).not.toContain('stroke-dasharray');
 });
+
+test('advanced mode: a span is written with its unit once', async () => {
+  const { FormatSpan } = await import('../src/network-ui.js');
+
+  expect(FormatSpan(7.3e-12, 89.3e-12, 'F')).toBe('7.3 \u2013 89.3 pF');
+  expect(FormatSpan(89.3e-12, 7.3e-12, 'F')).toBe('7.3 \u2013 89.3 pF');
+  expect(FormatSpan(972.375e3, 18.6277e6, 'Hz')).toBe('972.375 kHz \u2013 18.6277 MHz');
+  expect(FormatSpan(300e-9, 300e-9, 'H')).toBe('300 nH');
+});

@@ -36,17 +36,19 @@
       <div id="network_fields">
         <label class="var inductance"><b>L</b></label>
         <label class="name inductance">Inductance</label>
-        <input type="text" id="network_L" spellcheck="false" autocomplete="off" placeholder="(100n | 47n) + 250n" />
+        <input type="text" id="network_L" spellcheck="false" autocomplete="off" placeholder="300u" />
         <label class="var capacitance"><b>C</b></label>
         <label class="name capacitance">Capacitance</label>
-        <input type="text" id="network_C" spellcheck="false" autocomplete="off" placeholder="(27p + 470p) | 5p" />
+        <input type="text" id="network_C" spellcheck="false" autocomplete="off" placeholder="Cosc=3.8p..85.8p | Ctrim=3.5p" />
       </div>
       <div id="network_error" hidden></div>
       <div id="network_views">
         <div id="schematic"></div>
         <div id="equation"></div>
       </div>
-      <div id="network_result"></div>
+      <table id="network_result" hidden>
+        <tbody></tbody>
+      </table>
       <div id="part_panel" hidden>
         <b id="part_name"></b> <span id="part_value"></span>
         <span class="sep">|</span>
@@ -56,7 +58,7 @@
         <span id="part_result"></span>
         <button type="button" id="part_use" hidden>Use</button>
       </div>
-      <div id="network_help"><b>+</b> series &nbsp; <b>|</b> parallel &nbsp; <b>( )</b> group &nbsp; values like <b>100n</b> or a named part <b>Ltrim=5u</b> &nbsp; click a part to select it</div>
+      <div id="network_help"><b>+</b> series &nbsp; <b>|</b> parallel &nbsp; <b>( )</b> group &nbsp; values like <b>100n</b> or a named part <b>Ltrim=5u</b> &nbsp; a range <b>3.8p..85.8p</b> is a knob &nbsp; click a part to select it</div>
     </section>
     <label id="mode" title="Switch between the Thomson calculator and the free network view"><input type="checkbox" id="advanced_toggle" /> Advanced</label>
   </body>

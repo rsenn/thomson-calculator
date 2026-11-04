@@ -73,6 +73,18 @@ export function Seed(v) {
 
 const fmtValue = (v, unit) => FormatNumber(v, unit, 'floor', RoundTo(4)).replace(/\s+/g, '');
 
+/* `7.3 – 89.3 pF`: a range with the unit written once when both ends share it */
+export function FormatSpan(x, y, unit) {
+  const f = v => FormatNumber(v, unit, 'floor', RoundTo(4)).trim(),
+    [a, b] = [x, y].sort((p, q) => p - q).map(f);
+
+  if(a == b) return a;
+
+  const u = /\s\S+$/.exec(b)?.[0];
+
+  return `${u && a.endsWith(u) ? a.slice(0, -u.length) : a} \u2013 ${b}`;
+}
+
 /* a frequency like `100M`, `2.4G` or `433.92MHz` */
 export function ParseFrequency(str) {
   const v = NumericValue(Unit(String(str).replace(/\s/g, '').replace(/hz$/i, '')));
@@ -106,7 +118,7 @@ function ShowPanel() {
   const [kind, c] = found;
 
   Q('#part_name').textContent = c.name;
-  Q('#part_value').textContent = c.value != null ? fmtValue(c.value, kind == 'L' ? 'H' : 'F') : 'no value';
+  Q('#part_value').textContent = c.range ? `${fmtValue(c.range[0], kind == 'L' ? 'H' : 'F')}\u2026${fmtValue(c.range[1], kind == 'L' ? 'H' : 'F')}` : c.value != null ? fmtValue(c.value, kind == 'L' ? 'H' : 'F') : 'no value';
   Q('#part_use').hidden = state.solved?.name != c.name;
   Q('#part_result').textContent = state.solved?.name == c.name ? state.solved.message : '';
 }
@@ -156,6 +168,32 @@ function UseSolved(inputs, update) {
   update();
 }
 
+/*
+ * The result table, one row per quantity: [symbol, name, class, value].
+ * Rows for the single parts (C1, C2, L1, L2) can be added to the list.
+ */
+function ShowResult(result) {
+  const rows = result
+    ? [
+        ['L', 'Inductance', 'inductance', result.L],
+        ['C', 'Capacitance', 'capacitance', result.C],
+        ['f', 'Frequency', 'frequency', result.f],
+      ]
+    : [];
+  const cell = (cls, text) => Object.assign(document.createElement('td'), { className: cls, textContent: text });
+
+  Q('#network_result').hidden = !rows.length;
+  Q('#network_result tbody').replaceChildren(
+    ...rows.map(([sym, name, cls, value]) => {
+      const tr = document.createElement('tr');
+
+      tr.append(cell('var', sym), cell(`name ${cls}`, name), cell('value', value));
+
+      return tr;
+    }),
+  );
+}
+
 /* draw the tank of the two fields; returns { L, C } (a part is undefined when empty or wrong) */
 export function ShowNetworks(texts) {
   const nets = {},
@@ -181,23 +219,26 @@ export function ShowNetworks(texts) {
   const { L, C } = nets,
     both = L && C && new ThomsonEquation(L, C),
     shown = both ? both.network() : L ?? C,
-    values = Object.assign({}, L?.values(), C?.values());
-  let result = '';
+    values = Object.assign({}, L?.values(), C?.values()),
+    ranged = [...(L?.leaves() ?? []), ...(C?.leaves() ?? [])].filter(c => c.range);
+  let result;
 
   Q('#schematic').innerHTML = shown ? shown.schematic({ scale: 1.4 }) : '';
   Q('#equation').innerHTML = both ? both.renderSVG('f', { fontSize: 26 }) : '';
 
   try {
     if(both) {
-      const { Leq, Ceq, freq } = both.evaluate(values);
+      // adjustable parts (ranges) sweep with the knob: show both ends
+      const at = end => both.evaluate({ ...values, ...Object.fromEntries(ranged.map(c => [c.name, c.range[end]])) }),
+        [a, b] = ranged.length ? [at(0), at(1)] : [at(1), at(1)];
 
-      result = `L = ${fmtValue(Leq, 'H')}   C = ${fmtValue(Ceq, 'F')}   f = ${fmtValue(freq, 'Hz')}`;
+      result = { L: FormatSpan(a.Leq, b.Leq, 'H'), C: FormatSpan(a.Ceq, b.Ceq, 'F'), f: FormatSpan(a.freq, b.freq, 'Hz') };
     }
   } catch(e) {
     /* a part without a value */
   }
 
-  Q('#network_result').textContent = result;
+  ShowResult(result);
 
   // keep the selection while its part still exists
   state.nets = nets;
