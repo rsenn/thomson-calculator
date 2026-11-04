@@ -24,17 +24,12 @@ const computed = [];
 const minSize = 10;
 const DEFAULT_PRECISION = 3;
 
-const Start = () => {
-  try {
-    Init();
-  } catch(e) {
-    console.log('ERROR', e.message);
-    throw e;
-  }
-};
+let network;
 
-if(document.readyState == 'loading') document.addEventListener('DOMContentLoaded', Start);
-else Start();
+// storage keys of the advanced mode, and what was last read or written per key (SaveConfig)
+const ADVANCED_KEYS = ['advanced', 'networkL', 'networkC'];
+const saved = {};
+
 
 export function ParseValue(value, name) {
   const idx = FieldIndex(name);
@@ -139,9 +134,7 @@ export function FieldIndex(arg) {
   return arg;
 }
 
-/* advanced mode: the free network view, its code is loaded on first use */
-let network;
-
+/* advanced mode: the network view, its code is loaded on first use */
 export async function SetAdvanced(on, init = false) {
   document.body.classList.toggle('advanced', on);
   Q('#advanced_toggle').checked = on;
@@ -162,22 +155,50 @@ export async function SetAdvanced(on, init = false) {
   });
 }
 
+/*
+ * The config lives in two storage keys: the basic mode in `config`, the
+ * advanced mode (its switch and the two network texts) in `config.advanced`,
+ * so that a tab that only knows the basic mode cannot erase the other.
+ * SaveConfig() runs every 500 ms; it writes a key only when its content has
+ * changed since this tab last read or wrote it, so a tab that sits idle never
+ * overwrites what another tab saved meanwhile.
+ */
+function Store(key, obj) {
+  const json = JSON.stringify(obj);
+
+  if(saved[key] === json) return;
+
+  saved[key] = json;
+  localStorage.setItem(key, json);
+}
+
 export function SaveConfig() {
   for(let i = 0; i < NUM_FIELDS; i++) config['LCf'[i]] = GetField(i) ?? '';
 
   config.selected = GetSelected();
 
-  localStorage.setItem('config', JSON.stringify(config));
+  Store('config', Object.fromEntries(Object.entries(config).filter(([k]) => !ADVANCED_KEYS.includes(k))));
+  Store('config.advanced', Object.fromEntries(ADVANCED_KEYS.filter(k => k in config).map(k => [k, config[k]])));
 }
 
 export function LoadConfig() {
-  let r = {};
+  const read = key => {
+    let r = {};
 
-  try {
-    r = JSON.parse(localStorage.getItem('config') ?? '{}');
-  } catch(e) {}
+    try {
+      r = JSON.parse(localStorage.getItem(key) ?? '{}');
+    } catch(e) {}
 
-  return r;
+    return r;
+  };
+  const basic = read('config'),
+    advanced = read('config.advanced');
+
+  // what we start from counts as saved: an unchanged tab writes nothing
+  saved['config'] = JSON.stringify(Object.fromEntries(Object.entries(basic).filter(([k]) => !ADVANCED_KEYS.includes(k))));
+  saved['config.advanced'] = JSON.stringify(advanced);
+
+  return { ...basic, ...advanced };
 }
 
 function FieldElements(n) {
@@ -662,3 +683,19 @@ Object.assign(globalThis, {
   Thompson,
   Cover
 });
+
+/*
+ * Start last: on a page that is already loaded Init() runs at once, and
+ * everything it uses at module level (const, let) must have been evaluated.
+ */
+const Start = () => {
+  try {
+    Init();
+  } catch(e) {
+    console.log('ERROR', e.message);
+    throw e;
+  }
+};
+
+if(document.readyState == 'loading') document.addEventListener('DOMContentLoaded', Start);
+else Start();

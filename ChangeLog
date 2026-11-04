@@ -5,6 +5,26 @@
 	Advanced mode that takes the L and C of the tank as networks of
 	parts (selectable in the schematic and in the equation).
 
+	* src/app.js (SaveConfig, LoadConfig):
+	SaveConfig() ran every 500 ms and wrote the whole config from the
+	memory of its tab. Any other tab of the app (an old one, or one
+	left idle) therefore kept overwriting what was typed elsewhere,
+	which is why the advanced mode forgot its fields on reload.
+	- The advanced mode (switch and network texts) has its own storage
+	  key, `config.advanced`, which a basic-mode-only tab does not
+	  touch.
+	- A key is only written when its content differs from what this
+	  tab last read or wrote, so an idle tab writes nothing.
+
+	* src/app.js (network, SetAdvanced):
+	`let network` was declared below the call of Start(). Where the
+	page is already loaded when the module runs (a static server, not
+	the dev server) Init() ran first and SetAdvanced() died with
+	"Cannot access 'network' before initialization" when Advanced mode
+	was restored from the saved config: the fields did nothing until
+	the checkbox was switched off and on. Start() is now called at the
+	end of the module, after every module-level binding exists.
+
 	* src/network-ui.js (ShowNetworks, FormatSpan), src/app.html,
 	src/stylesheets/main.css:
 	L, C and f of the tank are shown as a table, one row per quantity,
