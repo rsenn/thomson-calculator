@@ -5,6 +5,15 @@
 	Advanced mode that takes the L and C of the tank as networks of
 	parts (selectable in the schematic and in the equation).
 
+	* doc/ [new], TODO [new], README.md:
+	Design documents as the source of truth: architecture, the network
+	model, the equation typesetter, the schematic, the Advanced mode,
+	icons and generated assets, the polyvaricon reference data
+	(Mitsumi PVC-2LXT-L5, CBM-443), the planned knob curve, tracking
+	and design tool features, and the pitfalls met so far. TODO lists
+	the open work and points into doc/. README.md mentions ranges, the
+	Advanced mode and doc/.
+
 	* src/app.js (SaveConfig, LoadConfig):
 	SaveConfig() ran every 500 ms and wrote the whole config from the
 	memory of its tab. Any other tab of the app (an old one, or one

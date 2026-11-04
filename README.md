@@ -85,6 +85,10 @@ defaults because it carries WebKitGTK and comes to about 80 MB:
 | `src/numbers.js` | parsing and formatting of values, units and ranges |
 | `src/thomson.js` | the formula, and the fixed-part-over-a-tuning-range solver |
 | `src/equations.js` | models, draws and solves composed LC networks |
+| `src/network-ui.js` | the Advanced mode: L and C of a tank as networks, schematic, equation, solve |
+| `src/glyphs.js` | generated glyph outlines for the equations (`bun run glyphs`) |
+| `tools/` | icon, glyph and equation generators |
+| `doc/` | the design documents, the source of truth (start with `doc/README.md`) |
 | `electron/main.js` | Electron main process |
 | `src-tauri/` | Tauri app |
 | `test/` | `bun test` suites |
@@ -93,8 +97,9 @@ defaults because it carries WebKitGTK and comes to about 80 MB:
 
 A network is a two-terminal series/parallel tree of inductors and capacitors.
 `+` is series, `|` is parallel (binds tighter), a part is a name with an
-optional value; names start with `L` or `C`. Adjustable parts are not modelled:
-sweep or solve for a component from the outside.
+optional value; names start with `L` or `C`. A value `a..b` makes a part
+adjustable (a knob moves it); the model holds the range and evaluating at a
+knob position is left to the caller.
 
 ```js
 import { Parse } from './src/equations.js';
@@ -115,6 +120,16 @@ net.equationSVG();    // Z(jω) = …, typeset with fractions, as <svg>
 `solve()` bisects a component value, since every resonance falls as any
 component grows. A zero/pole pair closer than one scan cell (about 0.4%) can
 be missed unless `points` is raised.
+
+## Advanced mode
+
+Tick **Advanced** (top right) to enter the inductance and the capacitance of
+the tank as networks of parts: `(100n | 47n) + 250n` for L, `Cosc=3.8p..85.8p |
+Ctrim=3.5p` for C (`+` series, `|` parallel, `a..b` an adjustable part).
+You get the schematic, the Thomson equation of the two networks, and L, C and
+f over the whole knob range; click a part in either drawing to solve for its
+value. See `doc/advanced-mode.md`. What is planned (knob curve, tracking,
+padder synthesis, tolerance) is in `doc/` and `TODO`.
 
 ## License
 

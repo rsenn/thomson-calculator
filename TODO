@@ -1,0 +1,197 @@
+TODO
+====
+
+The design documents in doc/ are the source of truth; start with
+doc/README.md. Items are roughly in the order they should be done.
+
+- commit-pending-work:
+  Everything since commit 9104b25 (Advanced mode) is uncommitted: range
+  parts, the trimmer symbol, the shared junction dot, the result table, the
+  start order fix, the config saving fix, and doc/ with this file. Split it
+  into schematic and model, Advanced mode user interface, the two bug fixes,
+  and documentation, with ChangeLog entries per commit as before
+  (doc/architecture.md, Conventions).
+
+  one_layer.js in the top directory is untracked and nobody remembers what
+  it is. Look at it and either add it, move it to tools/ or remove it.
+
+- knob-curve:
+  Plot frequency against knob position for a tank with range parts, with
+  linearity error, sensitivity in Hz per percent, crowding factor, fine tune
+  factor against the bare part and a verdict. This is the feature that
+  answers whether a padder, trimmer or parallel capacitor leaves a usable
+  dial. Design, definitions, interfaces and test vectors are in
+  doc/knob-curve.md.
+
+  Phase 1 is src/knob.js (KnobCurve, CurveMetrics, CurveSVG, straight line
+  taper only) and the Knob section in the Advanced view. The test vectors
+  come from a hand calculation of a 5 to 60 pF capacitor alone, in series
+  with 10 pF and in parallel with 100 pF.
+
+- measured-tapers:
+  Support tapers other than the straight line capacitance law: straight line
+  frequency, straight line wavelength, logarithmic, and tables with
+  monotone cubic interpolation. The Mitsumi PVC-2LXT-L5 curves A, B and C
+  (doc/polyvaricon.md) are not straight lines (the antenna section is at
+  26 percent of its swing at half rotation) and ship as presets. Needs the
+  at-sign syntax name@taper in the part grammar, a taper chooser in the part
+  panel and user tables stored in config.advanced. Phase 2 of
+  doc/knob-curve.md.
+
+- solve-at-knob-position:
+  The Solve panel for a selected part holds the other range parts at their
+  maximum. It should hold them at their value at a knob position, by default
+  the stop that gives the target, and say which position it used. Phase 4 of
+  doc/knob-curve.md; needs the taper machinery of measured-tapers.
+
+- tracking-plot:
+  Antenna and oscillator tank on one knob, the tracking error
+  f_osc - f_rf - IF plotted in kHz with the tracking points marked, the
+  image frequency, and a three point tracking solver for the oscillator
+  coil, padder and trimmer. This is what the unequal sections of the gang
+  capacitors are for. doc/tracking.md; depends on knob-curve and on
+  stray-capacitance, because the trimmer and the strays set the minimum
+  capacitance the tracking depends on.
+
+- synthesis-padder-trimmer:
+  Given a variable part, its range and a target band, compute the fixed
+  parallel and series capacitor (or inductor) that make the range cover the
+  band, with closed forms and a numeric fall back, then show the resulting
+  band and the knob curve metrics. The closed forms are in doc/design-tool.md
+  section 2 and have been checked numerically; each still needs a test
+  against ThomsonEquation#evaluate.
+
+- e-series-snapping:
+  Snap synthesized values to the E12, E24, E48 or E96 series, try the
+  neighbour combinations, show the band error at both ends in kHz, and
+  offer two standard parts in series or parallel for a value that is not in
+  the series. doc/design-tool.md section 2.
+
+- tolerance-analysis:
+  Worst case band from the part tolerances. Every resonance falls
+  monotonically as any part grows, so the worst case is exact at the corners
+  and needs no Monte Carlo (doc/model.md, Monotonicity). Report the edge
+  shift in kHz, a ranking of the parts, and optionally an envelope on the
+  knob curve. Datasheet tolerances: Mitsumi AM (1 pF + 1 percent), FM
+  (0.3 pF + 2 percent). doc/design-tool.md section 3.
+
+- stray-capacitance:
+  A stray capacitance in parallel with the C network, entered or measured
+  with the LC meter, drawn as a dotted capacitor and included in the result
+  table. A 3.8 pF minimum capacitance or a series capacitor of a few pF is
+  decided by it. doc/design-tool.md section 4. ComponentNode needs a stray
+  flag for the schematic and the tables.
+
+- practicality-checks:
+  The warning list under the metrics: value too small to build, series
+  capacitor swamped by strays, band lost to tolerance, crowded dial, narrow
+  band, trimmer near its end of travel, optional voltage rating. Thresholds
+  in one place in the code, listed in doc/design-tool.md section 5 when they
+  are set. Loss, temperature coefficient and coil coupling are not modelled
+  and the document says so.
+
+- result-table-part-rows:
+  The result table of the Advanced mode is built from a list in ShowResult
+  (src/network-ui.js) so that rows for the single parts can follow: every L
+  and C with its value or range, and the knob dependent ones with the value
+  at both stops. Wanted by the user for a later stage. doc/advanced-mode.md,
+  What is shown.
+
+- part-editing:
+  The part panel shows a selected part but only offers Solve. Wanted next to
+  it: edit the value or range in place (rewriting the field text through
+  SetValue), delete a part, wrap the selection in a series or parallel group,
+  and mark the selected part's token in the text field. Marking inside an
+  input is not possible with styling, so it needs selection ranges
+  (setSelectionRange) or a mirror element; Scan already knows every token
+  position. doc/advanced-mode.md, Selection.
+
+- equation-radical-clearance:
+  In the frequency equation with a tall denominator (several nested
+  fractions under the square root) the bar of the radical comes very close
+  to the bar of the fraction, so the two lines nearly merge. This is TeX's
+  standard clearance (three rule thicknesses) but looks cramped in the
+  Advanced mode at a font size of 26. Add some space above the radical in
+  Sqrt or the denominator shift in Frac (src/equations.js), then check the
+  basic images of tools/equations.js still match. doc/typesetting.md, TeX
+  metrics.
+
+- exit-shortcut:
+  Early on an exit button for the app was discussed; the proposal was no
+  button in the window but a keyboard shortcut (Ctrl+Q or Ctrl+W) in
+  Electron and Tauri, since closing the window already quits and the web
+  version has nothing to quit. The user did not decide. Ask again or drop it.
+
+- nginx-cache-control:
+  The nginx location that serves /thomson-calculator/ sends no Cache-Control,
+  so browsers keep old modules and stylesheets and the page breaks after
+  every update until a hard reload (doc/pitfalls.md). Add
+  add_header Cache-Control "no-cache"; to the location in
+  /etc/nginx/sites-available/ssl (the old location block there is commented
+  out, the root /var/www/html/thomson-calculator is a symlink to src/).
+  That file is outside the repository, so it is the user's decision. An
+  alternative inside the repository is a version query on every module
+  import, which is a lot of bookkeeping.
+
+- dev-server-runtime-image:
+  Under bun run web the equation image of the basic mode breaks after the
+  solved field is changed: app.js sets img.src = svg/<name>-equation.svg at
+  run time and the dev server only serves assets referenced from the HTML,
+  so it returns the HTML page. It worked in the other runtimes. Reference all
+  three images in the HTML (preloaded or as hidden img elements) and switch
+  between them. Also: a lazily loaded module can stay stale in the dev
+  server until it is restarted (doc/pitfalls.md).
+
+- desktop-app-verification:
+  The new icons (src-tauri/icons including icon.icns and the Windows
+  Square logos, electron/icon.png) and the Advanced mode were only looked at
+  in a browser. Run bun run start and bun run tauri:dev, check the window
+  icon, the Advanced mode (dynamic import over file://, the saved config in
+  the app's own profile), and build one package of each. Only Linux has been
+  built so far.
+
+- browser-tests:
+  The DOM code of the Advanced mode (ShowNetworks, ShowResult, Select, the
+  event wiring, restoring the saved state) is only checked by hand with the
+  checklist in doc/advanced-mode.md. Two bugs that were found on the hosted
+  page, the start order and the config clobbering, would have been caught by
+  a test that loads app.html in a real DOM and reloads it. Candidates:
+  happy-dom under bun test, or a small script that drives a headless
+  Chrome. test/equations.test.js also holds the Advanced mode helpers and
+  should be split into network-ui.test.js and equations.test.js when it
+  grows further.
+
+- trim-glyph-set:
+  src/glyphs.js is 91 KB and is loaded with every page because app.js imports
+  equations.js statically, although the basic mode needs none of it. Either
+  import equations.js lazily with network-ui.js or let tools/glyphs.js emit
+  only the glyphs the typesetter can ask for (the Greek letters and the
+  uppercase set are the bulk). Measure what the basic mode really loads
+  before and after.
+
+- readme-update:
+  README.md still says adjustable parts are not modelled and does not mention
+  the Advanced mode, ranges in the part syntax, the trimmer symbol, doc/ or
+  tools/. Update it together with the next feature, and keep it short: it is
+  the user summary, doc/ is the specification.
+
+- lc-meter-measurements:
+  Identify the gang capacitors in the drawer (photos show four trimmer
+  screws and section labels C1, C3, C4) by measuring each section at both
+  stops and every 10 percent of the rotation, with the trimmers fully out
+  and fully in, using the LC meter in ../lc-meter. The tables become user
+  tapers (measured-tapers) and the test data for knob-curve; the procedure
+  is at the end of doc/polyvaricon.md. Note whether capacitance really
+  falls clockwise and which Mitsumi curve each section follows.
+
+- opposed-ranges:
+  A mechanism where one part grows while another shrinks with the same knob,
+  for example an inductor on the shaft of a capacitor. Probably a reversed
+  taper modifier (g becomes 1 - g) on a range written as usual. Decide when a
+  real case turns up. doc/knob-curve.md, Open questions.
+
+- cbm-443-verify:
+  The CBM-443 data sheet we found is an anonymous generated PDF, not from
+  the manufacturer; the pin table in it is unverified (doc/polyvaricon.md).
+  Get the Hong Da data (hdic.com.hk) or measure the pins before using the
+  pin assignment anywhere.
