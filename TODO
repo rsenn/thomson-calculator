@@ -6,10 +6,20 @@ doc/README.md. Items are roughly in the order they should be done.
 
 - coil-inductance:
   Compute the inductance of a coil from its geometry (single layer coil
-  first: diameter, wire, pitch, length), so that L need not be typed in. Take
-  the algorithms from the open source Coil64 project rather than from a
-  scraped web calculator; they are more complete and more concise. Not
-  designed yet.
+  first: diameter, wire, length, turns), and from the same description its
+  series resistance (so Q) and its self-capacitance (a stray capacitance and
+  a self-resonant frequency). Clean-room design: Coil64 is GPLv3 and its
+  source is not read; the formulas come from the published literature and the
+  test vectors from the papers or hand calculations. Rules, sources and the
+  plan are in doc/coil.md. Comes after knob-curve; it feeds q-bandwidth and
+  stray-capacitance.
+
+- q-bandwidth:
+  Quality factor and bandwidth of the tank: BW = f0 / Q, the selectivity
+  curve |H(f)|, loaded Q from the source and load resistance, insertion
+  loss. Q is entered at first (default 100) and later computed from the coil
+  (coil-inductance). Shares the chart code of knob-curve. Not designed yet;
+  write doc/q-bandwidth.md first.
 
 - knob-curve:
   Plot frequency against knob position for a tank with range parts, with
@@ -79,12 +89,17 @@ doc/README.md. Items are roughly in the order they should be done.
   flag for the schematic and the tables.
 
 - practicality-checks:
-  The warning list under the metrics: value too small to build, series
-  capacitor swamped by strays, band lost to tolerance, crowded dial, narrow
-  band, trimmer near its end of travel, optional voltage rating. Thresholds
-  in one place in the code, listed in doc/design-tool.md section 5 when they
-  are set. Loss, temperature coefficient and coil coupling are not modelled
-  and the document says so.
+  The warning list under the metrics. Two groups in doc/design-tool.md
+  section 5. Structural checks (empty or inverted range, absurd value,
+  dominated by one part, parallel inductors, only one of L and C, a range
+  with no effect) need only the existing model: build these first, as a
+  pure Checks(tank) function and a list under the result table. Build checks
+  (value too small, swamped by strays, band lost to tolerance, crowded dial,
+  narrow band, trimmer travel, voltage) come with knob-curve,
+  stray-capacitance and tolerance-analysis; self-resonance, bandwidth and Q
+  checks with coil-inductance and q-bandwidth. Thresholds in one place in the
+  code, listed in the document when they are set. Loss, temperature
+  coefficient and coil coupling are not modelled and the document says so.
 
 - result-table-part-rows:
   The result table of the Advanced mode is built from a list in ShowResult

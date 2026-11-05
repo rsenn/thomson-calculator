@@ -137,6 +137,31 @@ it fires. They are warnings in a list under the metrics, never errors.
 | trimmer travel | the trimmer would have to be near an end of its 0 to 7 pF travel | no margin to adjust |
 | voltage and current | optional: when a drive level is given, the reactive current and the voltage across the smallest capacitor | solid-dielectric parts are rated about 100 V DC |
 
+Checks that depend on features that do not exist yet. They are added with the
+feature, and the table is extended with the threshold when it is set:
+
+| Check | Fires when | Needs |
+|---|---|---|
+| self-resonance | the band reaches the coil's self-resonant frequency (say above 0.5 of it) | `coil-inductance` ([coil.md](coil.md)) |
+| bandwidth too wide | the tank bandwidth f/Q is wider than the channel it must select | `q-bandwidth` |
+| image rejection too low | the selectivity at the image frequency is below a given dB | `q-bandwidth`, `tracking-plot` |
+| Q too low | the loaded Q is below a useful value (say 20) | `q-bandwidth` |
+
+### Structural checks
+
+A second group is about the network as typed, not about building it. It needs
+nothing but the existing model, so it can be built first. Same rules: a list of
+warnings, never errors, thresholds in one place.
+
+| Check | Fires when | Why |
+|---|---|---|
+| empty or inverted range | a range with minimum not below maximum, or equal ends | the knob does nothing, or runs backwards |
+| absurd value | a value at or below 0, below 1 fF or 1 pH, or above 1 F or 1 kH | probably a unit typo (`m` for milli against `M` for mega) |
+| dominated by one part | one part in series 100 times smaller than the others, or one in parallel 100 times larger | the other parts hardly matter, so adjusting them does nothing |
+| parallel inductors | two or more inductors in parallel | the model assumes no mutual coupling; real coils couple |
+| only one of L and C | one network is empty | there is no frequency to compute |
+| range inside a fixed part's shadow | a range part whose full travel changes the tank frequency by less than 1 percent | knob has almost no effect |
+
 The thresholds are constants in one place in the code and are listed in this
 table when they are set; they are rules of thumb, not physics.
 

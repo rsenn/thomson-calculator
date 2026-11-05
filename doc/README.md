@@ -20,6 +20,7 @@ records what changed and when; `../README.md` is the user-facing summary.
 | [knob-curve.md](knob-curve.md) | frequency against knob position, tapers, linearity, resolution | **planned** |
 | [tracking.md](tracking.md) | two tanks on one knob: antenna and oscillator, tracking error | **planned** |
 | [design-tool.md](design-tool.md) | synthesis of padder and trimmer values, tolerance, stray capacitance, practicality checks | **planned** |
+| [coil.md](coil.md) | coil inductance, resistance (Q) and self-capacitance from geometry; the clean-room rules | **planned** |
 | [pitfalls.md](pitfalls.md) | mistakes made and the rules that came out of them | living |
 
 "Built" documents describe code that exists and is tested. "Planned"
