@@ -4,6 +4,45 @@ TODO
 The design documents in doc/ are the source of truth; start with
 doc/README.md. Items are roughly in the order they should be done.
 
+Agreed order of the big items: practicality-checks (structural group),
+stray-capacitance, knob-curve, coil-inductance, q-bandwidth, tracking-plot.
+
+- practicality-checks:
+  The warning list under the metrics. Two groups in doc/design-tool.md
+  section 5. Structural checks (empty or inverted range, absurd value,
+  dominated by one part, parallel inductors, only one of L and C, a range
+  with no effect) need only the existing model: build these first, as a
+  pure Checks(tank) function and a list under the result table. Build checks
+  (value too small, swamped by strays, band lost to tolerance, crowded dial,
+  narrow band, trimmer travel, voltage) come with knob-curve,
+  stray-capacitance and tolerance-analysis; self-resonance, bandwidth and Q
+  checks with coil-inductance and q-bandwidth. Thresholds in one place in the
+  code, listed in the document when they are set. Loss, temperature
+  coefficient and coil coupling are not modelled and the document says so.
+  Build the structural group first, it needs nothing else.
+
+- stray-capacitance:
+  A stray capacitance in parallel with the C network, entered or measured
+  with the LC meter, drawn as a dotted capacitor and included in the result
+  table. A 3.8 pF minimum capacitance or a series capacitor of a few pF is
+  decided by it. doc/design-tool.md section 4. ComponentNode needs a stray
+  flag for the schematic and the tables.
+  Agreed order: first with manual entry, before knob-curve; coil
+  self-capacitance (coil-inductance) feeds it later.
+
+- knob-curve:
+  Plot frequency against knob position for a tank with range parts, with
+  linearity error, sensitivity in Hz per percent, crowding factor, fine tune
+  factor against the bare part and a verdict. This is the feature that
+  answers whether a padder, trimmer or parallel capacitor leaves a usable
+  dial. Design, definitions, interfaces and test vectors are in
+  doc/knob-curve.md.
+
+  Phase 1 is src/knob.js (KnobCurve, CurveMetrics, CurveSVG, straight line
+  taper only) and the Knob section in the Advanced view. The test vectors
+  come from a hand calculation of a 5 to 60 pF capacitor alone, in series
+  with 10 pF and in parallel with 100 pF.
+
 - coil-inductance:
   Compute the inductance of a coil from its geometry (single layer coil
   first: diameter, wire, length, turns), and from the same description its
@@ -21,18 +60,26 @@ doc/README.md. Items are roughly in the order they should be done.
   (coil-inductance). Shares the chart code of knob-curve. Not designed yet;
   write doc/q-bandwidth.md first.
 
-- knob-curve:
-  Plot frequency against knob position for a tank with range parts, with
-  linearity error, sensitivity in Hz per percent, crowding factor, fine tune
-  factor against the bare part and a verdict. This is the feature that
-  answers whether a padder, trimmer or parallel capacitor leaves a usable
-  dial. Design, definitions, interfaces and test vectors are in
-  doc/knob-curve.md.
+- tracking-plot:
+  Antenna and oscillator tank on one knob, the tracking error
+  f_osc - f_rf - IF plotted in kHz with the tracking points marked, the
+  image frequency, and a three point tracking solver for the oscillator
+  coil, padder and trimmer. This is what the unequal sections of the gang
+  capacitors are for. doc/tracking.md; depends on knob-curve and on
+  stray-capacitance, because the trimmer and the strays set the minimum
+  capacitance the tracking depends on.
+  Comes after q-bandwidth: a tracking error means something only against
+  the tank bandwidth.
 
-  Phase 1 is src/knob.js (KnobCurve, CurveMetrics, CurveSVG, straight line
-  taper only) and the Knob section in the Advanced view. The test vectors
-  come from a hand calculation of a 5 to 60 pF capacitor alone, in series
-  with 10 pF and in parallel with 100 pF.
+- pwa-device-check:
+  The offline PWA and the Pages deployment (https://rsenn.github.io/thomson-calculator/)
+  were tested only in desktop Chrome with the server stopped. Install it on a
+  phone (Android: install prompt; iOS: Add to Home Screen), check the icons
+  (maskable crop), the standalone window, offline start, and that a new
+  release is picked up the next time the app is opened. The mobile layout was
+  only tried in a 375x667 frame; check a real phone, and the remaining 8 px
+  of horizontal scroll width in the Advanced view (hidden with overflow-x,
+  cause not found).
 
 - measured-tapers:
   Support tapers other than the straight line capacitance law: straight line
@@ -49,15 +96,6 @@ doc/README.md. Items are roughly in the order they should be done.
   maximum. It should hold them at their value at a knob position, by default
   the stop that gives the target, and say which position it used. Phase 4 of
   doc/knob-curve.md; needs the taper machinery of measured-tapers.
-
-- tracking-plot:
-  Antenna and oscillator tank on one knob, the tracking error
-  f_osc - f_rf - IF plotted in kHz with the tracking points marked, the
-  image frequency, and a three point tracking solver for the oscillator
-  coil, padder and trimmer. This is what the unequal sections of the gang
-  capacitors are for. doc/tracking.md; depends on knob-curve and on
-  stray-capacitance, because the trimmer and the strays set the minimum
-  capacitance the tracking depends on.
 
 - synthesis-padder-trimmer:
   Given a variable part, its range and a target band, compute the fixed
@@ -80,26 +118,6 @@ doc/README.md. Items are roughly in the order they should be done.
   shift in kHz, a ranking of the parts, and optionally an envelope on the
   knob curve. Datasheet tolerances: Mitsumi AM (1 pF + 1 percent), FM
   (0.3 pF + 2 percent). doc/design-tool.md section 3.
-
-- stray-capacitance:
-  A stray capacitance in parallel with the C network, entered or measured
-  with the LC meter, drawn as a dotted capacitor and included in the result
-  table. A 3.8 pF minimum capacitance or a series capacitor of a few pF is
-  decided by it. doc/design-tool.md section 4. ComponentNode needs a stray
-  flag for the schematic and the tables.
-
-- practicality-checks:
-  The warning list under the metrics. Two groups in doc/design-tool.md
-  section 5. Structural checks (empty or inverted range, absurd value,
-  dominated by one part, parallel inductors, only one of L and C, a range
-  with no effect) need only the existing model: build these first, as a
-  pure Checks(tank) function and a list under the result table. Build checks
-  (value too small, swamped by strays, band lost to tolerance, crowded dial,
-  narrow band, trimmer travel, voltage) come with knob-curve,
-  stray-capacitance and tolerance-analysis; self-resonance, bandwidth and Q
-  checks with coil-inductance and q-bandwidth. Thresholds in one place in the
-  code, listed in the document when they are set. Loss, temperature
-  coefficient and coil coupling are not modelled and the document says so.
 
 - result-table-part-rows:
   The result table of the Advanced mode is built from a list in ShowResult
