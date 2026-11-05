@@ -4,16 +4,12 @@ TODO
 The design documents in doc/ are the source of truth; start with
 doc/README.md. Items are roughly in the order they should be done.
 
-- commit-pending-work:
-  Everything since commit 9104b25 (Advanced mode) is uncommitted: range
-  parts, the trimmer symbol, the shared junction dot, the result table, the
-  start order fix, the config saving fix, and doc/ with this file. Split it
-  into schematic and model, Advanced mode user interface, the two bug fixes,
-  and documentation, with ChangeLog entries per commit as before
-  (doc/architecture.md, Conventions).
-
-  one_layer.js in the top directory is untracked and nobody remembers what
-  it is. Look at it and either add it, move it to tools/ or remove it.
+- coil-inductance:
+  Compute the inductance of a coil from its geometry (single layer coil
+  first: diameter, wire, pitch, length), so that L need not be typed in. Take
+  the algorithms from the open source Coil64 project rather than from a
+  scraped web calculator; they are more complete and more concise. Not
+  designed yet.
 
 - knob-curve:
   Plot frequency against knob position for a tank with range parts, with
