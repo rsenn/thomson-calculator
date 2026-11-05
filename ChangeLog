@@ -2,7 +2,8 @@
 
 	Mobile layout: the page now scales to the device width and the
 	Advanced view fits a 375px phone screen. Installable offline PWA
-	and a GitHub Pages deployment of it.
+	and a GitHub Pages deployment of it. Structural warnings for the
+	network in the Advanced view.
 
 	* src/app.html:
 	Add the viewport and theme-color meta tags. Without a viewport tag
@@ -43,6 +44,23 @@
 	* .github/workflows/pages.yml [new]:
 	Runs the tests, builds dist/ and deploys it to GitHub Pages on every
 	push to main.
+
+	* src/checks.js [new], test/checks.test.js [new]:
+	Checks({ L, C }, texts): warnings about the network as typed, a pure
+	function of the model. A part without a value; an absurd value (a
+	unit prefix typo, m against M); an equal or reversed range; a part
+	that sets 99 percent of its group (a series capacitor 100 times
+	smaller than the other, a parallel one 100 times larger), counted
+	only when it holds at both ends of the knob; inductors in parallel
+	(the model assumes no coupling); only one of L and C given, but not
+	when the other field is merely wrong (that is a syntax error
+	already); a knob whose whole travel moves the frequency by less than
+	1 percent. Thresholds in LIMITS.
+
+	* src/network-ui.js (ShowWarnings), src/app.html, src/stylesheets/main.css:
+	The warnings as a list under the result table, on a pale yellow
+	background so that they read as advice and not as the red errors of
+	the fields.
 
 	* LICENSE:
 	Copyright line was the stub of the Electron template (Jakub Szwacz,

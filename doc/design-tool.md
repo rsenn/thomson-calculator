@@ -149,9 +149,11 @@ feature, and the table is extended with the threshold when it is set:
 
 ### Structural checks
 
-A second group is about the network as typed, not about building it. It needs
-nothing but the existing model, so it can be built first. Same rules: a list of
-warnings, never errors, thresholds in one place.
+**Built** (`src/checks.js`, `Checks({ L, C }, texts)`, tested in
+`test/checks.test.js`, shown under the result table of the Advanced view). A
+second group is about the network as typed, not about building it. It needs
+nothing but the existing model. Same rules: a list of warnings, never errors,
+thresholds in `LIMITS`.
 
 | Check | Fires when | Why |
 |---|---|---|
@@ -159,6 +161,7 @@ warnings, never errors, thresholds in one place.
 | absurd value | a value at or below 0, below 1 fF or 1 pH, or above 1 F or 1 kH | probably a unit typo (`m` for milli against `M` for mega) |
 | dominated by one part | one part in series 100 times smaller than the others, or one in parallel 100 times larger | the other parts hardly matter, so adjusting them does nothing |
 | parallel inductors | two or more inductors in parallel | the model assumes no mutual coupling; real coils couple |
+| part without a value | a named part with no value (`C1`) | there is no frequency yet |
 | only one of L and C | one network is empty | there is no frequency to compute |
 | range inside a fixed part's shadow | a range part whose full travel changes the tank frequency by less than 1 percent | knob has almost no effect |
 

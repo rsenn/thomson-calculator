@@ -11,15 +11,14 @@ stray-capacitance, knob-curve, coil-inductance, q-bandwidth, tracking-plot.
   The warning list under the metrics. Two groups in doc/design-tool.md
   section 5. Structural checks (empty or inverted range, absurd value,
   dominated by one part, parallel inductors, only one of L and C, a range
-  with no effect) need only the existing model: build these first, as a
-  pure Checks(tank) function and a list under the result table. Build checks
+  with no effect) are built (src/checks.js). Build checks
   (value too small, swamped by strays, band lost to tolerance, crowded dial,
   narrow band, trimmer travel, voltage) come with knob-curve,
   stray-capacitance and tolerance-analysis; self-resonance, bandwidth and Q
   checks with coil-inductance and q-bandwidth. Thresholds in one place in the
   code, listed in the document when they are set. Loss, temperature
   coefficient and coil coupling are not modelled and the document says so.
-  Build the structural group first, it needs nothing else.
+  Next: add each further check to src/checks.js with its feature.
 
 - stray-capacitance:
   A stray capacitance in parallel with the C network, entered or measured

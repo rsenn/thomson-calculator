@@ -5,6 +5,7 @@
 // (`Ltrim=5u`) is kept. The tank is drawn as a schematic and as the Thomson
 // equation of the two networks. Loaded on first use by app.js.
 
+import { Checks } from './checks.js';
 import { Parse, ThomsonEquation } from './equations.js';
 import { FormatNumber, NumericValue, RoundTo, Unit } from './numbers.js';
 
@@ -194,6 +195,23 @@ function ShowResult(result) {
   );
 }
 
+/* the warnings of Checks() as a list under the result table */
+function ShowWarnings(nets, texts) {
+  const list = Q('#network_warnings'),
+    warnings = Checks(nets, texts);
+
+  list.hidden = !warnings.length;
+  list.replaceChildren(
+    ...warnings.map(w => {
+      const li = document.createElement('li');
+
+      li.textContent = w.message;
+
+      return li;
+    }),
+  );
+}
+
 /* draw the tank of the two fields; returns { L, C } (a part is undefined when empty or wrong) */
 export function ShowNetworks(texts) {
   const nets = {},
@@ -239,6 +257,7 @@ export function ShowNetworks(texts) {
   }
 
   ShowResult(result);
+  ShowWarnings(nets, texts);
 
   // keep the selection while its part still exists
   state.nets = nets;

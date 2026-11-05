@@ -78,7 +78,11 @@ On every input event (`ShowNetworks`):
    `7.3 – 89.3 pF` (en dash): the unit once when both ends share it, both when
    they differ (`972.375 kHz – 18.6277 MHz`), one value when they are equal.
    The table is hidden while the data is incomplete.
-5. The selection is kept if its part still exists, and reset otherwise; a
+5. **Warnings**: `Checks({ L, C }, texts)` (`src/checks.js`) lists the structural
+   problems of the network as typed, as a list under the result table
+   (`#network_warnings`): advice, never an error, see
+   [design-tool.md](design-tool.md), section 5.
+6. The selection is kept if its part still exists, and reset otherwise; a
    pending solution is discarded.
 
 The values use four decimals (`RoundTo(4)`), engineering prefixes
