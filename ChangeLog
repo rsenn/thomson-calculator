@@ -1,3 +1,53 @@
+2026-11-05  Roman Senn  <roman.l.senn@gmail.com>
+
+	Mobile layout: the page now scales to the device width and the
+	Advanced view fits a 375px phone screen. Installable offline PWA
+	and a GitHub Pages deployment of it.
+
+	* src/app.html:
+	Add the viewport and theme-color meta tags. Without a viewport tag
+	phones lay the page out at 980px and shrink it, so everything was
+	tiny.
+
+	* src/stylesheets/main.css (@media max-width 640px):
+	- The page scrolls instead of clipping (body overflow was hidden,
+	  height fixed at 100%), no horizontal panning.
+	- Input grids use the full width; fields are 16px so iOS does not
+	  zoom on focus; the network input width no longer overflows.
+	- Schematic and equation shrink to the width, the result table
+	  wraps long frequency spans, the status bar is no longer fixed.
+
+	* src/manifest.webmanifest [new], src/icons/ [new], src/app.html,
+	tools/favicon.sh:
+	Web app manifest (standalone, relative start_url and scope so it
+	works under /thomson-calculator/) and the icons for it: 192 and
+	512 px, a maskable 512 px with the artwork inside the safe zone,
+	and the iOS home screen icon. tools/favicon.sh generates them from
+	src/svg/favicon.svg with the other icons. app.html links the
+	manifest and registers the service worker, but only over http(s),
+	not under file:// (Electron, Tauri).
+
+	* src/sw.js [new]:
+	Offline cache. The whole file set is cached under one version and
+	answered from that cache only, and there is no skipWaiting, so
+	files of two releases are never mixed (the stale module problem of
+	doc/pitfalls.md). A new version installs in the background and
+	takes over when the app is next opened. In the source tree the
+	version is 'dev' and nothing is cached.
+
+	* tools/pwa.js [new], package.json (pwa):
+	Builds dist/: a copy of src/ with app.html as index.html (Pages
+	serves index.html at the root) and sw.js filled in with the version
+	(git hash) and the file list.
+
+	* .github/workflows/pages.yml [new]:
+	Runs the tests, builds dist/ and deploys it to GitHub Pages on every
+	push to main.
+
+	* LICENSE:
+	Copyright line was the stub of the Electron template (Jakub Szwacz,
+	2015-2021); the author is Roman Senn, 2026.
+
 2026-11-04  Roman Senn  <roman.l.senn@gmail.com>
 
 	Icons rebuilt from the new src/svg/favicon.svg, equations typeset

@@ -43,6 +43,7 @@
   "scripts": {
     "start": "electron .",
     "web": "bun src/app.html",
+    "pwa": "bun tools/pwa.js",
     "equations": "bun tools/equations.js",
     "glyphs": "bun tools/glyphs.js",
     "test": "bun test test/",

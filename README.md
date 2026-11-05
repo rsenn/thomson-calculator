@@ -134,3 +134,12 @@ padder synthesis, tolerance) is in `doc/` and `TODO`.
 ## License
 
 MIT. See `LICENSE`.
+
+## Hosted version and offline use
+
+Every push to `main` is tested and deployed to GitHub Pages by
+`.github/workflows/pages.yml` (Settings, Pages, Source: GitHub Actions). The
+page can be installed as an app (Chrome: install icon in the address bar,
+Android: Add to Home screen, iOS: Share, Add to Home Screen) and then works
+offline. A new version is fetched in the background and used the next time
+the app is opened. `bun run pwa` builds the same `dist/` locally.
